@@ -22,6 +22,13 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.10")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.0.1")
 
+    implementation("org.apache.kafka:kafka-clients:3.1.0")
+    implementation("io.confluent:kafka-streams-avro-serde:7.0.1") {
+        exclude("org.apache.kafka", "kafka-clients")
+    }
+
+    implementation("no.nav.aap.avro:manuell:0.0.3")
+
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:1.6.7")
     testImplementation("no.nav.security:mock-oauth2-server:0.4.3")

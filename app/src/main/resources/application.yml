@@ -3,3 +3,15 @@ oauth:
     name: ${AZURE_OPENID_CONFIG_ISSUER:-azure}
     discoveryUrl: ${AZURE_APP_WELL_KNOWN_URL:-http://localhost:8087/azure/.well-known/openid-configuration}
     audience: ${AZURE_APP_CLIENT_ID:-oppgavestyring}
+
+kafka:
+  application-id: ${KAFKA_STREAMS_APPLICATION_ID:-oppgavestyring}
+  brokers: ${KAFKA_BROKERS:-localhost:9092}
+  security: ${KAFKA_SECURITY_ENABLED:-false}
+  truststorePath: ${KAFKA_TRUSTSTORE_PATH:-}
+  keystorePath: ${KAFKA_KEYSTORE_PATH:-}
+  credstorePsw: ${KAFKA_CREDSTORE_PASSWORD:-}
+  clientId: ${KAFKA_CLIENT_ID:-oppgavestyring}
+  schema-registry-url: ${KAFKA_SCHEMA_REGISTRY:-http://localhost:8081}
+  schema-registry-user: ${KAFKA_SCHEMA_REGISTRY_USER:-}
+  schema-registry-pwd: ${KAFKA_SCHEMA_REGISTRY_PASSWORD:-}
