@@ -41,6 +41,19 @@ internal fun Application.server(kafka: Kafka = KafkaSetup()) {
     install(AapAuth) { providers += AzureADProvider(config.oauth.azure) }
     install(ContentNegotiation) { jackson { registerModule(JavaTimeModule()) } }
 
+    intercept(ApplicationCallPipeline.Monitoring) {
+        try {
+            secureLog.info("Behandler kall til uri=${call.request.uri}, metode=${call.request.httpMethod.value}")
+            proceed()
+            secureLog.info("Ferdig behandlet kall til uri=${call.request.uri}, metode=${call.request.httpMethod.value}")
+        } catch (e: Throwable) {
+            secureLog.error(
+                "Feil i behandling av kall til uri=${call.request.uri}, metode=${call.request.httpMethod.value}", e
+            )
+            throw e
+        }
+    }
+
     val topics = Topics(config.kafka)
     kafka.start(config.kafka)
 
