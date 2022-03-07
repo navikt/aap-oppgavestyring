@@ -22,11 +22,13 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.10")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.0.1")
 
+    implementation("org.apache.kafka:kafka-streams:3.1.0")
     implementation("org.apache.kafka:kafka-clients:3.1.0")
     implementation("io.confluent:kafka-streams-avro-serde:7.0.1") {
         exclude("org.apache.kafka", "kafka-clients")
     }
 
+    implementation("no.nav.aap.avro:sokere:1.1.18")
     implementation("no.nav.aap.avro:manuell:0.0.3")
 
     testImplementation(kotlin("test"))
@@ -34,6 +36,7 @@ dependencies {
     testImplementation("no.nav.security:mock-oauth2-server:0.4.3")
     // used to override env var runtime
     testImplementation("uk.org.webcompere:system-stubs-jupiter:2.0.1")
+    testImplementation("org.apache.kafka:kafka-streams-test-utils:3.1.0")
 }
 
 application {

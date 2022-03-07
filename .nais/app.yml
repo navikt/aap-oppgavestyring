@@ -18,6 +18,7 @@ spec:
       enabled: true
   kafka:
     pool: {{kafka-pool}}
+    streams: true
   replicas:
     cpuThresholdPercentage: 90
     disableAutoScaling: true
