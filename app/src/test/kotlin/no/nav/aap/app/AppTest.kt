@@ -6,9 +6,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import no.nav.aap.app.frontendView.FrontendSak
+import no.nav.aap.app.frontendView.FrontendSakstype
+import no.nav.aap.app.frontendView.FrontendVilkårsvurdering
 import no.nav.aap.avro.manuell.v1.Manuell
-import no.nav.aap.avro.sokere.v1.Sak
-import no.nav.aap.avro.sokere.v1.Soker
+import no.nav.aap.avro.sokere.v1.*
 import org.apache.kafka.streams.TestInputTopic
 import org.apache.kafka.streams.TestOutputTopic
 import org.apache.kafka.streams.state.KeyValueStore
@@ -55,12 +56,55 @@ internal class AppTest {
         withTestApp { mocks ->
             søkerTopic.produce("12345678910") {
                 Soker(
-                    "12345678910", LocalDate.of(1956, 1, 12), listOf(
+                    "12345678910",
+                    LocalDate.of(1990, 1, 1),
+                    listOf(
                         Sak(
-                            emptyList(),
-                            LocalDate.now(),
-                            null,
-                            "TILSTAND",
+                            listOf(
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1", "LEDD_2"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "OPPFYLT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_2", "LEDD_3"),
+                                    tilstand = "IKKE_RELEVANT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1", "LEDD_2"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                )
+                            ),
+                            LocalDate.of(2022, 1, 1),
+                            VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            "SØKNAD_MOTTATT",
                             null
                         )
                     )
@@ -68,8 +112,68 @@ internal class AppTest {
             }
 
             val saker = getSaker(mocks, "/api/sak")
-
-            assertEquals(1, saker.size)
+            val expected = listOf(
+                FrontendSak(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    tilstand = "SØKNAD_MOTTATT",
+                    sakstype = FrontendSakstype(
+                        type = "STANDARD",
+                        vilkårsvurderinger = listOf(
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_2",
+                                ledd = listOf("LEDD_1", "LEDD_2"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_3",
+                                ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_4",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "OPPFYLT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_4",
+                                ledd = listOf("LEDD_2", "LEDD_3"),
+                                tilstand = "IKKE_RELEVANT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_5",
+                                ledd = listOf("LEDD_1", "LEDD_2"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_6",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_12",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_29",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            )
+                        )
+                    ),
+                    vedtak = null
+                )
+            )
+            assertEquals(expected, saker)
         }
     }
 
@@ -78,12 +182,55 @@ internal class AppTest {
         withTestApp { mocks ->
             søkerTopic.produce("12345678910") {
                 Soker(
-                    "12345678910", LocalDate.of(1956, 1, 12), listOf(
+                    "12345678910",
+                    LocalDate.of(1990, 1, 1),
+                    listOf(
                         Sak(
-                            emptyList(),
-                            LocalDate.now(),
-                            null,
-                            "TILSTAND",
+                            listOf(
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1", "LEDD_2"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "OPPFYLT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_2", "LEDD_3"),
+                                    tilstand = "IKKE_RELEVANT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1", "LEDD_2"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                ),
+                                vilkarsvurdering(
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "SØKNAD_MOTTATT"
+                                )
+                            ),
+                            LocalDate.of(2022, 1, 1),
+                            VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            "SØKNAD_MOTTATT",
                             null
                         )
                     )
@@ -91,10 +238,97 @@ internal class AppTest {
             }
 
             val saker = getSaker(mocks, "/api/sak/12345678910")
-
-            assertEquals(1, saker.size)
+            val expected = listOf(
+                FrontendSak(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    tilstand = "SØKNAD_MOTTATT",
+                    sakstype = FrontendSakstype(
+                        type = "STANDARD",
+                        vilkårsvurderinger = listOf(
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_2",
+                                ledd = listOf("LEDD_1", "LEDD_2"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_3",
+                                ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_4",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "OPPFYLT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_4",
+                                ledd = listOf("LEDD_2", "LEDD_3"),
+                                tilstand = "IKKE_RELEVANT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_5",
+                                ledd = listOf("LEDD_1", "LEDD_2"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_6",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_12",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            ),
+                            FrontendVilkårsvurdering(
+                                paragraf = "PARAGRAF_11_29",
+                                ledd = listOf("LEDD_1"),
+                                tilstand = "SØKNAD_MOTTATT",
+                                harÅpenOppgave = false
+                            )
+                        )
+                    ),
+                    vedtak = null
+                )
+            )
+            assertEquals(expected, saker)
         }
     }
+
+    private fun vilkarsvurdering(
+        paragraf: String,
+        ledd: List<String>,
+        tilstand: String,
+        losning_11_2_manuell: Losning_11_2? = null,
+        losning_11_2_maskinell: Losning_11_2? = null,
+        losning_11_3_manuell: Losning_11_3? = null,
+        losning_11_4_l2_l3_manuell: Losning_11_4_l2_l3? = null,
+        losning_11_5_manuell: Losning_11_5? = null,
+        losning_11_6_manuell: Losning_11_6? = null,
+        losning_11_12_l1_manuell: Losning_11_12_l1? = null,
+        losning_11_29_manuell: Losning_11_29? = null
+    ) = Vilkarsvurdering(
+        paragraf,
+        ledd,
+        tilstand,
+        losning_11_2_manuell,
+        losning_11_2_maskinell,
+        losning_11_3_manuell,
+        losning_11_4_l2_l3_manuell,
+        losning_11_5_manuell,
+        losning_11_6_manuell,
+        losning_11_12_l1_manuell,
+        losning_11_29_manuell
+    )
+
 
     private fun TestApplicationEngine.postLøsning(mocks: Mocks, body: String) {
         val request = handleRequest(HttpMethod.Post, "/api/sak/123/losning") {
