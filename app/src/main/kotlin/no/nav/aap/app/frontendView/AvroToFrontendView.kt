@@ -11,17 +11,20 @@ private fun Sak.toFrontendView(personident: String, fodselsdato: LocalDate): Fro
     personident = personident,
     fødselsdato = fodselsdato,
     tilstand = tilstand,
-    sakstype = FrontendSakstype( //FIXME
-        type = "STANDARD",
-        vilkårsvurderinger = vilkarsvurderinger.map { it.toFrontendView() }),
+    sakstype = sakstyper.map(Sakstype::toFrontendView).last(), //FIXME Legg til aktivflagg for filtrering/velging av aktiv sakstype
     vedtak = vedtak?.toFrontendView()
+)
+
+private fun Sakstype.toFrontendView() = FrontendSakstype(
+    type = type,
+    vilkårsvurderinger = vilkarsvurderinger.map(Vilkarsvurdering::toFrontendView)
 )
 
 private fun Vilkarsvurdering.toFrontendView() = FrontendVilkårsvurdering(
     paragraf = paragraf,
     ledd = ledd,
     tilstand = tilstand,
-    harÅpenOppgave = false
+    måVurderesManuelt = maVurderesManuelt
 )
 
 private fun Vedtak.toFrontendView() = FrontendVedtak(

@@ -61,45 +61,58 @@ internal class AppTest {
                     listOf(
                         Sak(
                             listOf(
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_2",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_3",
-                                    ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "OPPFYLT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_2", "LEDD_3"),
-                                    tilstand = "IKKE_RELEVANT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_5",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_6",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_12",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_29",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT"
+                                Sakstype(
+                                    "STANDARD",
+                                    listOf(
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_2",
+                                            ledd = listOf("LEDD_1", "LEDD_2"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_3",
+                                            ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_4",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "OPPFYLT",
+                                            måVurderesManuelt = false
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_4",
+                                            ledd = listOf("LEDD_2", "LEDD_3"),
+                                            tilstand = "IKKE_RELEVANT",
+                                            måVurderesManuelt = false
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_5",
+                                            ledd = listOf("LEDD_1", "LEDD_2"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_6",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_12",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_29",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        )
+                                    )
                                 )
                             ),
                             LocalDate.of(2022, 1, 1),
@@ -124,49 +137,49 @@ internal class AppTest {
                                 paragraf = "PARAGRAF_11_2",
                                 ledd = listOf("LEDD_1", "LEDD_2"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_3",
                                 ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_4",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "OPPFYLT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = false
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_4",
                                 ledd = listOf("LEDD_2", "LEDD_3"),
                                 tilstand = "IKKE_RELEVANT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = false
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_5",
                                 ledd = listOf("LEDD_1", "LEDD_2"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_6",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_12",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_29",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             )
                         )
                     ),
@@ -187,45 +200,58 @@ internal class AppTest {
                     listOf(
                         Sak(
                             listOf(
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_2",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_3",
-                                    ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "OPPFYLT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_2", "LEDD_3"),
-                                    tilstand = "IKKE_RELEVANT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_5",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_6",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_12",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT"
-                                ),
-                                vilkarsvurdering(
-                                    paragraf = "PARAGRAF_11_29",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT"
+                                Sakstype(
+                                    "STANDARD",
+                                    listOf(
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_2",
+                                            ledd = listOf("LEDD_1", "LEDD_2"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_3",
+                                            ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_4",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "OPPFYLT",
+                                            måVurderesManuelt = false
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_4",
+                                            ledd = listOf("LEDD_2", "LEDD_3"),
+                                            tilstand = "IKKE_RELEVANT",
+                                            måVurderesManuelt = false
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_5",
+                                            ledd = listOf("LEDD_1", "LEDD_2"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_6",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_12",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        ),
+                                        vilkarsvurdering(
+                                            paragraf = "PARAGRAF_11_29",
+                                            ledd = listOf("LEDD_1"),
+                                            tilstand = "SØKNAD_MOTTATT",
+                                            måVurderesManuelt = true
+                                        )
+                                    )
                                 )
                             ),
                             LocalDate.of(2022, 1, 1),
@@ -250,49 +276,49 @@ internal class AppTest {
                                 paragraf = "PARAGRAF_11_2",
                                 ledd = listOf("LEDD_1", "LEDD_2"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_3",
                                 ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_4",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "OPPFYLT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = false
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_4",
                                 ledd = listOf("LEDD_2", "LEDD_3"),
                                 tilstand = "IKKE_RELEVANT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = false
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_5",
                                 ledd = listOf("LEDD_1", "LEDD_2"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_6",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_12",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             ),
                             FrontendVilkårsvurdering(
                                 paragraf = "PARAGRAF_11_29",
                                 ledd = listOf("LEDD_1"),
                                 tilstand = "SØKNAD_MOTTATT",
-                                harÅpenOppgave = false
+                                måVurderesManuelt = true
                             )
                         )
                     ),
@@ -307,6 +333,7 @@ internal class AppTest {
         paragraf: String,
         ledd: List<String>,
         tilstand: String,
+        måVurderesManuelt: Boolean,
         losning_11_2_manuell: Losning_11_2? = null,
         losning_11_2_maskinell: Losning_11_2? = null,
         losning_11_3_manuell: Losning_11_3? = null,
@@ -319,6 +346,7 @@ internal class AppTest {
         paragraf,
         ledd,
         tilstand,
+        måVurderesManuelt,
         losning_11_2_manuell,
         losning_11_2_maskinell,
         losning_11_3_manuell,

@@ -22,7 +22,7 @@ data class FrontendVilkårsvurdering(
     val paragraf: String,
     val ledd: List<String>,
     val tilstand: String,
-    val harÅpenOppgave: Boolean
+    val måVurderesManuelt: Boolean
 )
 
 data class FrontendVedtak(
