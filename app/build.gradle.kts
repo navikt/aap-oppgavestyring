@@ -28,7 +28,7 @@ dependencies {
         exclude("org.apache.kafka", "kafka-clients")
     }
 
-    runtimeOnly("org.postgresql:postgresql:42.3.3")
+    implementation("org.postgresql:postgresql:42.3.3")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.flywaydb:flyway-core:8.5.4")
     implementation("com.github.seratch:kotliquery:1.6.3")
