@@ -62,7 +62,7 @@ internal class DbTest {
             personident = "12345678910",
             saksid = UUID.randomUUID(),
             diskresjonskode = "UGRADERT",
-            egenAnsatt = false,
+            skjermet = false,
             lokalkontorEnhetsnummer = "030102",
             oppgaver = listOf(
                 DBOppgave(
@@ -88,7 +88,7 @@ internal class DbTest {
             personident = "12345678910",
             saksid = saksid,
             diskresjonskode = "UGRADERT",
-            egenAnsatt = false,
+            skjermet = false,
             lokalkontorEnhetsnummer = "030102",
             oppgaver = listOf(
                 DBOppgave(
@@ -104,7 +104,7 @@ internal class DbTest {
             personident = "12345678910",
             saksid = saksid,
             diskresjonskode = "UGRADERT",
-            egenAnsatt = false,
+            skjermet = false,
             lokalkontorEnhetsnummer = "030102",
             oppgaver = listOf(
                 DBOppgave(

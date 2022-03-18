@@ -9,15 +9,15 @@ data class DBSak(
     private val personident: String,
     private val saksid: UUID,
     private val diskresjonskode: String,
-    private val egenAnsatt: Boolean,
+    private val skjermet: Boolean,
     private val lokalkontorEnhetsnummer: String,
     private val oppgaver: List<DBOppgave>
 ) {
     internal fun insert(session: Session) {
         @Language("PostgreSQL")
         val query = """
-                INSERT INTO sak (personident, saksid, diskresjonskode, egen_ansatt, lokalkontor_enhetsnummer)
-                VALUES (:personident, :saksid, :diskresjonskode, :egen_ansatt, :lokalkontor_enhetsnummer)
+                INSERT INTO sak (personident, saksid, diskresjonskode, skjermet, lokalkontor_enhetsnummer)
+                VALUES (:personident, :saksid, :diskresjonskode, :skjermet, :lokalkontor_enhetsnummer)
                 ON CONFLICT DO NOTHING
                 """
         session.run(
@@ -26,7 +26,7 @@ data class DBSak(
                     "personident" to personident,
                     "saksid" to saksid,
                     "diskresjonskode" to diskresjonskode,
-                    "egen_ansatt" to egenAnsatt,
+                    "skjermet" to skjermet,
                     "lokalkontor_enhetsnummer" to lokalkontorEnhetsnummer
                 )
             ).asUpdate

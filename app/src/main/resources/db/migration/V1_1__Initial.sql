@@ -9,7 +9,7 @@ CREATE TABLE sak
     personident              TEXT,
     saksid                   UUID UNIQUE,
     diskresjonskode          TEXT,
-    egen_ansatt              BOOL,
+    skjermet              BOOL,
     lokalkontor_enhetsnummer TEXT
 );
 

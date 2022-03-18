@@ -16,7 +16,7 @@ internal class SøkerTest {
             personident = "12345678910",
             geografiskTilknytning = "030102",
             diskresjonskode = "UGRADERT",
-            egenAnsatt = false,
+            skjermet = false,
             lokalkontorEnhetsnummer = "0315",
             saker = listOf(
                 DtoSak(
@@ -70,7 +70,7 @@ internal class SøkerTest {
                 Geografisk tilknytning og diskresjonskode er bakt inn i lokalkontorEnhetsnummer for lokalkontor.
                 For NAY må diskresjonskode håndteres i tillegg */
                 diskresjonskode = "UGRADERT",
-                egenAnsatt = false,
+                skjermet = false,
                 lokalkontorEnhetsnummer = "0315",
                 oppgaver = listOf(
                     DBOppgave(

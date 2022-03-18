@@ -42,7 +42,7 @@ data class DtoSøker(
     val personident: String,
     val geografiskTilknytning: String,
     val diskresjonskode: String,
-    val egenAnsatt: Boolean,
+    val skjermet: Boolean,
     val lokalkontorEnhetsnummer: String,
     val saker: List<DtoSak>
 )
