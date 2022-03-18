@@ -22,6 +22,7 @@ import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.*
 import org.apache.kafka.streams.state.KeyValueStore
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore
+import org.testcontainers.containers.PostgreSQLContainer
 import java.util.*
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -29,9 +30,11 @@ import java.util.concurrent.TimeUnit
 class Mocks : AutoCloseable {
     val azure = AzureMock().apply { start() }
     val kafka = KafkaSetupMock()
+    val postgres = PostgreSQLContainer<Nothing>("postgres:14").apply { start() }
 
     override fun close() {
         azure.close()
+        postgres.close()
     }
 }
 

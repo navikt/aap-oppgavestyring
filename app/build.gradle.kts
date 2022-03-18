@@ -11,7 +11,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:1.6.7")
     implementation("io.ktor:ktor-jackson:1.6.7")
     implementation("io.ktor:ktor-auth:1.6.7")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2")
     implementation("io.ktor:ktor-metrics-micrometer:1.6.7")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.3")
 
@@ -19,7 +19,7 @@ dependencies {
 
     implementation("com.sksamuel.hoplite:hoplite-yaml:1.4.16")
 
-    implementation("ch.qos.logback:logback-classic:1.2.10")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.0.1")
 
     implementation("org.apache.kafka:kafka-streams:3.1.0")

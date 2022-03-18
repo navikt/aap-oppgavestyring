@@ -1,6 +1,9 @@
 package no.nav.aap.app
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -20,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.nav.aap.app.config.Config
 import no.nav.aap.app.config.loadConfig
+import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
 import no.nav.aap.app.kafka.*
 import no.nav.aap.app.security.AapAuth
@@ -30,9 +34,10 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore
+import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
+import javax.sql.DataSource
 
-private const val SØKERE_STORE_NAME = "oppgavestyring-soker-state-store"
 private val secureLog = LoggerFactory.getLogger("secureLog")
 
 fun main() {
@@ -45,7 +50,10 @@ internal fun Application.server(kafka: Kafka = KafkaSetup()) {
 
     install(MicrometerMetrics) { registry = prometheus }
     install(AapAuth) { providers += AzureADProvider(config.oauth.azure) }
-    install(ContentNegotiation) { jackson { registerModule(JavaTimeModule()) } }
+    install(ContentNegotiation) { jackson {
+        registerModule(JavaTimeModule())
+        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    } }
 
     intercept(ApplicationCallPipeline.Monitoring) {
         val uri = call.request.uri
@@ -63,14 +71,17 @@ internal fun Application.server(kafka: Kafka = KafkaSetup()) {
 
     environment.monitor.subscribe(ApplicationStopping) { kafka.close() }
 
+    val datasource = initDatasource(config.database)
+    migrate(datasource)
+    val repo = Repo(datasource)
+
     val topics = Topics(config.kafka)
-    val topology = createTopology(topics)
+    val topology = createTopology(repo, topics)
     kafka.start(topology, config.kafka)
-    val søkerStore = kafka.getStore<Soker>(SØKERE_STORE_NAME)
 
     routing {
         actuator(prometheus)
-        api(søkerStore, kafka, topics)
+        api(repo, kafka, topics)
         devTools(kafka, topics)
     }
 }
@@ -83,22 +94,18 @@ private fun Routing.actuator(prometheus: PrometheusMeterRegistry) {
     }
 }
 
-private fun Routing.api(søkerStore: ReadOnlyKeyValueStore<String, Soker>, kafka: Kafka, topics: Topics) {
+private fun Routing.api(repo: Repo, kafka: Kafka, topics: Topics) {
     val manuellProducer = kafka.createProducer(topics.manuell)
 
     authenticate {
         route("/api") {
             get("/sak") {
-                val søkere: List<Soker> = søkerStore.allValues()
-                val saker = søkere.flatMap { it.toFrontendView() }
-                call.respond(saker)
+                call.respond(repo.hentSøkere())
             }
 
             get("/sak/{personident}") {
                 val personident = call.parameters.getOrFail("personident")
-                val søkere = søkerStore.allValues()
-                val saker = søkere.filter { it.personident == personident }.flatMap { it.toFrontendView() }
-                call.respond(saker)
+                call.respond(repo.hentSøker(personident))
             }
 
             post("/sak/{personident}/losning") {
@@ -114,16 +121,13 @@ private fun Routing.api(søkerStore: ReadOnlyKeyValueStore<String, Soker>, kafka
     }
 }
 
-private fun createTopology(topics: Topics): Topology = StreamsBuilder().apply {
-    val søkerKTable = stream(topics.søkere.name, topics.søkere.consumed("soker-consumed"))
+private fun createTopology(repo: Repo, topics: Topics): Topology = StreamsBuilder().apply {
+    stream(topics.søkere.name, topics.søkere.consumed("soker-consumed"))
         .logConsumed()
         .filter { _, value -> value != null }
-        .peek { key, value -> secureLog.info("produced [$SØKERE_STORE_NAME] K:$key V:$value") }
-        .toTable(named("sokere-as-ktable"), materialized<Soker>(SØKERE_STORE_NAME, topics.søkere))
+        .peek { key, value -> secureLog.info("produced K:$key V:$value") }
+        .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
 
-    søkerKTable.scheduleCleanup(SØKERE_STORE_NAME) { record ->
-        søkereToDelete.removeIf { it == record.value().personident }
-    }
 }.build()
 
 val søkereToDelete: ConcurrentList<String> = ConcurrentList()
@@ -145,4 +149,25 @@ private fun Routing.devTools(kafka: Kafka, topics: Topics) {
             call.respondText("Deleted $personident")
         }
     }
+}
+
+private fun initDatasource(dbConfig: DbConfig) = HikariDataSource(HikariConfig().apply {
+    jdbcUrl = dbConfig.url
+    username = dbConfig.username
+    password = dbConfig.password
+    maximumPoolSize = 3
+    minimumIdle = 1
+    initializationFailTimeout = 5000
+    idleTimeout = 10001
+    connectionTimeout = 1000
+    maxLifetime = 30001
+})
+
+private fun migrate(dataSource: DataSource) {
+    Flyway
+        .configure()
+        .cleanOnValidationError(true)
+        .dataSource(dataSource)
+        .load()
+        .migrate()
 }

@@ -1,10 +1,9 @@
-package no.nav.aap.app
+package no.nav.aap.app.dao
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.aap.app.dao.SakDao
 import no.nav.aap.app.db.DBOppgave
 import no.nav.aap.app.db.DBSak
 import org.flywaydb.core.Flyway
@@ -19,7 +18,7 @@ import java.util.*
 import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class DbTest {
+internal class SakDaoTest {
 
     private val postgres = PostgreSQLContainer<Nothing>("postgres:14")
     private lateinit var dataSource: DataSource

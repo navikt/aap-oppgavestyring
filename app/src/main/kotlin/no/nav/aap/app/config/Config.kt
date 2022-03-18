@@ -5,12 +5,14 @@ import com.sksamuel.hoplite.MapPropertySource
 import com.sksamuel.hoplite.yaml.YamlParser
 import io.ktor.application.*
 import io.ktor.config.*
+import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.kafka.KafkaConfig
 import no.nav.aap.app.security.OAuthConfig
 
 data class Config(
     val oauth: OAuthConfig,
-    val kafka: KafkaConfig
+    val kafka: KafkaConfig,
+    val database: DbConfig
 )
 
 inline fun <reified T : Any> Application.loadConfig(vararg resources: String = arrayOf("/application.yml")): T =

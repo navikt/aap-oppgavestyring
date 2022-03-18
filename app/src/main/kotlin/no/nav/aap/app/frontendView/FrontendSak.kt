@@ -6,7 +6,6 @@ import java.time.Year
 import java.time.YearMonth
 
 data class FrontendSak(
-    val personident: String,
     val fødselsdato: LocalDate,
     val tilstand: String,
     val sakstype: FrontendSakstype?,

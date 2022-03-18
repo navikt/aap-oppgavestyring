@@ -1,7 +1,8 @@
 CREATE TABLE soker
 (
     personident TEXT,
-    data        JSON
+    data        JSON,
+    CONSTRAINT unique_personident UNIQUE (personident)
 );
 
 CREATE TABLE sak

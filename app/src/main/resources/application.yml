@@ -15,3 +15,7 @@ kafka:
   schema-registry-url: ${KAFKA_SCHEMA_REGISTRY:-http://localhost:8081}
   schema-registry-user: ${KAFKA_SCHEMA_REGISTRY_USER:-}
   schema-registry-pwd: ${KAFKA_SCHEMA_REGISTRY_PASSWORD:-}
+database:
+  url: ${NAIS_DATABASE_MYAPP_MYDB_URL}
+  username: ${NAIS_DATABASE_MYAPP_MYDB_USERNAME}
+  password: ${NAIS_DATABASE_MYAPP_MYDB_PASSWORD}

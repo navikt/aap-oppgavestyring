@@ -5,10 +5,13 @@ import java.time.LocalDate
 import java.time.Year
 import java.time.YearMonth
 
-internal fun Soker.toFrontendView(): List<FrontendSak> = saker.map { it.toFrontendView(personident, fodselsdato) }
+internal fun Soker.toFrontendView(): FrontendSøker =
+    FrontendSøker(
+        personident = personident,
+        saker = saker.map { it.toFrontendView(fodselsdato) }
+    )
 
-private fun Sak.toFrontendView(personident: String, fodselsdato: LocalDate): FrontendSak = FrontendSak(
-    personident = personident,
+private fun Sak.toFrontendView(fodselsdato: LocalDate): FrontendSak = FrontendSak(
     fødselsdato = fodselsdato,
     tilstand = tilstand,
     sakstype = sakstyper.map(Sakstype::toFrontendView).last(), //FIXME Legg til aktivflagg for filtrering/velging av aktiv sakstype

@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import no.nav.aap.app.frontendView.FrontendSak
 import no.nav.aap.app.frontendView.FrontendSakstype
+import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.frontendView.FrontendVilkårsvurdering
 import no.nav.aap.avro.manuell.v1.Manuell
 import no.nav.aap.avro.sokere.v1.*
@@ -15,9 +16,11 @@ import org.apache.kafka.streams.TestOutputTopic
 import org.apache.kafka.streams.state.KeyValueStore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables
 import java.time.LocalDate
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class AppTest {
 
     @Test
@@ -126,64 +129,68 @@ internal class AppTest {
 
             val saker = getSaker(mocks, "/api/sak")
             val expected = listOf(
-                FrontendSak(
+                FrontendSøker(
                     personident = "12345678910",
-                    fødselsdato = LocalDate.of(1990, 1, 1),
-                    tilstand = "SØKNAD_MOTTATT",
-                    sakstype = FrontendSakstype(
-                        type = "STANDARD",
-                        vilkårsvurderinger = listOf(
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_2",
-                                ledd = listOf("LEDD_1", "LEDD_2"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
+                    saker = listOf(
+                        FrontendSak(
+                            fødselsdato = LocalDate.of(1990, 1, 1),
+                            tilstand = "SØKNAD_MOTTATT",
+                            sakstype = FrontendSakstype(
+                                type = "STANDARD",
+                                vilkårsvurderinger = listOf(
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_2",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_3",
+                                        ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "OPPFYLT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_2", "LEDD_3"),
+                                        tilstand = "IKKE_RELEVANT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_5",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_6",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_12",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_29",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    )
+                                )
                             ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_3",
-                                ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_4",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "OPPFYLT",
-                                måVurderesManuelt = false
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_4",
-                                ledd = listOf("LEDD_2", "LEDD_3"),
-                                tilstand = "IKKE_RELEVANT",
-                                måVurderesManuelt = false
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_5",
-                                ledd = listOf("LEDD_1", "LEDD_2"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_6",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_12",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_29",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            )
+                            vedtak = null
                         )
-                    ),
-                    vedtak = null
+                    )
                 )
             )
             assertEquals(expected, saker)
@@ -265,64 +272,68 @@ internal class AppTest {
 
             val saker = getSaker(mocks, "/api/sak/12345678910")
             val expected = listOf(
-                FrontendSak(
+                FrontendSøker(
                     personident = "12345678910",
-                    fødselsdato = LocalDate.of(1990, 1, 1),
-                    tilstand = "SØKNAD_MOTTATT",
-                    sakstype = FrontendSakstype(
-                        type = "STANDARD",
-                        vilkårsvurderinger = listOf(
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_2",
-                                ledd = listOf("LEDD_1", "LEDD_2"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
+                    saker = listOf(
+                        FrontendSak(
+                            fødselsdato = LocalDate.of(1990, 1, 1),
+                            tilstand = "SØKNAD_MOTTATT",
+                            sakstype = FrontendSakstype(
+                                type = "STANDARD",
+                                vilkårsvurderinger = listOf(
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_2",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_3",
+                                        ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "OPPFYLT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_2", "LEDD_3"),
+                                        tilstand = "IKKE_RELEVANT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_5",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_6",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_12",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    FrontendVilkårsvurdering(
+                                        paragraf = "PARAGRAF_11_29",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    )
+                                )
                             ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_3",
-                                ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_4",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "OPPFYLT",
-                                måVurderesManuelt = false
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_4",
-                                ledd = listOf("LEDD_2", "LEDD_3"),
-                                tilstand = "IKKE_RELEVANT",
-                                måVurderesManuelt = false
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_5",
-                                ledd = listOf("LEDD_1", "LEDD_2"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_6",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_12",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            ),
-                            FrontendVilkårsvurdering(
-                                paragraf = "PARAGRAF_11_29",
-                                ledd = listOf("LEDD_1"),
-                                tilstand = "SØKNAD_MOTTATT",
-                                måVurderesManuelt = true
-                            )
+                            vedtak = null
                         )
-                    ),
-                    vedtak = null
+                    )
                 )
             )
             assertEquals(expected, saker)
@@ -368,7 +379,7 @@ internal class AppTest {
         assertEquals(request.response.status(), HttpStatusCode.OK)
     }
 
-    private fun TestApplicationEngine.getSaker(mocks: Mocks, path: String): List<FrontendSak> {
+    private fun TestApplicationEngine.getSaker(mocks: Mocks, path: String): List<FrontendSøker> {
         val request = handleRequest(HttpMethod.Get, path) {
             val token = mocks.azure.issueAzureToken()
             addHeader("Authorization", "Bearer ${token.serialize()}")
@@ -382,7 +393,6 @@ internal class AppTest {
         internal fun initializeTopics(kafka: KafkaSetupMock) {
             søkerTopic = kafka.inputAvroTopic("aap.sokere.v1")
             manuellOutputTopic = kafka.outputAvroTopic("aap.manuell.v1")
-            stateStore = kafka.getKeyValueStore("oppgavestyring-soker-state-store")
         }
 
         inline fun <reified T> TestApplicationResponse.parseBody(): T = objectMapper.readValue(content!!)
@@ -391,7 +401,6 @@ internal class AppTest {
 
         private lateinit var søkerTopic: TestInputTopic<String, Soker>
         private lateinit var manuellOutputTopic: TestOutputTopic<String, Manuell>
-        private lateinit var stateStore: KeyValueStore<String, Soker>
     }
 
     private fun withTestApp(test: TestApplicationEngine.(mocks: Mocks) -> Unit) {
@@ -410,6 +419,9 @@ internal class AppTest {
                 "KAFKA_SCHEMA_REGISTRY" to mocks.kafka.schemaRegistryUrl,
                 "KAFKA_SCHEMA_REGISTRY_USER" to "",
                 "KAFKA_SCHEMA_REGISTRY_PASSWORD" to "",
+                "NAIS_DATABASE_MYAPP_MYDB_URL" to mocks.postgres.jdbcUrl,
+                "NAIS_DATABASE_MYAPP_MYDB_USERNAME" to mocks.postgres.username,
+                "NAIS_DATABASE_MYAPP_MYDB_PASSWORD" to mocks.postgres.password
             )
 
             EnvironmentVariables(externalConfig).execute<Unit> {
