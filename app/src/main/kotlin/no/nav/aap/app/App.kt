@@ -25,15 +25,16 @@ import no.nav.aap.app.config.Config
 import no.nav.aap.app.config.loadConfig
 import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
-import no.nav.aap.app.kafka.*
+import no.nav.aap.app.kafka.Kafka
+import no.nav.aap.app.kafka.KafkaSetup
+import no.nav.aap.app.kafka.Topics
+import no.nav.aap.app.kafka.logConsumed
 import no.nav.aap.app.security.AapAuth
 import no.nav.aap.app.security.AzureADProvider
-import no.nav.aap.avro.sokere.v1.Soker
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
-import org.apache.kafka.streams.state.ReadOnlyKeyValueStore
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import javax.sql.DataSource
@@ -161,6 +162,7 @@ private fun initDatasource(dbConfig: DbConfig) = HikariDataSource(HikariConfig()
     idleTimeout = 10001
     connectionTimeout = 1000
     maxLifetime = 30001
+    driverClassName = "org.postgresql.Driver"
 })
 
 private fun migrate(dataSource: DataSource) {
