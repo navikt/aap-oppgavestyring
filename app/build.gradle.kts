@@ -28,6 +28,11 @@ dependencies {
         exclude("org.apache.kafka", "kafka-clients")
     }
 
+    runtimeOnly("org.postgresql:postgresql:42.3.3")
+    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("org.flywaydb:flyway-core:8.5.4")
+    implementation("com.github.seratch:kotliquery:1.6.3")
+
     implementation("no.nav.aap.avro:sokere:3.0.0")
     implementation("no.nav.aap.avro:manuell:0.0.3")
 
@@ -37,6 +42,8 @@ dependencies {
     // used to override env var runtime
     testImplementation("uk.org.webcompere:system-stubs-jupiter:2.0.1")
     testImplementation("org.apache.kafka:kafka-streams-test-utils:3.1.0")
+
+    testImplementation("org.testcontainers:postgresql:1.16.3")
 }
 
 application {
