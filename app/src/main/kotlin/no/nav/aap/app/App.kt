@@ -162,7 +162,6 @@ private fun initDatasource(dbConfig: DbConfig) = HikariDataSource(HikariConfig()
     idleTimeout = 10001
     connectionTimeout = 1000
     maxLifetime = 30001
-    driverClassName = "org.postgresql.Driver"
 })
 
 private fun migrate(dataSource: DataSource) {

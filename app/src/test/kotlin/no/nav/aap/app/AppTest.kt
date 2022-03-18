@@ -13,7 +13,6 @@ import no.nav.aap.avro.manuell.v1.Manuell
 import no.nav.aap.avro.sokere.v1.*
 import org.apache.kafka.streams.TestInputTopic
 import org.apache.kafka.streams.TestOutputTopic
-import org.apache.kafka.streams.state.KeyValueStore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -419,7 +418,9 @@ internal class AppTest {
                 "KAFKA_SCHEMA_REGISTRY" to mocks.kafka.schemaRegistryUrl,
                 "KAFKA_SCHEMA_REGISTRY_USER" to "",
                 "KAFKA_SCHEMA_REGISTRY_PASSWORD" to "",
-                "DB_URL" to mocks.postgres.jdbcUrl,
+                "DB_HOST" to mocks.postgres.host,
+                "DB_PORT" to mocks.postgres.firstMappedPort.toString(),
+                "DB_DATABASE" to mocks.postgres.databaseName,
                 "DB_USERNAME" to mocks.postgres.username,
                 "DB_PASSWORD" to mocks.postgres.password
             )

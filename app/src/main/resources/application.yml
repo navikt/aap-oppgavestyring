@@ -16,6 +16,6 @@ kafka:
   schema-registry-user: ${KAFKA_SCHEMA_REGISTRY_USER:-}
   schema-registry-pwd: ${KAFKA_SCHEMA_REGISTRY_PASSWORD:-}
 database:
-  url: ${DB_URL}
+  url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
   username: ${DB_USERNAME}
   password: ${DB_PASSWORD}
