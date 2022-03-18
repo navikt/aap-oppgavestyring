@@ -16,6 +16,6 @@ kafka:
   schema-registry-user: ${KAFKA_SCHEMA_REGISTRY_USER:-}
   schema-registry-pwd: ${KAFKA_SCHEMA_REGISTRY_PASSWORD:-}
 database:
-  url: ${NAIS_DATABASE_MYAPP_MYDB_URL}
-  username: ${NAIS_DATABASE_MYAPP_MYDB_USERNAME}
-  password: ${NAIS_DATABASE_MYAPP_MYDB_PASSWORD}
+  url: ${DB_URL}
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}

@@ -419,9 +419,9 @@ internal class AppTest {
                 "KAFKA_SCHEMA_REGISTRY" to mocks.kafka.schemaRegistryUrl,
                 "KAFKA_SCHEMA_REGISTRY_USER" to "",
                 "KAFKA_SCHEMA_REGISTRY_PASSWORD" to "",
-                "NAIS_DATABASE_MYAPP_MYDB_URL" to mocks.postgres.jdbcUrl,
-                "NAIS_DATABASE_MYAPP_MYDB_USERNAME" to mocks.postgres.username,
-                "NAIS_DATABASE_MYAPP_MYDB_PASSWORD" to mocks.postgres.password
+                "DB_URL" to mocks.postgres.jdbcUrl,
+                "DB_USERNAME" to mocks.postgres.username,
+                "DB_PASSWORD" to mocks.postgres.password
             )
 
             EnvironmentVariables(externalConfig).execute<Unit> {

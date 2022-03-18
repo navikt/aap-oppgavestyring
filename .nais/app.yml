@@ -24,6 +24,7 @@ spec:
       - type: POSTGRES_14
         databases:
           - name: oppgavestyring
+            envVarPrefix: DB
   replicas:
     cpuThresholdPercentage: 90
     disableAutoScaling: true
