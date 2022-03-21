@@ -10,7 +10,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:1.6.7")
     implementation("io.ktor:ktor-server-netty:1.6.7")
     implementation("io.ktor:ktor-jackson:1.6.7")
-    implementation("io.ktor:ktor-auth:1.6.7")
+    implementation("io.ktor:ktor-auth:1.6.8")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2")
     implementation("io.ktor:ktor-metrics-micrometer:1.6.7")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.3")
