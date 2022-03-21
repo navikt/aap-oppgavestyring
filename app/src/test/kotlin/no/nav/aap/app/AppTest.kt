@@ -130,9 +130,8 @@ internal class AppTest {
             val expected = listOf(
                 FrontendSøker(
                     personident = "12345678910",
-                    saker = listOf(
-                        FrontendSak(
-                            fødselsdato = LocalDate.of(1990, 1, 1),
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    sak = FrontendSak(
                             tilstand = "SØKNAD_MOTTATT",
                             sakstype = FrontendSakstype(
                                 type = "STANDARD",
@@ -191,7 +190,7 @@ internal class AppTest {
                         )
                     )
                 )
-            )
+
             assertEquals(expected, saker)
         }
     }
@@ -273,9 +272,8 @@ internal class AppTest {
             val expected = listOf(
                 FrontendSøker(
                     personident = "12345678910",
-                    saker = listOf(
-                        FrontendSak(
-                            fødselsdato = LocalDate.of(1990, 1, 1),
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    sak = FrontendSak(
                             tilstand = "SØKNAD_MOTTATT",
                             sakstype = FrontendSakstype(
                                 type = "STANDARD",
@@ -334,7 +332,7 @@ internal class AppTest {
                         )
                     )
                 )
-            )
+
             assertEquals(expected, saker)
         }
     }

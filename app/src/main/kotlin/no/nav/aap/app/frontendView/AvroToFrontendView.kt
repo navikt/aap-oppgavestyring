@@ -8,11 +8,11 @@ import java.time.YearMonth
 internal fun Soker.toFrontendView(): FrontendSøker =
     FrontendSøker(
         personident = personident,
-        saker = saker.map { it.toFrontendView(fodselsdato) }
+        fødselsdato = fodselsdato,
+        sak = saker.first().toFrontendView()
     )
 
-private fun Sak.toFrontendView(fodselsdato: LocalDate): FrontendSak = FrontendSak(
-    fødselsdato = fodselsdato,
+private fun Sak.toFrontendView(): FrontendSak = FrontendSak(
     tilstand = tilstand,
     sakstype = sakstyper.map(Sakstype::toFrontendView).last(), //FIXME Legg til aktivflagg for filtrering/velging av aktiv sakstype
     vedtak = vedtak?.toFrontendView()

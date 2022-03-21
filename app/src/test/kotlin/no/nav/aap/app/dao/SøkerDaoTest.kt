@@ -64,9 +64,8 @@ internal class SøkerDaoTest {
     fun `Lagrer liste med frontendsak i database`() {
         val frontendSøker = FrontendSøker(
             personident = "12345678910",
-            saker = listOf(
-            FrontendSak(
-                fødselsdato = LocalDate.of(1990, 1, 1),
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            sak = FrontendSak(
                 tilstand = "SØKNAD_MOTTATT",
                 sakstype = FrontendSakstype(
                     type = "STANDARD",
@@ -123,7 +122,7 @@ internal class SøkerDaoTest {
                 ),
                 vedtak = null
             )
-        ))
+        )
 
         søkerDao.insert(frontendSøker)
 

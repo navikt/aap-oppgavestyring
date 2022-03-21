@@ -1,6 +1,9 @@
 package no.nav.aap.app.frontendView
 
+import java.time.LocalDate
+
 data class FrontendSøker(
     val personident: String,
-    val saker: List<FrontendSak>
+    val fødselsdato: LocalDate,
+    val sak: FrontendSak
 )
