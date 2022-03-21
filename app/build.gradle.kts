@@ -37,7 +37,7 @@ dependencies {
     implementation("no.nav.aap.avro:manuell:0.0.3")
 
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-server-test-host:1.6.7")
+    testImplementation("io.ktor:ktor-server-test-host:1.6.8")
     testImplementation("no.nav.security:mock-oauth2-server:0.4.3")
     // used to override env var runtime
     testImplementation("uk.org.webcompere:system-stubs-jupiter:2.0.1")
