@@ -12,7 +12,7 @@ dependencies {
     implementation("io.ktor:ktor-jackson:1.6.7")
     implementation("io.ktor:ktor-auth:1.6.7")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2")
-    implementation("io.ktor:ktor-metrics-micrometer:1.6.7")
+    implementation("io.ktor:ktor-metrics-micrometer:1.6.8")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.3")
 
     implementation("no.nav.security:token-validation-ktor:2.0.7")
