@@ -15,9 +15,9 @@ dependencies {
     implementation("io.ktor:ktor-metrics-micrometer:1.6.8")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.4")
 
-    implementation("no.nav.security:token-validation-ktor:2.0.7")
+    implementation("no.nav.security:token-validation-ktor:2.0.12")
 
-    implementation("com.sksamuel.hoplite:hoplite-yaml:2.0.0")
+    implementation("com.sksamuel.hoplite:hoplite-yaml:2.0.2")
 
     implementation("ch.qos.logback:logback-classic:1.2.11")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.0.1")
