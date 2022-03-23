@@ -16,7 +16,6 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
-import io.ktor.util.collections.*
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +30,6 @@ import no.nav.aap.app.kafka.Topics
 import no.nav.aap.app.kafka.logConsumed
 import no.nav.aap.app.security.AapAuth
 import no.nav.aap.app.security.AzureADProvider
-import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
@@ -51,10 +49,12 @@ internal fun Application.server(kafka: Kafka = KafkaSetup()) {
 
     install(MicrometerMetrics) { registry = prometheus }
     install(AapAuth) { providers += AzureADProvider(config.oauth.azure) }
-    install(ContentNegotiation) { jackson {
-        registerModule(JavaTimeModule())
-        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    } }
+    install(ContentNegotiation) {
+        jackson {
+            registerModule(JavaTimeModule())
+            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        }
+    }
 
     intercept(ApplicationCallPipeline.Monitoring) {
         val uri = call.request.uri
@@ -83,7 +83,6 @@ internal fun Application.server(kafka: Kafka = KafkaSetup()) {
     routing {
         actuator(prometheus)
         api(repo, kafka, topics)
-        devTools(kafka, topics)
     }
 }
 
@@ -123,34 +122,17 @@ private fun Routing.api(repo: Repo, kafka: Kafka, topics: Topics) {
 }
 
 private fun createTopology(repo: Repo, topics: Topics): Topology = StreamsBuilder().apply {
-    stream(topics.søkere.name, topics.søkere.consumed("soker-consumed"))
+    val sokerKStream = stream(topics.søkere.name, topics.søkere.consumed("soker-consumed"))
         .logConsumed()
+    sokerKStream
         .filter { _, value -> value != null }
         .peek { key, value -> secureLog.info("produced K:$key V:$value") }
         .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
-
+    sokerKStream
+        .filter { _, value -> value == null }
+        .peek { key, value -> secureLog.info("deleted K:$key V:$value") }
+        .foreach { key, _ -> repo.slettSøker(key) }
 }.build()
-
-val søkereToDelete: ConcurrentList<String> = ConcurrentList()
-
-private fun Routing.devTools(kafka: Kafka, topics: Topics) {
-    val søkerProducer = kafka.createProducer(topics.søkere)
-
-    fun <V> Producer<String, V>.tombstone(key: String) {
-        send(ProducerRecord(topics.søkere.name, key, null)).get()
-    }
-
-    route("/delete/{personident}") {
-        get {
-            val personident = call.parameters.getOrFail("personident")
-            søkerProducer.tombstone(personident).also {
-                søkereToDelete.add(personident)
-                secureLog.info("produced [${topics.søkere.name}] [$personident] [tombstone]")
-            }
-            call.respondText("Deleted $personident")
-        }
-    }
-}
 
 private fun initDatasource(dbConfig: DbConfig) = HikariDataSource(HikariConfig().apply {
     jdbcUrl = dbConfig.url
