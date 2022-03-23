@@ -126,6 +126,89 @@ internal class SakDaoTest {
         assertEquals(1, rowCount("rolle"))
     }
 
+    @Test
+    fun `Sletter dbsak fra database`() {
+        val dbSak = DBSak(
+            personident = "12345678910",
+            saksid = UUID.randomUUID(),
+            diskresjonskode = "UGRADERT",
+            skjermet = false,
+            lokalkontorEnhetsnummer = "030102",
+            oppgaver = listOf(
+                DBOppgave(
+                    oppgaveid = UUID.randomUUID(),
+                    status = "IKKE_VURDERT",
+                    nayEllerKontor = "KONTOR",
+                    roller = listOf("BEHANDLER")
+                )
+            )
+        )
+        sakDao.insert(dbSak)
+
+        assertEquals(1, rowCount("sak"))
+        assertEquals(1, rowCount("oppgave"))
+        assertEquals(1, rowCount("rolle"))
+
+        sakDao.delete("12345678910")
+
+        assertEquals(0, rowCount("sak"))
+        assertEquals(0, rowCount("oppgave"))
+        assertEquals(0, rowCount("rolle"))
+    }
+
+    @Test
+    fun `Sletter ikke dbsak til annen personident fra database`() {
+        sakDao.insert(
+            DBSak(
+                personident = "01987654321",
+                saksid = UUID.randomUUID(),
+                diskresjonskode = "UGRADERT",
+                skjermet = false,
+                lokalkontorEnhetsnummer = "030102",
+                oppgaver = listOf(
+                    DBOppgave(
+                        oppgaveid = UUID.randomUUID(),
+                        status = "IKKE_VURDERT",
+                        nayEllerKontor = "KONTOR",
+                        roller = listOf("BEHANDLER")
+                    )
+                )
+            )
+        )
+
+        assertEquals(1, rowCount("sak"))
+        assertEquals(1, rowCount("oppgave"))
+        assertEquals(1, rowCount("rolle"))
+
+        sakDao.insert(
+            DBSak(
+                personident = "12345678910",
+                saksid = UUID.randomUUID(),
+                diskresjonskode = "UGRADERT",
+                skjermet = false,
+                lokalkontorEnhetsnummer = "030102",
+                oppgaver = listOf(
+                    DBOppgave(
+                        oppgaveid = UUID.randomUUID(),
+                        status = "IKKE_VURDERT",
+                        nayEllerKontor = "KONTOR",
+                        roller = listOf("BEHANDLER")
+                    )
+                )
+            )
+        )
+
+        assertEquals(2, rowCount("sak"))
+        assertEquals(2, rowCount("oppgave"))
+        assertEquals(2, rowCount("rolle"))
+
+        sakDao.delete("01987654321")
+
+        assertEquals(1, rowCount("sak"))
+        assertEquals(1, rowCount("oppgave"))
+        assertEquals(1, rowCount("rolle"))
+    }
+
     private fun rowCount(tabell: String): Int {
         @Language("PostgreSQL")
         val query = """

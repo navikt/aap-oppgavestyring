@@ -4,8 +4,6 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.aap.app.db.DBOppgave
-import no.nav.aap.app.db.DBSak
 import no.nav.aap.app.frontendView.FrontendSak
 import no.nav.aap.app.frontendView.FrontendSakstype
 import no.nav.aap.app.frontendView.FrontendSøker
@@ -19,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.testcontainers.containers.PostgreSQLContainer
 import java.time.LocalDate
-import java.util.*
 import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -131,6 +128,71 @@ internal class SøkerDaoTest {
         val frontendsøkere = søkerDao.select(listOf("12345678910"))
 
         assertEquals(frontendSøker, frontendsøkere.single())
+    }
+
+    @Test
+    fun `Sletter søker fra database`() {
+        søkerDao.insert(
+            FrontendSøker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                sak = FrontendSak(
+                    tilstand = "SØKNAD_MOTTATT",
+                    sakstype = FrontendSakstype(
+                        type = "STANDARD",
+                        vilkårsvurderinger = emptyList()
+                    ),
+                    vedtak = null
+                )
+            )
+        )
+
+        assertEquals(1, rowCount("soker"))
+
+        søkerDao.delete("12345678910")
+
+        assertEquals(0, rowCount("soker"))
+    }
+
+    @Test
+    fun `Sletter ikke annen søker fra database`() {
+        søkerDao.insert(
+            FrontendSøker(
+                personident = "01987654321",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                sak = FrontendSak(
+                    tilstand = "SØKNAD_MOTTATT",
+                    sakstype = FrontendSakstype(
+                        type = "STANDARD",
+                        vilkårsvurderinger = emptyList()
+                    ),
+                    vedtak = null
+                )
+            )
+        )
+
+        assertEquals(1, rowCount("soker"))
+
+        søkerDao.insert(
+            FrontendSøker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                sak = FrontendSak(
+                    tilstand = "SØKNAD_MOTTATT",
+                    sakstype = FrontendSakstype(
+                        type = "STANDARD",
+                        vilkårsvurderinger = emptyList()
+                    ),
+                    vedtak = null
+                )
+            )
+        )
+
+        assertEquals(2, rowCount("soker"))
+
+        søkerDao.delete("01987654321")
+
+        assertEquals(1, rowCount("soker"))
     }
 
     private fun rowCount(tabell: String): Int {

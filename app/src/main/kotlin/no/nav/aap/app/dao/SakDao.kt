@@ -65,7 +65,7 @@ internal class SakDao(private val dataSource: DataSource) {
                 skjermet = row.boolean("skjermet"),
                 lokalkontorEnhetsnummer = row.string("lokalkontor_enhetsnummer"),
                 oppgaveid = row.uuid("oppgaveid"),
-                status=row.string("status"),
+                status = row.string("status"),
                 nayEllerKontor = row.string("nay_eller_kontor"),
                 rolle = row.string("rolle")
             )
@@ -101,6 +101,18 @@ internal class SakDao(private val dataSource: DataSource) {
                     roller = roller
                 )
             }
+        }
+    }
+
+    internal fun delete(personident: String) {
+        sessionOf(dataSource).use { session ->
+            @Language("PostgreSQL")
+            val query = """
+                DELETE FROM rolle WHERE oppgaveid IN (SELECT o.oppgaveid FROM oppgave o INNER JOIN sak s ON s.saksid = o.saksid WHERE personident = :personident);
+                DELETE FROM oppgave WHERE saksid IN (SELECT s.saksid FROM sak s WHERE personident = :personident);
+                DELETE FROM sak WHERE personident = :personident
+            """
+            session.run(queryOf(query, mapOf("personident" to personident)).asExecute)
         }
     }
 }

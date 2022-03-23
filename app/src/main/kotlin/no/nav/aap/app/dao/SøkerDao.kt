@@ -62,4 +62,15 @@ internal class SøkerDao(private val dataSource: DataSource) {
             )
         }
 
+    internal fun delete(personident: String) {
+        sessionOf(dataSource).use { session ->
+            @Language("PostgreSQL")
+            val query = """
+                DELETE FROM soker WHERE personident = :personident
+                """
+            session.run(
+                queryOf(query, mapOf("personident" to personident)).asExecute
+            )
+        }
+    }
 }
