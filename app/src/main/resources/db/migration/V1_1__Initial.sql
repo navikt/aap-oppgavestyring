@@ -30,3 +30,12 @@ CREATE TABLE rolle
     CONSTRAINT fk_oppgave FOREIGN KEY (oppgaveid) REFERENCES Oppgave (oppgaveid),
     CONSTRAINT unique_rolle UNIQUE (oppgaveid, rolle)
 );
+
+CREATE TABLE tildeling
+(
+    saksid  UUID,
+    ident   TEXT,
+    rolle   TEXT,
+    opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_tildeling UNIQUE (saksid, ident)
+);
