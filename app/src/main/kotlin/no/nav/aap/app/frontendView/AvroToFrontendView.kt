@@ -1,9 +1,10 @@
 package no.nav.aap.app.frontendView
 
 import no.nav.aap.avro.sokere.v1.*
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Year
 import java.time.YearMonth
+import java.util.*
 
 internal fun Soker.toFrontendView(): FrontendSøker =
     FrontendSøker(
@@ -13,17 +14,21 @@ internal fun Soker.toFrontendView(): FrontendSøker =
     )
 
 private fun Sak.toFrontendView(): FrontendSak = FrontendSak(
+    saksid = saksid?.let(UUID::fromString) ?: UUID.randomUUID(),
     tilstand = tilstand,
-    sakstype = sakstyper.map(Sakstype::toFrontendView).last(), //FIXME Legg til aktivflagg for filtrering/velging av aktiv sakstype
+    sakstype = sakstyper.map(Sakstype::toFrontendView).first { it.aktiv },
+    søknadstidspunkt = soknadstidspunkt ?: LocalDateTime.now(),
     vedtak = vedtak?.toFrontendView()
 )
 
 private fun Sakstype.toFrontendView() = FrontendSakstype(
     type = type,
+    aktiv = aktiv ?: true,
     vilkårsvurderinger = vilkarsvurderinger.map(Vilkarsvurdering::toFrontendView)
 )
 
 private fun Vilkarsvurdering.toFrontendView() = FrontendVilkårsvurdering(
+    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
     paragraf = paragraf,
     ledd = ledd,
     tilstand = tilstand,
@@ -31,9 +36,9 @@ private fun Vilkarsvurdering.toFrontendView() = FrontendVilkårsvurdering(
 )
 
 private fun Vedtak.toFrontendView() = FrontendVedtak(
+    vedtaksid = vedtaksid?.let(UUID::fromString) ?: UUID.randomUUID(),
     innvilget = innvilget,
     inntektsgrunnlag = inntektsgrunnlag.toFrontendView(),
-    søknadstidspunkt = soknadstidspunkt,
     vedtaksdato = vedtaksdato,
     virkningsdato = virkningsdato
 )

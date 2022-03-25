@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.testcontainers.containers.PostgreSQLContainer
 import java.time.LocalDate
+import java.util.*
 import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -63,53 +64,63 @@ internal class SøkerDaoTest {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             sak = FrontendSak(
+                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                 tilstand = "SØKNAD_MOTTATT",
                 sakstype = FrontendSakstype(
                     type = "STANDARD",
+                    aktiv = true,
                     vilkårsvurderinger = listOf(
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
                             paragraf = "PARAGRAF_11_2",
                             ledd = listOf("LEDD_1", "LEDD_2"),
                             tilstand = "SØKNAD_MOTTATT",
                             måVurderesManuelt = true
                         ),
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
                             paragraf = "PARAGRAF_11_3",
                             ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                             tilstand = "SØKNAD_MOTTATT",
                             måVurderesManuelt = true
                         ),
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
                             paragraf = "PARAGRAF_11_4",
                             ledd = listOf("LEDD_1"),
                             tilstand = "OPPFYLT",
                             måVurderesManuelt = false
                         ),
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417304"),
                             paragraf = "PARAGRAF_11_4",
                             ledd = listOf("LEDD_2", "LEDD_3"),
                             tilstand = "IKKE_RELEVANT",
                             måVurderesManuelt = false
                         ),
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
                             paragraf = "PARAGRAF_11_5",
                             ledd = listOf("LEDD_1", "LEDD_2"),
                             tilstand = "SØKNAD_MOTTATT",
                             måVurderesManuelt = true
                         ),
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
                             paragraf = "PARAGRAF_11_6",
                             ledd = listOf("LEDD_1"),
                             tilstand = "SØKNAD_MOTTATT",
                             måVurderesManuelt = true
                         ),
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
                             paragraf = "PARAGRAF_11_12",
                             ledd = listOf("LEDD_1"),
                             tilstand = "SØKNAD_MOTTATT",
                             måVurderesManuelt = true
                         ),
                         FrontendVilkårsvurdering(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
                             paragraf = "PARAGRAF_11_29",
                             ledd = listOf("LEDD_1"),
                             tilstand = "SØKNAD_MOTTATT",
@@ -117,6 +128,7 @@ internal class SøkerDaoTest {
                         )
                     )
                 ),
+                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                 vedtak = null
             )
         )
@@ -137,11 +149,14 @@ internal class SøkerDaoTest {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "SØKNAD_MOTTATT",
                     sakstype = FrontendSakstype(
                         type = "STANDARD",
+                        aktiv = true,
                         vilkårsvurderinger = emptyList()
                     ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
             )
@@ -161,11 +176,14 @@ internal class SøkerDaoTest {
                 personident = "01987654321",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "SØKNAD_MOTTATT",
                     sakstype = FrontendSakstype(
                         type = "STANDARD",
+                        aktiv = true,
                         vilkårsvurderinger = emptyList()
                     ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
             )
@@ -178,11 +196,14 @@ internal class SøkerDaoTest {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "SØKNAD_MOTTATT",
                     sakstype = FrontendSakstype(
                         type = "STANDARD",
+                        aktiv = true,
                         vilkårsvurderinger = emptyList()
                     ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
             )

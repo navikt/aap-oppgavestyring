@@ -33,7 +33,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:8.5.4")
     implementation("com.github.seratch:kotliquery:1.6.3")
 
-    implementation("no.nav.aap.avro:sokere:3.0.0")
+    implementation("no.nav.aap.avro:sokere:3.0.2")
     implementation("no.nav.aap.avro:manuell:0.0.3")
 
     testImplementation(kotlin("test"))

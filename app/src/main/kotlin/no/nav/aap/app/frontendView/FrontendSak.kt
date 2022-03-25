@@ -4,21 +4,24 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Year
 import java.time.YearMonth
-import java.util.UUID
+import java.util.*
 
 data class FrontendSak(
-    val saksid: UUID = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"), // TODO fiks i Avro
+    val saksid: UUID,
     val tilstand: String,
     val sakstype: FrontendSakstype?,
+    val søknadstidspunkt: LocalDateTime,
     val vedtak: FrontendVedtak?
 )
 
 data class FrontendSakstype(
     val type: String,
+    val aktiv: Boolean,
     val vilkårsvurderinger: List<FrontendVilkårsvurdering>
 )
 
 data class FrontendVilkårsvurdering(
+    val vilkårsvurderingsid: UUID,
     val paragraf: String,
     val ledd: List<String>,
     val tilstand: String,
@@ -26,9 +29,9 @@ data class FrontendVilkårsvurdering(
 )
 
 data class FrontendVedtak(
+    val vedtaksid: UUID,
     val innvilget: Boolean,
     val inntektsgrunnlag: FrontendInntektsgrunnlag,
-    val søknadstidspunkt: LocalDateTime,
     val vedtaksdato: LocalDate,
     val virkningsdato: LocalDate
 )

@@ -24,6 +24,7 @@ import org.junit.jupiter.api.TestInstance
 import org.testcontainers.containers.PostgreSQLContainer
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables
 import java.time.LocalDate
+import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class AppTest {
@@ -68,53 +69,63 @@ internal class AppTest {
                     LocalDate.of(1990, 1, 1),
                     listOf(
                         Sak(
+                            "f422222c-8606-4426-b929-c2b8b4417367",
                             listOf(
                                 Sakstype(
                                     "STANDARD",
+                                    true,
                                     listOf(
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
                                             paragraf = "PARAGRAF_11_2",
                                             ledd = listOf("LEDD_1", "LEDD_2"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
                                             paragraf = "PARAGRAF_11_3",
                                             ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
                                             paragraf = "PARAGRAF_11_4",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "OPPFYLT",
                                             måVurderesManuelt = false
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
                                             paragraf = "PARAGRAF_11_4",
                                             ledd = listOf("LEDD_2", "LEDD_3"),
                                             tilstand = "IKKE_RELEVANT",
                                             måVurderesManuelt = false
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
                                             paragraf = "PARAGRAF_11_5",
                                             ledd = listOf("LEDD_1", "LEDD_2"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
                                             paragraf = "PARAGRAF_11_6",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
                                             paragraf = "PARAGRAF_11_12",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
                                             paragraf = "PARAGRAF_11_29",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "SØKNAD_MOTTATT",
@@ -125,6 +136,7 @@ internal class AppTest {
                             ),
                             LocalDate.of(2022, 1, 1),
                             VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            LocalDate.of(2022, 1, 1).atStartOfDay(),
                             "SØKNAD_MOTTATT",
                             null
                         )
@@ -138,53 +150,63 @@ internal class AppTest {
                     personident = "12345678910",
                     fødselsdato = LocalDate.of(1990, 1, 1),
                     sak = FrontendSak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "SØKNAD_MOTTATT",
                         sakstype = FrontendSakstype(
                             type = "STANDARD",
+                            aktiv = true,
                             vilkårsvurderinger = listOf(
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1", "LEDD_2"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "OPPFYLT",
                                     måVurderesManuelt = false
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417304"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_2", "LEDD_3"),
                                     tilstand = "IKKE_RELEVANT",
                                     måVurderesManuelt = false
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1", "LEDD_2"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "SØKNAD_MOTTATT",
@@ -192,6 +214,7 @@ internal class AppTest {
                                 )
                             )
                         ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
                 )
@@ -210,53 +233,63 @@ internal class AppTest {
                     LocalDate.of(1990, 1, 1),
                     listOf(
                         Sak(
+                            "f422222c-8606-4426-b929-c2b8b4417367",
                             listOf(
                                 Sakstype(
                                     "STANDARD",
+                                    true,
                                     listOf(
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
                                             paragraf = "PARAGRAF_11_2",
                                             ledd = listOf("LEDD_1", "LEDD_2"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
                                             paragraf = "PARAGRAF_11_3",
                                             ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
                                             paragraf = "PARAGRAF_11_4",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "OPPFYLT",
                                             måVurderesManuelt = false
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
                                             paragraf = "PARAGRAF_11_4",
                                             ledd = listOf("LEDD_2", "LEDD_3"),
                                             tilstand = "IKKE_RELEVANT",
                                             måVurderesManuelt = false
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
                                             paragraf = "PARAGRAF_11_5",
                                             ledd = listOf("LEDD_1", "LEDD_2"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
                                             paragraf = "PARAGRAF_11_6",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
                                             paragraf = "PARAGRAF_11_12",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "SØKNAD_MOTTATT",
                                             måVurderesManuelt = true
                                         ),
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
                                             paragraf = "PARAGRAF_11_29",
                                             ledd = listOf("LEDD_1"),
                                             tilstand = "SØKNAD_MOTTATT",
@@ -267,6 +300,7 @@ internal class AppTest {
                             ),
                             LocalDate.of(2022, 1, 1),
                             VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            LocalDate.of(2022, 1, 1).atStartOfDay(),
                             "SØKNAD_MOTTATT",
                             null
                         )
@@ -280,53 +314,63 @@ internal class AppTest {
                     personident = "12345678910",
                     fødselsdato = LocalDate.of(1990, 1, 1),
                     sak = FrontendSak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "SØKNAD_MOTTATT",
                         sakstype = FrontendSakstype(
                             type = "STANDARD",
+                            aktiv = true,
                             vilkårsvurderinger = listOf(
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1", "LEDD_2"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "OPPFYLT",
                                     måVurderesManuelt = false
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417304"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_2", "LEDD_3"),
                                     tilstand = "IKKE_RELEVANT",
                                     måVurderesManuelt = false
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1", "LEDD_2"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "SØKNAD_MOTTATT",
                                     måVurderesManuelt = true
                                 ),
                                 FrontendVilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "SØKNAD_MOTTATT",
@@ -334,6 +378,7 @@ internal class AppTest {
                                 )
                             )
                         ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
                 )
@@ -352,11 +397,14 @@ internal class AppTest {
                     LocalDate.of(1990, 1, 1),
                     listOf(
                         Sak(
+                            "f422222c-8606-4426-b929-c2b8b4417367",
                             listOf(
                                 Sakstype(
                                     "STANDARD",
+                                    true,
                                     listOf(
                                         vilkarsvurdering(
+                                            vilkårsvurderingsid = UUID.randomUUID().toString(),
                                             paragraf = "PARAGRAF_11_2",
                                             ledd = listOf("LEDD_1", "LEDD_2"),
                                             tilstand = "SØKNAD_MOTTATT",
@@ -367,6 +415,7 @@ internal class AppTest {
                             ),
                             LocalDate.of(2022, 1, 1),
                             VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            LocalDate.of(2022, 1, 1).atStartOfDay(),
                             "SØKNAD_MOTTATT",
                             null
                         )
@@ -409,6 +458,7 @@ internal class AppTest {
         })
 
     private fun vilkarsvurdering(
+        vilkårsvurderingsid: String,
         paragraf: String,
         ledd: List<String>,
         tilstand: String,
@@ -422,6 +472,7 @@ internal class AppTest {
         losning_11_12_l1_manuell: Losning_11_12_l1? = null,
         losning_11_29_manuell: Losning_11_29? = null
     ) = Vilkarsvurdering(
+        vilkårsvurderingsid,
         paragraf,
         ledd,
         tilstand,
