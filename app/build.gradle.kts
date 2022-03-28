@@ -15,7 +15,7 @@ dependencies {
     implementation("io.ktor:ktor-metrics-micrometer:1.6.8")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.4")
 
-    implementation("no.nav.security:token-validation-ktor:2.0.12")
+    implementation("no.nav.security:token-validation-ktor:2.0.14")
 
     implementation("com.sksamuel.hoplite:hoplite-yaml:2.0.2")
 
