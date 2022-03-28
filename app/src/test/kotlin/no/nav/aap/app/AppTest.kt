@@ -9,10 +9,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.aap.app.frontendView.FrontendSak
-import no.nav.aap.app.frontendView.FrontendSakstype
-import no.nav.aap.app.frontendView.FrontendSøker
-import no.nav.aap.app.frontendView.FrontendVilkårsvurdering
+import no.nav.aap.app.frontendView.*
 import no.nav.aap.avro.manuell.v1.Manuell
 import no.nav.aap.avro.sokere.v1.*
 import org.apache.kafka.streams.TestInputTopic
@@ -149,72 +146,46 @@ internal class AppTest {
                 FrontendSøker(
                     personident = "12345678910",
                     fødselsdato = LocalDate.of(1990, 1, 1),
+                    skjermet = false,
                     sak = FrontendSak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "SØKNAD_MOTTATT",
-                        sakstype = FrontendSakstype(
-                            type = "STANDARD",
-                            aktiv = true,
-                            vilkårsvurderinger = listOf(
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
-                                    paragraf = "PARAGRAF_11_2",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
-                                    paragraf = "PARAGRAF_11_3",
-                                    ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "OPPFYLT",
-                                    måVurderesManuelt = false
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417304"),
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_2", "LEDD_3"),
-                                    tilstand = "IKKE_RELEVANT",
-                                    måVurderesManuelt = false
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
-                                    paragraf = "PARAGRAF_11_5",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
-                                    paragraf = "PARAGRAF_11_6",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
-                                    paragraf = "PARAGRAF_11_12",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
-                                    paragraf = "PARAGRAF_11_29",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                )
-                            )
-                        ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        type = "STANDARD",
+                        paragraf_11_2 = FrontendParagraf_11_2(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_3 = FrontendParagraf_11_3(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_4 = FrontendParagraf_11_4(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
+                            erOppfylt = true,
+                            måVurderesManuelt = false
+                        ),
+                        paragraf_11_5 = FrontendParagraf_11_5(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_6 = FrontendParagraf_11_6(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_12 = FrontendParagraf_11_12(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_29 = FrontendParagraf_11_29(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
                         vedtak = null
                     )
                 )
@@ -313,72 +284,46 @@ internal class AppTest {
                 FrontendSøker(
                     personident = "12345678910",
                     fødselsdato = LocalDate.of(1990, 1, 1),
+                    skjermet = false,
                     sak = FrontendSak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "SØKNAD_MOTTATT",
-                        sakstype = FrontendSakstype(
-                            type = "STANDARD",
-                            aktiv = true,
-                            vilkårsvurderinger = listOf(
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
-                                    paragraf = "PARAGRAF_11_2",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
-                                    paragraf = "PARAGRAF_11_3",
-                                    ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "OPPFYLT",
-                                    måVurderesManuelt = false
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417304"),
-                                    paragraf = "PARAGRAF_11_4",
-                                    ledd = listOf("LEDD_2", "LEDD_3"),
-                                    tilstand = "IKKE_RELEVANT",
-                                    måVurderesManuelt = false
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
-                                    paragraf = "PARAGRAF_11_5",
-                                    ledd = listOf("LEDD_1", "LEDD_2"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
-                                    paragraf = "PARAGRAF_11_6",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
-                                    paragraf = "PARAGRAF_11_12",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                ),
-                                FrontendVilkårsvurdering(
-                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
-                                    paragraf = "PARAGRAF_11_29",
-                                    ledd = listOf("LEDD_1"),
-                                    tilstand = "SØKNAD_MOTTATT",
-                                    måVurderesManuelt = true
-                                )
-                            )
-                        ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        type = "STANDARD",
+                        paragraf_11_2 = FrontendParagraf_11_2(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_3 = FrontendParagraf_11_3(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_4 = FrontendParagraf_11_4(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
+                            erOppfylt = true,
+                            måVurderesManuelt = false
+                        ),
+                        paragraf_11_5 = FrontendParagraf_11_5(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_6 = FrontendParagraf_11_6(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_12 = FrontendParagraf_11_12(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
+                        paragraf_11_29 = FrontendParagraf_11_29(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
+                            erOppfylt = false,
+                            måVurderesManuelt = true
+                        ),
                         vedtak = null
                     )
                 )

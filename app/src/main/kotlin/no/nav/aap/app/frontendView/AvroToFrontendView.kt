@@ -1,5 +1,6 @@
 package no.nav.aap.app.frontendView
 
+import no.nav.aap.app.modell.Paragraf
 import no.nav.aap.avro.sokere.v1.*
 import java.time.LocalDateTime
 import java.time.Year
@@ -10,28 +11,66 @@ internal fun Soker.toFrontendView(): FrontendSøker =
     FrontendSøker(
         personident = personident,
         fødselsdato = fodselsdato,
-        sak = saker.first().toFrontendView()
+        sak = saker.first().toFrontendView(),
+        skjermet = false // TODO: Hent fra avro Soker
     )
 
 private fun Sak.toFrontendView(): FrontendSak = FrontendSak(
     saksid = saksid?.let(UUID::fromString) ?: UUID.randomUUID(),
-    tilstand = tilstand,
-    sakstype = sakstyper.map(Sakstype::toFrontendView).first { it.aktiv },
     søknadstidspunkt = soknadstidspunkt ?: LocalDateTime.now(),
-    vedtak = vedtak?.toFrontendView()
+    type = sakstyper.first { it.aktiv }.type,
+    vedtak = vedtak?.toFrontendView(),
+    paragraf_11_2 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_2.name)?.toFrontendParagraf11_2(),
+    paragraf_11_3 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_3.name)?.toFrontendParagraf11_3(),
+    paragraf_11_4 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_4.name)?.toFrontendParagraf11_4(),
+    paragraf_11_5 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_5.name)?.toFrontendParagraf11_5(),
+    paragraf_11_6 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_6.name)?.toFrontendParagraf11_6(),
+    paragraf_11_12 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_12.name)?.toFrontendParagraf11_12(),
+    paragraf_11_29 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_29.name)?.toFrontendParagraf11_29()
 )
 
-private fun Sakstype.toFrontendView() = FrontendSakstype(
-    type = type,
-    aktiv = aktiv ?: true,
-    vilkårsvurderinger = vilkarsvurderinger.map(Vilkarsvurdering::toFrontendView)
-)
+private fun Iterable<Sakstype>.finnVilkårsvurdering(paragrafnavn: String) =
+    this.first { it.aktiv }.vilkarsvurderinger.firstOrNull { it.paragraf == paragrafnavn }
 
-private fun Vilkarsvurdering.toFrontendView() = FrontendVilkårsvurdering(
+private fun Vilkarsvurdering.toFrontendParagraf11_2() = FrontendParagraf_11_2(
     vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
-    paragraf = paragraf,
-    ledd = ledd,
-    tilstand = tilstand,
+    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+    måVurderesManuelt = maVurderesManuelt
+)
+
+private fun Vilkarsvurdering.toFrontendParagraf11_3() = FrontendParagraf_11_3(
+    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+    måVurderesManuelt = maVurderesManuelt
+)
+
+private fun Vilkarsvurdering.toFrontendParagraf11_4() = FrontendParagraf_11_4(
+    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+    måVurderesManuelt = maVurderesManuelt
+)
+
+private fun Vilkarsvurdering.toFrontendParagraf11_5() = FrontendParagraf_11_5(
+    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+    måVurderesManuelt = maVurderesManuelt
+)
+
+private fun Vilkarsvurdering.toFrontendParagraf11_6() = FrontendParagraf_11_6(
+    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+    måVurderesManuelt = maVurderesManuelt
+)
+
+private fun Vilkarsvurdering.toFrontendParagraf11_12() = FrontendParagraf_11_12(
+    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+    måVurderesManuelt = maVurderesManuelt
+)
+
+private fun Vilkarsvurdering.toFrontendParagraf11_29() = FrontendParagraf_11_29(
+    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
     måVurderesManuelt = maVurderesManuelt
 )
 
