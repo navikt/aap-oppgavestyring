@@ -37,5 +37,5 @@ CREATE TABLE tildeling
     ident   TEXT,
     rolle   TEXT,
     opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_tildeling UNIQUE (saksid, ident)
+    CONSTRAINT unique_tildeling UNIQUE (saksid, ident, rolle)
 );
