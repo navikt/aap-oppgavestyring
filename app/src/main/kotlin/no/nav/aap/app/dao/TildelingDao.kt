@@ -4,7 +4,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.db.DBTildeling
 import org.intellij.lang.annotations.Language
-import java.util.UUID
+import java.util.*
 import javax.sql.DataSource
 
 internal class TildelingDao(private val dataSource: DataSource) {
@@ -49,4 +49,21 @@ internal class TildelingDao(private val dataSource: DataSource) {
         }
     }
 
+    internal fun delete(ident: String) {
+        sessionOf(dataSource).use { session ->
+            session.transaction { tSession ->
+                @Language("PostgreSQL")
+                val query = """
+                    DELETE FROM tildeling WHERE ident = :ident
+                    """
+                tSession.run(
+                    queryOf(
+                        query, mapOf(
+                            "ident" to ident
+                        )
+                    ).asUpdate
+                )
+            }
+        }
+    }
 }
