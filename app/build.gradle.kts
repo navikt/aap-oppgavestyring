@@ -17,7 +17,7 @@ dependencies {
 
     implementation("no.nav.security:token-validation-ktor:2.0.12")
 
-    implementation("com.sksamuel.hoplite:hoplite-yaml:2.0.2")
+    implementation("com.sksamuel.hoplite:hoplite-yaml:2.1.1")
 
     implementation("ch.qos.logback:logback-classic:1.2.11")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.0.1")
