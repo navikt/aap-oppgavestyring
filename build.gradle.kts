@@ -7,6 +7,7 @@ subprojects {
     repositories {
         maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
         maven("https://packages.confluent.io/maven/")
+        maven("https://jitpack.io")
         mavenCentral()
     }
 }
