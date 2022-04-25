@@ -6,7 +6,7 @@ import no.nav.aap.app.dao.TildelingDao
 import no.nav.aap.app.db.DBTildeling
 import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.modell.Rolle
-import java.util.UUID
+import java.util.*
 import javax.sql.DataSource
 
 internal class Repo(dataSource: DataSource) {
@@ -24,6 +24,7 @@ internal class Repo(dataSource: DataSource) {
     internal fun slettSøker(personident: String) {
         søkerDao.delete(personident)
         sakDao.delete(personident)
+        tildelingDao.delete(personident)
     }
 
     internal fun tildelSak(saksid: UUID, ident: String, rolle: Rolle) {

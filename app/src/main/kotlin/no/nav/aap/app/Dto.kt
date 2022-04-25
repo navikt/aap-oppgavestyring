@@ -114,7 +114,7 @@ data class DtoInntektsgrunnlagForÅr(
 
 data class DtoInntekt(
     val arbeidsgiver: String,
-    val inntekstmåned: YearMonth,
+    val inntektsmåned: YearMonth,
     val beløp: Double
 )
 
