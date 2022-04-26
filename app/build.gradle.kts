@@ -34,7 +34,7 @@ dependencies {
     implementation("com.github.seratch:kotliquery:1.7.0")
 
     implementation("com.github.navikt.aap-avro:manuell:3.0.8")
-    implementation("com.github.navikt.aap-avro:sokere:3.0.8")
+    implementation("com.github.navikt.aap-avro:sokere:3.0.9")
 
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:1.6.8")
