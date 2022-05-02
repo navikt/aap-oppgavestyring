@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core:1.6.8")
+    implementation("io.ktor:ktor-server-core:2.0.1")
     implementation("io.ktor:ktor-server-netty:1.6.8")
     implementation("io.ktor:ktor-jackson:1.6.8")
     implementation("io.ktor:ktor-auth:1.6.8")
