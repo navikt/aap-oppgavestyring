@@ -30,7 +30,7 @@ dependencies {
     implementation("com.github.seratch:kotliquery:1.7.0")
 
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-server-test-host:1.6.8")
+    testImplementation("io.ktor:ktor-server-test-host:2.0.1")
     testImplementation("no.nav.security:mock-oauth2-server:0.4.5")
     testImplementation("uk.org.webcompere:system-stubs-jupiter:2.0.1")
     testImplementation("com.github.navikt.aap-libs:kafka-test:0.0.43")
