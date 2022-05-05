@@ -15,6 +15,8 @@ dependencies {
     implementation("io.ktor:ktor-metrics-micrometer:1.6.8")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.5")
 
+    implementation("com.github.navikt.aap-libs:kafka:0.0.43")
+
     implementation("no.nav.security:token-validation-ktor:2.0.14")
 
     implementation("com.sksamuel.hoplite:hoplite-yaml:2.1.2")
@@ -22,26 +24,16 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.11")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.1.1")
 
-    implementation("org.apache.kafka:kafka-streams:3.1.0")
-    implementation("org.apache.kafka:kafka-clients:3.1.0")
-    implementation("io.confluent:kafka-streams-avro-serde:7.0.1") {
-        exclude("org.apache.kafka", "kafka-clients")
-    }
-
     implementation("org.postgresql:postgresql:42.3.4")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.flywaydb:flyway-core:8.5.9")
     implementation("com.github.seratch:kotliquery:1.7.0")
 
-    implementation("com.github.navikt.aap-avro:manuell:3.0.8")
-    implementation("com.github.navikt.aap-avro:sokere:3.0.8")
-
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:1.6.8")
-    testImplementation("no.nav.security:mock-oauth2-server:0.4.5")
-    // used to override env var runtime
+    testImplementation("no.nav.security:mock-oauth2-server:0.4.6")
     testImplementation("uk.org.webcompere:system-stubs-jupiter:2.0.1")
-    testImplementation("org.apache.kafka:kafka-streams-test-utils:3.1.0")
+    testImplementation("com.github.navikt.aap-libs:kafka-test:0.0.43")
 
     testImplementation("org.testcontainers:postgresql:1.17.1")
 }
@@ -52,7 +44,7 @@ application {
 
 tasks {
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = "18"
     }
 
     withType<Test> {
