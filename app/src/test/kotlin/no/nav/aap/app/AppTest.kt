@@ -10,10 +10,7 @@ import io.ktor.server.testing.*
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.frontendView.*
-import no.nav.aap.avro.manuell.v1.Manuell
-import no.nav.aap.avro.sokere.v1.*
-import org.apache.kafka.streams.TestInputTopic
-import org.apache.kafka.streams.TestOutputTopic
+import no.nav.aap.app.kafka.*
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -28,7 +25,10 @@ internal class AppTest {
 
     @Test
     fun `is alive`() {
-        withTestApp {
+        withTestApp { mocks ->
+            mocks.kafka.inputTopic(Topics.søkere)
+            mocks.kafka.outputTopic(Topics.manuell)
+
             val request = handleRequest(HttpMethod.Get, "/actuator/live")
             assertEquals(HttpStatusCode.OK, request.response.status())
         }
@@ -36,7 +36,10 @@ internal class AppTest {
 
     @Test
     fun `is ready`() {
-        withTestApp {
+        withTestApp { mocks ->
+            mocks.kafka.inputTopic(Topics.søkere)
+            mocks.kafka.outputTopic(Topics.manuell)
+
             val request = handleRequest(HttpMethod.Get, "/actuator/ready")
             assertEquals(HttpStatusCode.OK, request.response.status())
         }
@@ -44,7 +47,10 @@ internal class AppTest {
 
     @Test
     fun metrics() {
-        withTestApp {
+        withTestApp { mocks ->
+            mocks.kafka.inputTopic(Topics.søkere)
+            mocks.kafka.outputTopic(Topics.manuell)
+
             val request = handleRequest(HttpMethod.Get, "/actuator/metrics")
             assertEquals(HttpStatusCode.OK, request.response.status())
         }
@@ -53,6 +59,9 @@ internal class AppTest {
     @Test
     fun `Authentisering av endepunkt for sending av løsning`() {
         withTestApp { mocks ->
+            mocks.kafka.inputTopic(Topics.søkere)
+            mocks.kafka.outputTopic(Topics.manuell)
+
             postLøsning(mocks, """{"løsning_11_3_manuell":{"erOppfylt":true}}""")
         }
     }
@@ -60,14 +69,17 @@ internal class AppTest {
     @Test
     fun `Henter alle saker`() {
         withTestApp { mocks ->
+            val søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+            mocks.kafka.outputTopic(Topics.manuell)
+
             søkerTopic.produce("12345678910") {
-                Soker(
+                SøkereKafkaDto(
                     "12345678910",
                     LocalDate.of(1990, 1, 1),
                     listOf(
                         Sak(
-                            "f422222c-8606-4426-b929-c2b8b4417367",
-                            listOf(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                            sakstyper = listOf(
                                 Sakstype(
                                     "STANDARD",
                                     true,
@@ -131,11 +143,11 @@ internal class AppTest {
                                     )
                                 )
                             ),
-                            LocalDate.of(2022, 1, 1),
-                            VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
-                            LocalDate.of(2022, 1, 1).atStartOfDay(),
-                            "SØKNAD_MOTTATT",
-                            null
+                            vurderingsdato = LocalDate.of(2022, 1, 1),
+                            vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            tilstand = "SØKNAD_MOTTATT",
+                            vedtak = null
                         )
                     )
                 )
@@ -198,14 +210,17 @@ internal class AppTest {
     @Test
     fun `Henter alle saker til en søker`() {
         withTestApp { mocks ->
+            val søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+            mocks.kafka.outputTopic(Topics.manuell)
+
             søkerTopic.produce("12345678910") {
-                Soker(
-                    "12345678910",
-                    LocalDate.of(1990, 1, 1),
-                    listOf(
+                SøkereKafkaDto(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
                         Sak(
-                            "f422222c-8606-4426-b929-c2b8b4417367",
-                            listOf(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                            sakstyper = listOf(
                                 Sakstype(
                                     "STANDARD",
                                     true,
@@ -269,11 +284,11 @@ internal class AppTest {
                                     )
                                 )
                             ),
-                            LocalDate.of(2022, 1, 1),
-                            VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
-                            LocalDate.of(2022, 1, 1).atStartOfDay(),
-                            "SØKNAD_MOTTATT",
-                            null
+                            vurderingsdato = LocalDate.of(2022, 1, 1),
+                            vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            tilstand = "SØKNAD_MOTTATT",
+                            vedtak = null
                         )
                     )
                 )
@@ -336,14 +351,17 @@ internal class AppTest {
     @Test
     fun `Slett søker ved tombstone`() {
         withTestApp { mocks ->
+            val søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+            mocks.kafka.outputTopic(Topics.manuell)
+
             søkerTopic.produce("12345678910") {
-                Soker(
+                SøkereKafkaDto(
                     "12345678910",
                     LocalDate.of(1990, 1, 1),
                     listOf(
                         Sak(
-                            "f422222c-8606-4426-b929-c2b8b4417367",
-                            listOf(
+                            UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                            sakstyper = listOf(
                                 Sakstype(
                                     "STANDARD",
                                     true,
@@ -358,11 +376,11 @@ internal class AppTest {
                                     )
                                 )
                             ),
-                            LocalDate.of(2022, 1, 1),
-                            VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
-                            LocalDate.of(2022, 1, 1).atStartOfDay(),
-                            "SØKNAD_MOTTATT",
-                            null
+                            vurderingsdato = LocalDate.of(2022, 1, 1),
+                            vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            tilstand = "SØKNAD_MOTTATT",
+                            vedtak = null
                         )
                     )
                 )
@@ -408,28 +426,34 @@ internal class AppTest {
         ledd: List<String>,
         tilstand: String,
         måVurderesManuelt: Boolean,
-        losning_11_2_manuell: Losning_11_2? = null,
-        losning_11_2_maskinell: Losning_11_2? = null,
-        losning_11_3_manuell: Losning_11_3? = null,
-        losning_11_4_l2_l3_manuell: Losning_11_4_l2_l3? = null,
-        losning_11_5_manuell: Losning_11_5? = null,
-        losning_11_6_manuell: Losning_11_6? = null,
-        losning_11_12_l1_manuell: Losning_11_12_l1? = null,
-        losning_11_29_manuell: Losning_11_29? = null
-    ) = Vilkarsvurdering(
-        vilkårsvurderingsid,
-        paragraf,
-        ledd,
-        tilstand,
-        måVurderesManuelt,
-        losning_11_2_manuell,
-        losning_11_2_maskinell,
-        losning_11_3_manuell,
-        losning_11_4_l2_l3_manuell,
-        losning_11_5_manuell,
-        losning_11_6_manuell,
-        losning_11_12_l1_manuell,
-        losning_11_29_manuell
+        løsningYrkesskade_manuell: LøsningManuellMedlemskapYrkesskade? = null,
+        løsningYrkesskade_maskinell: LøsningMaskinellMedlemskapYrkesskade? = null,
+        losning_11_2_manuell: LøsningParagraf_11_2? = null,
+        losning_11_2_maskinell: LøsningParagraf_11_2? = null,
+        losning_11_3_manuell: LøsningParagraf_11_3? = null,
+        losning_11_4_l2_l3_manuell: LøsningParagraf_11_4_ledd2_ledd3? = null,
+        losning_11_5_manuell: LøsningParagraf_11_5? = null,
+        losning_11_6_manuell: LøsningParagraf_11_6? = null,
+        losning_11_12_l1_manuell: LøsningParagraf_11_12_ledd1? = null,
+        losning_11_29_manuell: LøsningParagraf_11_29? = null
+    ) = Vilkårsvurdering(
+        vilkårsvurderingsid = UUID.fromString(vilkårsvurderingsid),
+        paragraf = paragraf,
+        ledd = ledd,
+        tilstand = tilstand,
+        måVurderesManuelt = måVurderesManuelt,
+        løsning_medlemskap_yrkesskade_maskinell = løsningYrkesskade_maskinell,
+        løsning_medlemskap_yrkesskade_manuell = løsningYrkesskade_manuell,
+        løsning_11_2_maskinell = losning_11_2_maskinell,
+        løsning_11_2_manuell = losning_11_2_manuell,
+        løsning_11_3_manuell = losning_11_3_manuell,
+        løsning_11_4_ledd2_ledd3_manuell = losning_11_4_l2_l3_manuell,
+        løsning_11_5_manuell = losning_11_5_manuell,
+        løsning_11_5_yrkesskade_manuell = null,
+        løsning_11_6_manuell = losning_11_6_manuell,
+        løsning_11_12_ledd1_manuell = losning_11_12_l1_manuell,
+        løsning_11_22_manuell = null,
+        løsning_11_29_manuell = losning_11_29_manuell,
     )
 
 
@@ -454,17 +478,9 @@ internal class AppTest {
     }
 
     companion object {
-        internal fun initializeTopics(kafka: KafkaSetupMock) {
-            søkerTopic = kafka.inputAvroTopic("aap.sokere.v1")
-            manuellOutputTopic = kafka.outputAvroTopic("aap.manuell.v1")
-        }
-
         inline fun <reified T> TestApplicationResponse.parseBody(): T = objectMapper.readValue(content!!)
 
         private val objectMapper = jacksonObjectMapper().apply { registerModule(JavaTimeModule()) }
-
-        private lateinit var søkerTopic: TestInputTopic<String, Soker>
-        private lateinit var manuellOutputTopic: TestOutputTopic<String, Manuell>
     }
 
     private fun withTestApp(test: TestApplicationEngine.(mocks: Mocks) -> Unit) {
@@ -480,7 +496,7 @@ internal class AppTest {
                 "KAFKA_CREDSTORE_PASSWORD" to "",
                 "KAFKA_CLIENT_ID" to "oppgavestyring",
                 "KAFKA_GROUP_ID" to "oppgavestyring-1",
-                "KAFKA_SCHEMA_REGISTRY" to mocks.kafka.schemaRegistryUrl,
+                "KAFKA_SCHEMA_REGISTRY" to "mock://schema-registry",
                 "KAFKA_SCHEMA_REGISTRY_USER" to "",
                 "KAFKA_SCHEMA_REGISTRY_PASSWORD" to "",
                 "DB_HOST" to mocks.postgres.host,
@@ -492,7 +508,6 @@ internal class AppTest {
 
             EnvironmentVariables(externalConfig).execute<Unit> {
                 withTestApplication({ server(mocks.kafka) }) {
-                    initializeTopics(mocks.kafka)
                     test(mocks)
                 }
             }

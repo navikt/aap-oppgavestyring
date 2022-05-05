@@ -1,23 +1,20 @@
 package no.nav.aap.app.frontendView
 
+import no.nav.aap.app.kafka.*
 import no.nav.aap.app.modell.Paragraf
-import no.nav.aap.avro.sokere.v1.*
-import java.time.LocalDateTime
 import java.time.Year
-import java.time.YearMonth
-import java.util.*
 
-internal fun Soker.toFrontendView(): FrontendSøker =
+internal fun SøkereKafkaDto.toFrontendView(): FrontendSøker =
     FrontendSøker(
         personident = personident,
-        fødselsdato = fodselsdato,
+        fødselsdato = fødselsdato,
         sak = saker.first().toFrontendView(),
         skjermet = false // TODO: Hent fra avro Soker
     )
 
 private fun Sak.toFrontendView(): FrontendSak = FrontendSak(
-    saksid = saksid?.let(UUID::fromString) ?: UUID.randomUUID(),
-    søknadstidspunkt = soknadstidspunkt ?: LocalDateTime.now(),
+    saksid = saksid,
+    søknadstidspunkt = søknadstidspunkt,
     type = sakstyper.first { it.aktiv }.type,
     vedtak = vedtak?.toFrontendView(),
     paragraf_11_2 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_2.name)?.toFrontendParagraf11_2(),
@@ -30,52 +27,52 @@ private fun Sak.toFrontendView(): FrontendSak = FrontendSak(
 )
 
 private fun Iterable<Sakstype>.finnVilkårsvurdering(paragrafnavn: String) =
-    this.first { it.aktiv }.vilkarsvurderinger.firstOrNull { it.paragraf == paragrafnavn }
+    this.first { it.aktiv }.vilkårsvurderinger.firstOrNull { it.paragraf == paragrafnavn }
 
-private fun Vilkarsvurdering.toFrontendParagraf11_2() = FrontendParagraf_11_2(
-    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+private fun Vilkårsvurdering.toFrontendParagraf11_2() = FrontendParagraf_11_2(
+    vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = maVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt
 )
 
-private fun Vilkarsvurdering.toFrontendParagraf11_3() = FrontendParagraf_11_3(
-    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+private fun Vilkårsvurdering.toFrontendParagraf11_3() = FrontendParagraf_11_3(
+    vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = maVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt
 )
 
-private fun Vilkarsvurdering.toFrontendParagraf11_4() = FrontendParagraf_11_4(
-    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+private fun Vilkårsvurdering.toFrontendParagraf11_4() = FrontendParagraf_11_4(
+    vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = maVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt
 )
 
-private fun Vilkarsvurdering.toFrontendParagraf11_5() = FrontendParagraf_11_5(
-    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+private fun Vilkårsvurdering.toFrontendParagraf11_5() = FrontendParagraf_11_5(
+    vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = maVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt
 )
 
-private fun Vilkarsvurdering.toFrontendParagraf11_6() = FrontendParagraf_11_6(
-    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+private fun Vilkårsvurdering.toFrontendParagraf11_6() = FrontendParagraf_11_6(
+    vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = maVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt
 )
 
-private fun Vilkarsvurdering.toFrontendParagraf11_12() = FrontendParagraf_11_12(
-    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+private fun Vilkårsvurdering.toFrontendParagraf11_12() = FrontendParagraf_11_12(
+    vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = maVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt
 )
 
-private fun Vilkarsvurdering.toFrontendParagraf11_29() = FrontendParagraf_11_29(
-    vilkårsvurderingsid = vilkarsvurderingsid?.let(UUID::fromString) ?: UUID.randomUUID(),
+private fun Vilkårsvurdering.toFrontendParagraf11_29() = FrontendParagraf_11_29(
+    vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = maVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt
 )
 
 private fun Vedtak.toFrontendView() = FrontendVedtak(
-    vedtaksid = vedtaksid?.let(UUID::fromString) ?: UUID.randomUUID(),
+    vedtaksid = vedtaksid,
     innvilget = innvilget,
     inntektsgrunnlag = inntektsgrunnlag.toFrontendView(),
     vedtaksdato = vedtaksdato,
@@ -84,23 +81,23 @@ private fun Vedtak.toFrontendView() = FrontendVedtak(
 
 private fun Inntektsgrunnlag.toFrontendView() = FrontendInntektsgrunnlag(
     beregningsdato = beregningsdato,
-    inntekterSiste3Kalenderår = inntekterSiste3Kalenderar.map { it.toFrontendView() },
-    fødselsdato = fodselsdato,
-    sisteKalenderår = Year.from(sisteKalenderar),
-    grunnlagsfaktor = grunnlagsfaktor
+    inntekterSiste3Kalenderår = inntekterSiste3Kalenderår.map { it.toFrontendView() },
+    fødselsdato = fødselsdato,
+    sisteKalenderår = Year.from(sisteKalenderår),
+    grunnlagsfaktor = grunnlagsfaktor,
 )
 
-private fun InntektsgrunnlagForAr.toFrontendView() = FrontendInntektsgrunnlagForÅr(
-    år = Year.from(ar),
+private fun InntekterForBeregning.toFrontendView() = FrontendInntektsgrunnlagForÅr(
     inntekter = inntekter.map { it.toFrontendView() },
-    beløpFørJustering = belopForJustering,
-    beløpJustertFor6G = belopJustertFor6G,
-    erBeløpJustertFor6G = erBelopJustertFor6G,
-    grunnlagsfaktor = grunnlagsfaktor
+    år = inntektsgrunnlagForÅr.år,
+    beløpFørJustering = inntektsgrunnlagForÅr.beløpFørJustering,
+    beløpJustertFor6G = inntektsgrunnlagForÅr.beløpJustertFor6G,
+    erBeløpJustertFor6G = inntektsgrunnlagForÅr.erBeløpJustertFor6G,
+    grunnlagsfaktor = inntektsgrunnlagForÅr.grunnlagsfaktor,
 )
 
 private fun Inntekt.toFrontendView() = FrontendInntekt(
     arbeidsgiver = arbeidsgiver,
-    inntekstmåned = YearMonth.from(inntektsmaned),
-    beløp = belop
+    inntekstmåned = inntekstmåned,
+    beløp = beløp
 )

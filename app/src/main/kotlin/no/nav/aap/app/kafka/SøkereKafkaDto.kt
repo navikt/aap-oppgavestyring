@@ -1,0 +1,126 @@
+package no.nav.aap.app.kafka
+
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Year
+import java.time.YearMonth
+import java.util.*
+
+data class SøkereKafkaDto(
+    val personident: String,
+    val fødselsdato: LocalDate,
+    val saker: List<Sak>,
+)
+
+data class Sak(
+    val saksid: UUID,
+    val tilstand: String,
+    val sakstyper: List<Sakstype>,
+    val vurderingsdato: LocalDate,
+    val vurderingAvBeregningsdato: VurderingAvBeregningsdato,
+    val søknadstidspunkt: LocalDateTime,
+    val vedtak: Vedtak?
+)
+
+data class Sakstype(
+    val type: String,
+    val aktiv: Boolean,
+    val vilkårsvurderinger: List<Vilkårsvurdering>,
+)
+
+data class Vilkårsvurdering(
+    val vilkårsvurderingsid: UUID,
+    val paragraf: String,
+    val ledd: List<String>,
+    val tilstand: String,
+    val måVurderesManuelt: Boolean,
+    val løsning_medlemskap_yrkesskade_maskinell: LøsningMaskinellMedlemskapYrkesskade? = null,
+    val løsning_medlemskap_yrkesskade_manuell: LøsningManuellMedlemskapYrkesskade? = null,
+    val løsning_11_2_maskinell: LøsningParagraf_11_2? = null,
+    val løsning_11_2_manuell: LøsningParagraf_11_2? = null,
+    val løsning_11_3_manuell: LøsningParagraf_11_3? = null,
+    val løsning_11_4_ledd2_ledd3_manuell: LøsningParagraf_11_4_ledd2_ledd3? = null,
+    val løsning_11_5_manuell: LøsningParagraf_11_5? = null,
+    val løsning_11_5_yrkesskade_manuell: LøsningParagraf_11_5_yrkesskade? = null,
+    val løsning_11_6_manuell: LøsningParagraf_11_6? = null,
+    val løsning_11_12_ledd1_manuell: LøsningParagraf_11_12_ledd1? = null,
+    val løsning_11_22_manuell: LøsningParagraf_11_22? = null,
+    val løsning_11_29_manuell: LøsningParagraf_11_29? = null,
+)
+
+data class LøsningMaskinellMedlemskapYrkesskade(val erMedlem: String)
+data class LøsningManuellMedlemskapYrkesskade(val erMedlem: String)
+data class LøsningParagraf_11_2(val erMedlem: String)
+data class LøsningParagraf_11_3(val erOppfylt: Boolean)
+data class LøsningParagraf_11_4_ledd2_ledd3(val erOppfylt: Boolean)
+
+data class LøsningParagraf_11_5(
+    val kravOmNedsattArbeidsevneErOppfylt: Boolean,
+    val nedsettelseSkyldesSykdomEllerSkade: Boolean
+)
+
+data class LøsningParagraf_11_5_yrkesskade(
+    val arbeidsevneErNedsattMedMinst50Prosent: Boolean,
+    val arbeidsevneErNedsattMedMinst30Prosent: Boolean
+)
+
+data class LøsningParagraf_11_6(val erOppfylt: Boolean)
+data class LøsningParagraf_11_12_ledd1(val erOppfylt: Boolean)
+data class LøsningParagraf_11_22(
+    val erOppfylt: Boolean,
+    val andelNedsattArbeidsevne: Int,
+    val år: Year,
+    val antattÅrligArbeidsinntekt: Double
+)
+
+data class LøsningParagraf_11_29(val erOppfylt: Boolean)
+
+data class Vedtak(
+    val vedtaksid: UUID,
+    val innvilget: Boolean,
+    val inntektsgrunnlag: Inntektsgrunnlag,
+    val vedtaksdato: LocalDate,
+    val virkningsdato: LocalDate
+)
+
+data class Inntektsgrunnlag(
+    val beregningsdato: LocalDate,
+    val inntekterSiste3Kalenderår: List<InntekterForBeregning>,
+    val yrkesskade: Yrkesskade?,
+    val fødselsdato: LocalDate,
+    val sisteKalenderår: Year,
+    val grunnlagsfaktor: Double
+)
+
+data class InntekterForBeregning(
+    val inntekter: List<Inntekt>,
+    val inntektsgrunnlagForÅr: InntektsgrunnlagForÅr
+)
+
+data class VurderingAvBeregningsdato(
+    val tilstand: String,
+    val løsningVurderingAvBeregningsdato: SøkerLøsningVurderingAvBeregningsdato?
+)
+
+data class SøkerLøsningVurderingAvBeregningsdato(
+    val beregningsdato: LocalDate
+)
+
+data class Inntekt(
+    val arbeidsgiver: String,
+    val inntekstmåned: YearMonth,
+    val beløp: Double
+)
+
+data class InntektsgrunnlagForÅr(
+    val år: Year,
+    val beløpFørJustering: Double,
+    val beløpJustertFor6G: Double,
+    val erBeløpJustertFor6G: Boolean,
+    val grunnlagsfaktor: Double
+)
+
+data class Yrkesskade(
+    val gradAvNedsattArbeidsevneKnyttetTilYrkesskade: Double,
+    val inntektsgrunnlag: InntektsgrunnlagForÅr
+)

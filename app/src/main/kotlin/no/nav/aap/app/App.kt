@@ -24,15 +24,15 @@ import no.nav.aap.app.config.Config
 import no.nav.aap.app.config.loadConfig
 import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
-import no.nav.aap.app.kafka.Kafka
-import no.nav.aap.app.kafka.KafkaSetup
 import no.nav.aap.app.kafka.Topics
-import no.nav.aap.app.kafka.logConsumed
 import no.nav.aap.app.security.AapAuth
 import no.nav.aap.app.security.AzureADProvider
+import no.nav.aap.kafka.KafkaConfig
+import no.nav.aap.kafka.streams.KStreams
+import no.nav.aap.kafka.streams.KafkaStreams
+import no.nav.aap.kafka.streams.consume
+import no.nav.aap.kafka.streams.filterNotNull
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.Topology
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import javax.sql.DataSource
@@ -43,7 +43,7 @@ fun main() {
     embeddedServer(Netty, port = 8080, module = Application::server).start(wait = true)
 }
 
-internal fun Application.server(kafka: Kafka = KafkaSetup()) {
+internal fun Application.server(kafka: KStreams = KafkaStreams) {
     val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
     val config = loadConfig<Config>()
 
@@ -76,26 +76,42 @@ internal fun Application.server(kafka: Kafka = KafkaSetup()) {
     migrate(datasource)
     val repo = Repo(datasource)
 
-    val topics = Topics(config.kafka)
-    val topology = createTopology(repo, topics)
-    kafka.start(topology, config.kafka)
+    kafka.start(config.kafka, prometheus) {
+        val søkerKStream = consume(Topics.søkere)
+
+        søkerKStream.filterNotNull { "filter-sokere-tombstone" }
+            .peek { key, value -> secureLog.info("produced [${Topics.søkere}] K:$key V:$value") }
+            .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
+
+        søkerKStream.filter { _, value -> value == null }
+            .peek { key, value -> secureLog.info("deleted [${Topics.søkere}] K:$key V:$value") }
+            .foreach { key, _ -> repo.slettSøker(key) }
+    }
 
     routing {
-        actuator(prometheus)
-        api(repo, kafka, topics)
+        actuator(prometheus, kafka)
+        api(repo, config.kafka, kafka)
     }
 }
 
-private fun Routing.actuator(prometheus: PrometheusMeterRegistry) {
+private fun Routing.actuator(prometheus: PrometheusMeterRegistry, kafka: KStreams) {
     route("/actuator") {
-        get("/metrics") { call.respond(prometheus.scrape()) }
-        get("/live") { call.respond("oppgavestyring") }
-        get("/ready") { call.respond("oppgavestyring") }
+        get("/metrics") {
+            call.respond(prometheus.scrape())
+        }
+        get("/live") {
+            val status = if (kafka.isLive()) HttpStatusCode.OK else HttpStatusCode.InternalServerError
+            call.respond(status, "oppgavestyring")
+        }
+        get("/ready") {
+            val status = if (kafka.isReady()) HttpStatusCode.OK else HttpStatusCode.InternalServerError
+            call.respond(status, "oppgavestyring")
+        }
     }
 }
 
-private fun Routing.api(repo: Repo, kafka: Kafka, topics: Topics) {
-    val manuellProducer = kafka.createProducer(topics.manuell)
+private fun Routing.api(repo: Repo, config: KafkaConfig, kafka: KStreams) {
+    val manuellProducer = kafka.createProducer(config, Topics.manuell)
 
     authenticate {
         route("/api") {
@@ -113,26 +129,13 @@ private fun Routing.api(repo: Repo, kafka: Kafka, topics: Topics) {
                 secureLog.info("Skal løse oppgave for $personident")
                 val løsning = call.receive<DtoManuell>()
                 withContext(Dispatchers.IO) {
-                    manuellProducer.send(ProducerRecord(topics.manuell.name, personident, løsning.toAvro())).get()
+                    manuellProducer.send(ProducerRecord(Topics.manuell.name, personident, løsning.toKafkaDto())).get()
                 }
                 call.respond(HttpStatusCode.OK, "OK")
             }
         }
     }
 }
-
-private fun createTopology(repo: Repo, topics: Topics): Topology = StreamsBuilder().apply {
-    val sokerKStream = stream(topics.søkere.name, topics.søkere.consumed("soker-consumed"))
-        .logConsumed()
-    sokerKStream
-        .filter { _, value -> value != null }
-        .peek { key, value -> secureLog.info("produced K:$key V:$value") }
-        .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
-    sokerKStream
-        .filter { _, value -> value == null }
-        .peek { key, value -> secureLog.info("deleted K:$key V:$value") }
-        .foreach { key, _ -> repo.slettSøker(key) }
-}.build()
 
 private fun initDatasource(dbConfig: DbConfig) = HikariDataSource(HikariConfig().apply {
     jdbcUrl = dbConfig.url
