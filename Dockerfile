@@ -1,4 +1,4 @@
-FROM gradle:7.3.3-jdk18-alpine AS buildToJar
+FROM gradle:7.4.2-jdk18-alpine AS buildToJar
 COPY . .
 
 # RocksDB (kafka streams KTable) bruker noen gclibs som ikke er inkludert i alpine.
