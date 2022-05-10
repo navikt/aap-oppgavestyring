@@ -1,14 +1,32 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    kotlin("jvm") version "1.6.20" apply false
+    kotlin("jvm") version "1.6.20"
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
-subprojects {
+allprojects {
     repositories {
-        maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
-        maven("https://packages.confluent.io/maven/")
-        maven("https://jitpack.io")
         mavenCentral()
+        maven("https://jitpack.io")
+        maven("https://packages.confluent.io/maven/")
+    }
+}
+
+subprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+
+    tasks {
+        withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = "18"
+        }
+
+        withType<Test> {
+            useJUnitPlatform()
+            testLogging {
+                events("PASSED", "SKIPPED", "FAILED")
+            }
+        }
     }
 
     configurations.all {

@@ -1,40 +1,41 @@
 package no.nav.aap.app
 
+import com.auth0.jwk.JwkProvider
+import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.metrics.micrometer.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.engine.*
+import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.netty.*
-import io.ktor.util.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.util.*
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.nav.aap.app.config.Config
-import no.nav.aap.app.config.loadConfig
 import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
 import no.nav.aap.app.kafka.Topics
-import no.nav.aap.app.security.AapAuth
-import no.nav.aap.app.security.AzureADProvider
 import no.nav.aap.kafka.KafkaConfig
 import no.nav.aap.kafka.streams.KStreams
 import no.nav.aap.kafka.streams.KafkaStreams
 import no.nav.aap.kafka.streams.consume
 import no.nav.aap.kafka.streams.filterNotNull
+import no.nav.aap.ktor.config.loadConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
+import java.util.concurrent.TimeUnit
 import javax.sql.DataSource
 
 private val secureLog = LoggerFactory.getLogger("secureLog")
@@ -48,7 +49,6 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     val config = loadConfig<Config>()
 
     install(MicrometerMetrics) { registry = prometheus }
-    install(AapAuth) { providers += AzureADProvider(config.oauth.azure) }
     install(ContentNegotiation) {
         jackson {
             registerModule(JavaTimeModule())
@@ -56,17 +56,17 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
         }
     }
 
-    intercept(ApplicationCallPipeline.Monitoring) {
-        val uri = call.request.uri
-        val metode = call.request.httpMethod.value
-        try {
-            if (uri.startsWith("/actuator")) return@intercept proceed()
-            secureLog.info("Behandler kall til uri=$uri, metode=$metode")
-            proceed()
-            secureLog.info("Ferdig behandlet kall til uri=$uri, metode=$metode")
-        } catch (e: Throwable) {
-            secureLog.error("Feil i behandling av kall til uri=$uri, metode=$metode", e)
-            throw e
+    val jwkProvider: JwkProvider = JwkProviderBuilder(config.oauth.azure.jwksUrl)
+        .cached(10, 24, TimeUnit.HOURS)
+        .rateLimited(10, 1, TimeUnit.MINUTES)
+        .build()
+
+    install(Authentication) {
+        jwt {
+            realm = "hent oppgaver"
+            verifier(jwkProvider, "azure")
+            validate { cred -> JWTPrincipal(cred.payload) }
+            challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "not authed") }
         }
     }
 
@@ -99,10 +99,12 @@ private fun Routing.actuator(prometheus: PrometheusMeterRegistry, kafka: KStream
         get("/metrics") {
             call.respond(prometheus.scrape())
         }
+
         get("/live") {
             val status = if (kafka.isLive()) HttpStatusCode.OK else HttpStatusCode.InternalServerError
             call.respond(status, "oppgavestyring")
         }
+
         get("/ready") {
             val status = if (kafka.isReady()) HttpStatusCode.OK else HttpStatusCode.InternalServerError
             call.respond(status, "oppgavestyring")

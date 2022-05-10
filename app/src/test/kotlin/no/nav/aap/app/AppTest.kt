@@ -1,77 +1,90 @@
 package no.nav.aap.app
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
+import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.frontendView.*
 import no.nav.aap.app.kafka.*
+import no.nav.aap.app.security.JwtGenerator
+import org.apache.kafka.streams.TestInputTopic
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.testcontainers.containers.PostgreSQLContainer
-import uk.org.webcompere.systemstubs.environment.EnvironmentVariables
 import java.time.LocalDate
 import java.util.*
+import kotlin.test.assertNotNull
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class AppTest {
 
     @Test
-    fun `is alive`() {
-        withTestApp { mocks ->
-            mocks.kafka.inputTopic(Topics.søkere)
-            mocks.kafka.outputTopic(Topics.manuell)
+    fun `actuators available without auth`() {
+        MockEnvironment().use { mocks ->
+            testApplication {
+                environment { config = mocks.applicationConfig() }
+                application { server(mocks.kafka) }
 
-            val request = handleRequest(HttpMethod.Get, "/actuator/live")
-            assertEquals(HttpStatusCode.OK, request.response.status())
-        }
-    }
+                runBlocking {
+                    val live = client.get("actuator/live")
+                    assertEquals(HttpStatusCode.OK, live.status)
 
-    @Test
-    fun `is ready`() {
-        withTestApp { mocks ->
-            mocks.kafka.inputTopic(Topics.søkere)
-            mocks.kafka.outputTopic(Topics.manuell)
+                    val ready = client.get("actuator/ready")
+                    assertEquals(HttpStatusCode.OK, ready.status)
 
-            val request = handleRequest(HttpMethod.Get, "/actuator/ready")
-            assertEquals(HttpStatusCode.OK, request.response.status())
-        }
-    }
-
-    @Test
-    fun metrics() {
-        withTestApp { mocks ->
-            mocks.kafka.inputTopic(Topics.søkere)
-            mocks.kafka.outputTopic(Topics.manuell)
-
-            val request = handleRequest(HttpMethod.Get, "/actuator/metrics")
-            assertEquals(HttpStatusCode.OK, request.response.status())
+                    val metrics = client.get("actuator/metrics")
+                    assertEquals(HttpStatusCode.OK, metrics.status)
+                    assertNotNull(metrics.bodyAsText())
+                }
+            }
         }
     }
 
     @Test
     fun `Authentisering av endepunkt for sending av løsning`() {
-        withTestApp { mocks ->
-            mocks.kafka.inputTopic(Topics.søkere)
-            mocks.kafka.outputTopic(Topics.manuell)
+        MockEnvironment().use { mocks ->
+            testApplication {
+                environment { config = mocks.applicationConfig() }
+                application { server(mocks.kafka) }
 
-            postLøsning(mocks, """{"løsning_11_3_manuell":{"erOppfylt":true}}""")
+                postLøsning("""{"løsning_11_3_manuell":{"erOppfylt":true}}""")
+            }
         }
     }
 
     @Test
     fun `Henter alle saker`() {
-        withTestApp { mocks ->
-            val søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
-            mocks.kafka.outputTopic(Topics.manuell)
+        MockEnvironment().use { mocks ->
+            lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
+            val app = TestApplication {
+                environment { config = mocks.applicationConfig() }
+                application {
+                    server(mocks.kafka)
+                    søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                    mocks.kafka.outputTopic(Topics.manuell)
+                }
+            }
 
+            val client = app.createClient {
+                install(ContentNegotiation) {
+                    jackson {
+                        registerModule(JavaTimeModule())
+                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    }
+                }
+            }
+            runBlocking { client.get("/actuator/live") }
             søkerTopic.produce("12345678910") {
                 SøkereKafkaDto(
                     "12345678910",
@@ -153,7 +166,8 @@ internal class AppTest {
                 )
             }
 
-            val saker = getSaker(mocks, "/api/sak")
+            val saker = client.getSaker("/api/sak")
+
             val expected = listOf(
                 FrontendSøker(
                     personident = "12345678910",
@@ -202,16 +216,35 @@ internal class AppTest {
                     )
                 )
             )
-
             assertEquals(expected, saker)
+
+            app.stop()
         }
     }
 
     @Test
     fun `Henter alle saker til en søker`() {
-        withTestApp { mocks ->
-            val søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
-            mocks.kafka.outputTopic(Topics.manuell)
+        MockEnvironment().use { mocks ->
+            lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
+            val app = TestApplication {
+                environment { config = mocks.applicationConfig() }
+                application {
+                    server(mocks.kafka)
+                    søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                    mocks.kafka.outputTopic(Topics.manuell)
+                }
+            }
+
+            val client = app.createClient {
+                install(ContentNegotiation) {
+                    jackson {
+                        registerModule(JavaTimeModule())
+                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    }
+                }
+            }
+
+            runBlocking { client.get("/actuator/live") }
 
             søkerTopic.produce("12345678910") {
                 SøkereKafkaDto(
@@ -294,7 +327,7 @@ internal class AppTest {
                 )
             }
 
-            val saker = getSaker(mocks, "/api/sak/12345678910")
+            val saker = client.getSaker("/api/sak/12345678910")
             val expected = listOf(
                 FrontendSøker(
                     personident = "12345678910",
@@ -345,14 +378,33 @@ internal class AppTest {
             )
 
             assertEquals(expected, saker)
+            app.stop()
         }
     }
 
     @Test
     fun `Slett søker ved tombstone`() {
-        withTestApp { mocks ->
-            val søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
-            mocks.kafka.outputTopic(Topics.manuell)
+        MockEnvironment().use { mocks ->
+            lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
+            val app = TestApplication {
+                environment { config = mocks.applicationConfig() }
+                application {
+                    server(mocks.kafka)
+                    søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                    mocks.kafka.outputTopic(Topics.manuell)
+                }
+            }
+
+            val client = app.createClient {
+                install(ContentNegotiation) {
+                    jackson {
+                        registerModule(JavaTimeModule())
+                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    }
+                }
+            }
+
+            runBlocking { client.get("/actuator/live") }
 
             søkerTopic.produce("12345678910") {
                 SøkereKafkaDto(
@@ -385,19 +437,20 @@ internal class AppTest {
                     )
                 )
             }
-            assertEquals(1, getSaker(mocks, "/api/sak").size)
+            assertEquals(1, client.getSaker("/api/sak").size)
 
             søkerTopic.produceTombstone("12345678910")
-            assertEquals(0, getSaker(mocks, "/api/sak").size)
+            assertEquals(0, client.getSaker("/api/sak").size)
 
             assertEquals(0, rowCount(mocks, "soker"))
             assertEquals(0, rowCount(mocks, "sak"))
             assertEquals(0, rowCount(mocks, "oppgave"))
             assertEquals(0, rowCount(mocks, "rolle"))
+            app.stop()
         }
     }
 
-    private fun rowCount(mocks: Mocks, tabell: String): Int {
+    private fun rowCount(mocks: MockEnvironment, tabell: String): Int {
         @Language("PostgreSQL")
         val query = """
             SELECT count(1) FROM $tabell          
@@ -456,61 +509,24 @@ internal class AppTest {
         løsning_11_29_manuell = losning_11_29_manuell,
     )
 
-
-    private fun TestApplicationEngine.postLøsning(mocks: Mocks, body: String) {
-        val request = handleRequest(HttpMethod.Post, "/api/sak/123/losning") {
-            val token = mocks.azure.issueAzureToken()
-            addHeader("Authorization", "Bearer ${token.serialize()}")
-            addHeader(HttpHeaders.ContentType, "application/json")
+    private suspend fun ApplicationTestBuilder.postLøsning(body: String) {
+        val response = client.post("/api/sak/123/losning") {
+            bearerAuth(JwtGenerator.generate().serialize())
+            contentType(ContentType.Application.Json)
             setBody(body)
         }
-        assertEquals(request.response.status(), HttpStatusCode.OK)
+
+        assertEquals(HttpStatusCode.OK, response.status)
     }
 
-    private fun TestApplicationEngine.getSaker(mocks: Mocks, path: String): List<FrontendSøker> {
-        val request = handleRequest(HttpMethod.Get, path) {
-            val token = mocks.azure.issueAzureToken()
-            addHeader("Authorization", "Bearer ${token.serialize()}")
-            addHeader(HttpHeaders.ContentType, "application/json")
+    private fun HttpClient.getSaker(path: String): List<FrontendSøker> = runBlocking {
+        println("get saker")
+        val response = get(path) {
+            bearerAuth(JwtGenerator.generate().serialize())
+            accept(ContentType.Application.Json)
         }
-        assertEquals(request.response.status(), HttpStatusCode.OK)
-        return request.response.parseBody()
-    }
 
-    companion object {
-        inline fun <reified T> TestApplicationResponse.parseBody(): T = objectMapper.readValue(content!!)
-
-        private val objectMapper = jacksonObjectMapper().apply { registerModule(JavaTimeModule()) }
-    }
-
-    private fun withTestApp(test: TestApplicationEngine.(mocks: Mocks) -> Unit) {
-        Mocks().use { mocks ->
-            val externalConfig = mapOf(
-                "AZURE_OPENID_CONFIG_ISSUER" to "azure",
-                "AZURE_APP_WELL_KNOWN_URL" to mocks.azure.wellKnownUrl(),
-                "AZURE_APP_CLIENT_ID" to "oppgavestyring",
-                "KAFKA_BROKERS" to "mock://kafka",
-                "KAFKA_TRUSTSTORE_PATH" to "",
-                "KAFKA_SECURITY_ENABLED" to "false",
-                "KAFKA_KEYSTORE_PATH" to "",
-                "KAFKA_CREDSTORE_PASSWORD" to "",
-                "KAFKA_CLIENT_ID" to "oppgavestyring",
-                "KAFKA_GROUP_ID" to "oppgavestyring-1",
-                "KAFKA_SCHEMA_REGISTRY" to "mock://schema-registry",
-                "KAFKA_SCHEMA_REGISTRY_USER" to "",
-                "KAFKA_SCHEMA_REGISTRY_PASSWORD" to "",
-                "DB_HOST" to mocks.postgres.host,
-                "DB_PORT" to mocks.postgres.firstMappedPort.toString(),
-                "DB_DATABASE" to mocks.postgres.databaseName,
-                "DB_USERNAME" to mocks.postgres.username,
-                "DB_PASSWORD" to mocks.postgres.password
-            )
-
-            EnvironmentVariables(externalConfig).execute<Unit> {
-                withTestApplication({ server(mocks.kafka) }) {
-                    test(mocks)
-                }
-            }
-        }
+        assertEquals(response.status, HttpStatusCode.OK)
+        response.body()
     }
 }
