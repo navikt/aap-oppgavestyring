@@ -5,7 +5,7 @@ kafka:
   truststorePath: ${KAFKA_TRUSTSTORE_PATH}
   keystorePath: ${KAFKA_KEYSTORE_PATH}
   credstorePsw: ${KAFKA_CREDSTORE_PASSWORD}
-  clientId: ${KAFKA_CLIENT_ID}
+  clientId: ${KAFKA_CLIENT_ID:-oppgavestyring}
 
 database:
   url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
