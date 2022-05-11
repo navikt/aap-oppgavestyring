@@ -1,9 +1,11 @@
 package no.nav.aap.app
 
+import no.nav.aap.app.dao.PersonopplysningerDao
 import no.nav.aap.app.dao.SakDao
 import no.nav.aap.app.dao.SøkerDao
 import no.nav.aap.app.dao.TildelingDao
 import no.nav.aap.app.db.DBTildeling
+import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.modell.Rolle
 import java.util.*
@@ -12,6 +14,7 @@ import javax.sql.DataSource
 internal class Repo(dataSource: DataSource) {
 
     private val søkerDao = SøkerDao(dataSource)
+    private val personopplysningerDao = PersonopplysningerDao(dataSource)
     private val sakDao = SakDao(dataSource)
     private val tildelingDao = TildelingDao(dataSource)
 
@@ -27,12 +30,17 @@ internal class Repo(dataSource: DataSource) {
         tildelingDao.delete(personident)
     }
 
+    internal fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = personopplysningerDao.insert(fp)
+    internal fun hentPersonopplysninger(personident: String) = personopplysningerDao.select(personident)
+
     internal fun tildelSak(saksid: UUID, ident: String, rolle: Rolle) {
-        tildelingDao.insert(DBTildeling(
-            saksid = saksid,
-            ident = ident,
-            rolle = rolle.name
-        ))
+        tildelingDao.insert(
+            DBTildeling(
+                saksid = saksid,
+                ident = ident,
+                rolle = rolle.name
+            )
+        )
     }
 
     internal fun endreTildeling(saksid: UUID, ident: String, nyIdent: String, nyRolle: Rolle) {

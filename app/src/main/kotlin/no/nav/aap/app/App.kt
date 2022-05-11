@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
+import no.nav.aap.app.kafka.PersonopplysningerKafkaDto
 import no.nav.aap.app.kafka.Topics
 import no.nav.aap.kafka.KafkaConfig
 import no.nav.aap.kafka.streams.KStreams
@@ -33,6 +34,7 @@ import no.nav.aap.kafka.streams.consume
 import no.nav.aap.kafka.streams.filterNotNull
 import no.nav.aap.ktor.config.loadConfig
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.streams.kstream.Branched
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
@@ -79,8 +81,19 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     kafka.start(config.kafka, prometheus) {
         val søkerKStream = consume(Topics.søkere)
 
-        søkerKStream.filterNotNull { "filter-sokere-tombstone" }
-            .peek { key, value -> secureLog.info("produced [${Topics.søkere}] K:$key V:$value") }
+        consume(Topics.personopplysninger)
+            .filterNotNull("filter-personopplysning-tombstones")
+            .split()
+            .branch(erUfullstendig, Branched.withConsumer { chain ->
+                chain.peek { key, value -> secureLog.info("skipped [${Topics.personopplysninger}] K:$key V:$value") }
+            })
+            .defaultBranch(Branched.withConsumer { chain ->
+                chain.peek { key, value -> secureLog.info("saving [${Topics.personopplysninger}] K:$key V:$value") }
+                    .foreach { personident, value -> repo.lagrePersonopplysninger(value.toFrontendView(personident)) }
+            })
+
+        søkerKStream.filterNotNull("filter-sokere-tombstone")
+            .peek { key, value -> secureLog.info("saving [${Topics.søkere}] K:$key V:$value") }
             .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
 
         søkerKStream.filter { _, value -> value == null }
@@ -92,6 +105,10 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
         actuator(prometheus, kafka)
         api(repo, config.kafka, kafka)
     }
+}
+
+private val erUfullstendig: (_: String, value: PersonopplysningerKafkaDto) -> Boolean = { _, v ->
+    listOf(v.norgEnhetId, v.adressebeskyttelse, v.geografiskTilknytning, v.skjerming).any { it == null }
 }
 
 private fun Routing.actuator(prometheus: PrometheusMeterRegistry, kafka: KStreams) {
@@ -117,6 +134,14 @@ private fun Routing.api(repo: Repo, config: KafkaConfig, kafka: KStreams) {
 
     authenticate {
         route("/api") {
+            get("/personopplysinger/{personident}") {
+                val personident = call.parameters.getOrFail("personident")
+                when (val opplysninger = repo.hentPersonopplysninger(personident)) {
+                    null -> call.respond(HttpStatusCode.NotFound)
+                    else -> call.respond(HttpStatusCode.OK, opplysninger)
+                }
+            }
+
             get("/sak") {
                 call.respond(repo.hentSøkere())
             }

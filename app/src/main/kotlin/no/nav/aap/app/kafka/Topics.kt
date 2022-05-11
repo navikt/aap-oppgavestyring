@@ -6,4 +6,5 @@ import no.nav.aap.kafka.streams.Topic
 object Topics {
     val søkere = Topic("aap.sokere.v1", JsonSerde.jackson<SøkereKafkaDto>())
     val manuell = Topic("aap.manuell.v1", JsonSerde.jackson<ManuellKafkaDto>())
+    val personopplysninger = Topic("aap.personopplysninger.v1", JsonSerde.jackson<PersonopplysningerKafkaDto>())
 }
