@@ -28,13 +28,9 @@ import no.nav.aap.app.frontendView.toFrontendView
 import no.nav.aap.app.kafka.PersonopplysningerKafkaDto
 import no.nav.aap.app.kafka.Topics
 import no.nav.aap.kafka.KafkaConfig
-import no.nav.aap.kafka.streams.KStreams
-import no.nav.aap.kafka.streams.KafkaStreams
-import no.nav.aap.kafka.streams.consume
-import no.nav.aap.kafka.streams.filterNotNull
+import no.nav.aap.kafka.streams.*
 import no.nav.aap.ktor.config.loadConfig
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.streams.kstream.Branched
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
@@ -83,18 +79,19 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
 
         consume(Topics.personopplysninger)
             .filterNotNull("filter-personopplysning-tombstones")
-            .split()
-            .branch(erUfullstendig, Branched.withConsumer { chain ->
-                chain.peek { key, value -> secureLog.info("skipped [${Topics.personopplysninger}] K:$key V:$value") }
-            })
-            .defaultBranch(Branched.withConsumer { chain ->
-                chain.peek { key, value -> secureLog.info("saving [${Topics.personopplysninger}] K:$key V:$value") }
-                    .foreach { personident, value -> repo.lagrePersonopplysninger(value.toFrontendView(personident)) }
-            })
+            .filterNot(erUfullstendig)
+            .peek { key, value -> secureLog.info("saving [${Topics.personopplysninger}] K:$key V:$value") }
+            .foreach { personident, value -> repo.lagrePersonopplysninger(value.toFrontendView(personident)) }
 
-        søkerKStream.filterNotNull("filter-sokere-tombstone")
+        val presentSøkereStream = søkerKStream.filterNotNull("filter-sokere-tombstone")
+
+        presentSøkereStream
             .peek { key, value -> secureLog.info("saving [${Topics.søkere}] K:$key V:$value") }
             .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
+
+        presentSøkereStream
+            .mapValues { _, _ -> PersonopplysningerKafkaDto() }
+            .produce(Topics.personopplysninger, "produce-empty-personopplysninger")
 
         søkerKStream.filter { _, value -> value == null }
             .peek { key, value -> secureLog.info("deleted [${Topics.søkere}] K:$key V:$value") }
@@ -107,8 +104,10 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     }
 }
 
-private val erUfullstendig: (_: String, value: PersonopplysningerKafkaDto) -> Boolean = { _, v ->
-    listOf(v.norgEnhetId, v.adressebeskyttelse, v.geografiskTilknytning, v.skjerming).any { it == null }
+private val erUfullstendig: (_: String, value: PersonopplysningerKafkaDto) -> Boolean = { k, v ->
+    listOf(v.norgEnhetId, v.adressebeskyttelse, v.geografiskTilknytning, v.skjerming)
+        .any { it == null }
+        .also { if (it) secureLog.info("skipped [${Topics.personopplysninger}] K:$k V:$v") }
 }
 
 private fun Routing.actuator(prometheus: PrometheusMeterRegistry, kafka: KStreams) {
