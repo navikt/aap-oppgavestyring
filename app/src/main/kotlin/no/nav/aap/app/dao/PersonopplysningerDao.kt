@@ -60,4 +60,16 @@ internal class PersonopplysningerDao(private val dataSource: DataSource) {
             }.asList
         )
     }
+
+    internal fun delete(personident: String) {
+        sessionOf(dataSource).use { session ->
+            @Language("PostgreSQL")
+            val query = """
+                DELETE FROM personopplysninger WHERE personident = :personident
+                """
+            session.run(
+                queryOf(query, mapOf("personident" to personident)).asExecute
+            )
+        }
+    }
 }

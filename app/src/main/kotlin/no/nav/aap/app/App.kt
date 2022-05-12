@@ -96,6 +96,10 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
         søkerKStream.filter { _, value -> value == null }
             .peek { key, value -> secureLog.info("deleted [${Topics.søkere}] K:$key V:$value") }
             .foreach { key, _ -> repo.slettSøker(key) }
+
+        consume(Topics.mottakere)
+            .filterNotNull("filter-mottakere-tombstone")
+            .foreach { _, mottaker -> repo.lagreMottaker(mottaker.toFrontendView()) }
     }
 
     routing {

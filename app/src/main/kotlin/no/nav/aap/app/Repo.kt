@@ -1,10 +1,8 @@
 package no.nav.aap.app
 
-import no.nav.aap.app.dao.PersonopplysningerDao
-import no.nav.aap.app.dao.SakDao
-import no.nav.aap.app.dao.SøkerDao
-import no.nav.aap.app.dao.TildelingDao
+import no.nav.aap.app.dao.*
 import no.nav.aap.app.db.DBTildeling
+import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.modell.Rolle
@@ -15,6 +13,7 @@ internal class Repo(dataSource: DataSource) {
 
     private val søkerDao = SøkerDao(dataSource)
     private val personopplysningerDao = PersonopplysningerDao(dataSource)
+    private val mottakerDao = MottakerDao(dataSource)
     private val sakDao = SakDao(dataSource)
     private val tildelingDao = TildelingDao(dataSource)
 
@@ -26,12 +25,16 @@ internal class Repo(dataSource: DataSource) {
 
     internal fun slettSøker(personident: String) {
         søkerDao.delete(personident)
+        personopplysningerDao.delete(personident)
+        mottakerDao.delete(personident)
         sakDao.delete(personident)
         tildelingDao.delete(personident)
     }
 
     internal fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = personopplysningerDao.insert(fp)
     internal fun hentPersonopplysninger(personident: String) = personopplysningerDao.select(personident)
+
+    internal fun lagreMottaker(frontendMottaker: FrontendMottaker) = mottakerDao.insert(frontendMottaker)
 
     internal fun tildelSak(saksid: UUID, ident: String, rolle: Rolle) {
         tildelingDao.insert(

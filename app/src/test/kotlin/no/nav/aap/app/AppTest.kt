@@ -17,6 +17,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.frontendView.*
 import no.nav.aap.app.kafka.*
+import no.nav.aap.app.kafka.DtoVedtak
 import no.nav.aap.app.security.JwtGenerator
 import org.apache.kafka.streams.TestInputTopic
 import org.intellij.lang.annotations.Language
@@ -383,6 +384,85 @@ internal class AppTest {
     }
 
     @Test
+    fun `Lytter på og lagrer mottaker fra utbetaling`() {
+        MockEnvironment().use { mocks ->
+            lateinit var mottakerTopic: TestInputTopic<String, DtoMottaker>
+            val app = TestApplication {
+                environment { config = mocks.applicationConfig() }
+                application {
+                    server(mocks.kafka)
+                    mottakerTopic = mocks.kafka.inputTopic(Topics.mottakere)
+                    mocks.kafka.outputTopic(Topics.manuell)
+                }
+            }
+
+            val client = app.createClient {
+                install(ContentNegotiation) {
+                    jackson {
+                        registerModule(JavaTimeModule())
+                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    }
+                }
+            }
+
+            runBlocking { client.get("/actuator/live") }
+
+            assertEquals(0, rowCount(mocks, "mottaker"))
+
+            mottakerTopic.produce("12345678910") {
+                DtoMottaker(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    vedtakshistorikk = listOf(
+                        DtoVedtak(
+                            vedtaksid = UUID.randomUUID(),
+                            innvilget = true,
+                            grunnlagsfaktor = 4.0,
+                            vedtaksdato = LocalDate.of(2022, 5, 2),
+                            virkningsdato = LocalDate.of(2022, 5, 2),
+                            fødselsdato = LocalDate.of(1990, 1, 1)
+                        )
+                    ),
+                    aktivitetstidslinje = listOf(
+                        DtoMeldeperiode(
+                            dager = listOf(
+                                DtoDag(
+                                    dato = LocalDate.of(2022, 5, 2),
+                                    arbeidstimer = 0.0,
+                                    type = "ARBEIDSDAG"
+                                )
+                            )
+                        )
+                    ),
+                    utbetalingstidslinjehistorikk = listOf(
+                        DtoUtbetalingstidslinje(
+                            dager = listOf(
+                                DtoUtbetalingstidslinjedag(
+                                    dato = LocalDate.of(2022, 5, 2),
+                                    grunnlagsfaktor = 4.0,
+                                    barnetillegg = 0.0,
+                                    grunnlag = 425596.0,
+                                    dagsats = 1080.0,
+                                    høyestebeløpMedBarnetillegg = 1473.0,
+                                    beløpMedBarnetillegg = 1080.0,
+                                    beløp = 1080.0,
+                                    arbeidsprosent = 0.0,
+                                )
+                            )
+                        )
+                    ),
+                    oppdragshistorikk = listOf(DtoOppdrag()),
+                    tilstand = "UTBETALING_BEREGNET"
+                )
+            }
+
+            assertEquals(1, rowCount(mocks, "mottaker"))
+
+            app.stop()
+        }
+    }
+
+    @Test
     fun `Slett søker ved tombstone`() {
         MockEnvironment().use { mocks ->
             lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
@@ -443,6 +523,8 @@ internal class AppTest {
             assertEquals(0, client.getSaker("/api/sak").size)
 
             assertEquals(0, rowCount(mocks, "soker"))
+            assertEquals(0, rowCount(mocks, "personopplysninger"))
+            assertEquals(0, rowCount(mocks, "mottaker"))
             assertEquals(0, rowCount(mocks, "sak"))
             assertEquals(0, rowCount(mocks, "oppgave"))
             assertEquals(0, rowCount(mocks, "rolle"))

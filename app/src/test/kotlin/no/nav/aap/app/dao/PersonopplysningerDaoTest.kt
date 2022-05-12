@@ -70,6 +70,62 @@ internal class PersonopplysningerDaoTest {
         assertEquals(personopplysninger, personopplysningResult)
     }
 
+    @Test
+    fun `Sletter personopplysninger fra database`() {
+        personopplysningerDao.insert(
+            FrontendPersonopplysninger(
+                personident = "12345678910",
+                norgEnhetId = "4201",
+                adressebeskyttelse = "UGRADERT",
+                geografiskTilknytning = "030101", // bydel
+                erSkjermet = false,
+                erSkjermetFom = null,
+                erSkjermetTom = null,
+            )
+        )
+
+        assertEquals(1, rowCount("personopplysninger"))
+
+        personopplysningerDao.delete("12345678910")
+
+        assertEquals(0, rowCount("personopplysninger"))
+    }
+
+    @Test
+    fun `Sletter ikke andre personopplysninger fra database`() {
+        personopplysningerDao.insert(
+            FrontendPersonopplysninger(
+                personident = "01987654321",
+                norgEnhetId = "4201",
+                adressebeskyttelse = "UGRADERT",
+                geografiskTilknytning = "030101", // bydel
+                erSkjermet = false,
+                erSkjermetFom = null,
+                erSkjermetTom = null,
+            )
+        )
+
+        assertEquals(1, rowCount("personopplysninger"))
+
+        personopplysningerDao.insert(
+            FrontendPersonopplysninger(
+                personident = "12345678910",
+                norgEnhetId = "4201",
+                adressebeskyttelse = "UGRADERT",
+                geografiskTilknytning = "030101", // bydel
+                erSkjermet = false,
+                erSkjermetFom = null,
+                erSkjermetTom = null,
+            )
+        )
+
+        assertEquals(2, rowCount("personopplysninger"))
+
+        personopplysningerDao.delete("01987654321")
+
+        assertEquals(1, rowCount("personopplysninger"))
+    }
+
     private fun rowCount(tabell: String): Int {
         @Language("PostgreSQL")
         val query = """
