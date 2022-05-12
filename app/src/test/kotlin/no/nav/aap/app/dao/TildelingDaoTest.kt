@@ -7,10 +7,13 @@ import kotliquery.sessionOf
 import no.nav.aap.app.db.DBTildeling
 import org.flywaydb.core.Flyway
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.testcontainers.containers.PostgreSQLContainer
-import java.util.UUID
+import java.util.*
 import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -86,7 +89,7 @@ class TildelingDaoTest {
     private fun rowCount(tabell: String): Int {
         @Language("PostgreSQL")
         val query = """
-            SELECT count(1) FROM $tabell          
+            SELECT count(1) FROM $tabell
         """
         return sessionOf(dataSource).use { session ->
             session.run(queryOf(query).map { row -> row.int(1) }.asSingle)!!

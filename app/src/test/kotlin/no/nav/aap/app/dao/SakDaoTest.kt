@@ -212,7 +212,7 @@ internal class SakDaoTest {
     private fun rowCount(tabell: String): Int {
         @Language("PostgreSQL")
         val query = """
-            SELECT count(1) FROM $tabell          
+            SELECT count(1) FROM $tabell
         """
         return sessionOf(dataSource).use { session ->
             session.run(queryOf(query).map { row -> row.int(1) }.asSingle)!!

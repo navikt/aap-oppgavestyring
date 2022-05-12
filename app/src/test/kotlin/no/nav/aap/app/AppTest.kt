@@ -563,7 +563,7 @@ internal class AppTest {
     private fun rowCount(mocks: MockEnvironment, tabell: String): Int {
         @Language("PostgreSQL")
         val query = """
-            SELECT count(1) FROM $tabell          
+            SELECT count(1) FROM $tabell
         """
         return sessionOf(initDatasource(mocks.postgres)).use { session ->
             session.run(queryOf(query).map { row -> row.int(1) }.asSingle)!!
