@@ -62,7 +62,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     install(Authentication) {
         jwt {
             realm = "hent oppgaver"
-            verifier(jwkProvider, "azure")
+            verifier(jwkProvider, config.oauth.azure.issuer)
             validate { cred -> JWTPrincipal(cred.payload) }
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "not authed") }
         }
