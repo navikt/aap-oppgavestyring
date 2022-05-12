@@ -98,6 +98,6 @@ private fun InntekterForBeregning.toFrontendView() = FrontendInntektsgrunnlagFor
 
 private fun Inntekt.toFrontendView() = FrontendInntekt(
     arbeidsgiver = arbeidsgiver,
-    inntekstmåned = inntekstmåned,
+    inntektsmåned = inntekstmåned,
     beløp = beløp
 )

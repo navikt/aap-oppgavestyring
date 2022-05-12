@@ -32,6 +32,6 @@ data class FrontendInntektsgrunnlagForÅr(
 
 data class FrontendInntekt(
     val arbeidsgiver: String,
-    val inntekstmåned: YearMonth,
+    val inntektsmåned: YearMonth,
     val beløp: Double
 )
