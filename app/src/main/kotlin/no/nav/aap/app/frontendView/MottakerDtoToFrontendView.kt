@@ -56,4 +56,34 @@ private fun Iterable<DtoUtbetalingstidslinjedag>.toFrontendUtbetalingstidslinjed
     )
 }
 
-private fun Iterable<DtoOppdrag>.toFrontendOppdrag() = map { FrontendOppdrag() }
+private fun Iterable<DtoOppdrag>.toFrontendOppdrag() = map {
+    FrontendOppdrag(
+        mottaker = it.mottaker,
+        fagområde = it.fagområde,
+        linjer = it.linjer.toFrontendUtbetalingslinjer(),
+        fagsystemId = it.fagsystemId,
+        endringskode = it.endringskode,
+        nettoBeløp = it.nettoBeløp,
+        overføringstidspunkt = it.overføringstidspunkt,
+        avstemmingsnøkkel = it.avstemmingsnøkkel,
+        status = it.status,
+        tidsstempel = it.tidsstempel
+    )
+}
+
+private fun Iterable<DtoUtbetalingslinje>.toFrontendUtbetalingslinjer() = map {
+    FrontendUtbetalingslinje(
+        fom = it.fom,
+        tom = it.tom,
+        satstype = it.satstype,
+        beløp = it.beløp,
+        aktuellDagsinntekt = it.aktuellDagsinntekt,
+        grad = it.grad,
+        refFagsystemId = it.refFagsystemId,
+        delytelseId = it.delytelseId,
+        refDelytelseId = it.refDelytelseId,
+        endringskode = it.endringskode,
+        klassekode = it.klassekode,
+        datoStatusFom = it.datoStatusFom
+    )
+}

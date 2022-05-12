@@ -1,6 +1,7 @@
 package no.nav.aap.app.frontendView
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 data class FrontendMottaker(
@@ -47,12 +48,30 @@ data class FrontendUtbetalingstidslinjedag(
     val arbeidsprosent: Double
 )
 
-class FrontendOppdrag { //FIXME Kan endres til data class når den får innhold
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        return true
-    }
+data class FrontendOppdrag(
+    val mottaker: String,
+    val fagområde: String,
+    val linjer: List<FrontendUtbetalingslinje>,
+    val fagsystemId: String,
+    val endringskode: String,
+    val nettoBeløp: Int,
+    val overføringstidspunkt: LocalDateTime?,
+    val avstemmingsnøkkel: Long?,
+    val status: String?,
+    val tidsstempel: LocalDateTime
+)
 
-    override fun hashCode() = javaClass.hashCode()
-}
+data class FrontendUtbetalingslinje(
+    val fom: LocalDate,
+    val tom: LocalDate,
+    val satstype: String,
+    val beløp: Int?,
+    val aktuellDagsinntekt: Int?,
+    val grad: Int?,
+    val refFagsystemId: String?,
+    val delytelseId: Int,
+    val refDelytelseId: Int?,
+    val endringskode: String,
+    val klassekode: String,
+    val datoStatusFom: LocalDate?
+)

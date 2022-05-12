@@ -98,7 +98,35 @@ internal class MottakerDaoTest {
                     )
                 )
             ),
-            oppdragshistorikk = listOf(FrontendOppdrag())
+            oppdragshistorikk = listOf(
+                FrontendOppdrag(
+                    mottaker = "12345678910",
+                    fagområde = "Arbeidsavklaringspenger",
+                    linjer = listOf(
+                        FrontendUtbetalingslinje(
+                            fom = LocalDate.of(2022, 5, 2),
+                            tom = LocalDate.of(2022, 5, 2),
+                            satstype = "DAG",
+                            beløp = 1080,
+                            aktuellDagsinntekt = 1080,
+                            grad = 100,
+                            refFagsystemId = null,
+                            delytelseId = 1,
+                            refDelytelseId = null,
+                            endringskode = "NY",
+                            klassekode = "RefusjonIkkeOpplysningspliktig",
+                            datoStatusFom = null
+                        )
+                    ),
+                    fagsystemId = "NQGM2S4XEJEJ3AYTU7NJDMDNO4",
+                    endringskode = "NY",
+                    nettoBeløp = 1080,
+                    overføringstidspunkt = LocalDate.of(2022, 5, 2).atStartOfDay(),
+                    avstemmingsnøkkel = null,
+                    status = null,
+                    tidsstempel = LocalDate.of(2022, 5, 2).atStartOfDay()
+                )
+            )
         )
 
         mottakerDao.insert(frontendMottaker)
