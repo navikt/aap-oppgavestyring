@@ -20,7 +20,7 @@ dependencies {
     implementation("com.github.navikt.aap-libs:kafka:0.0.45")
     implementation("com.github.navikt.aap-libs:ktor-utils:0.0.45")
 
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.5")
     runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.1.1")
