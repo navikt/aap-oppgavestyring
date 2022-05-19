@@ -6,6 +6,7 @@ import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.modell.Rolle
+import org.slf4j.LoggerFactory
 import java.util.*
 import javax.sql.DataSource
 
@@ -31,8 +32,12 @@ internal class Repo(dataSource: DataSource) {
         tildelingDao.delete(personident)
     }
 
+    private val secureLog = LoggerFactory.getLogger("secureLog")
+
     internal fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = personopplysningerDao.insert(fp)
-    internal fun hentPersonopplysninger(personident: String) = personopplysningerDao.select(personident)
+    internal fun hentPersonopplysninger(personident: String) = personopplysningerDao.select(personident).also {
+        secureLog.info("hent personopplysninger for $personident fra db: $it")
+    }
 
     internal fun lagreMottaker(frontendMottaker: FrontendMottaker) = mottakerDao.insert(frontendMottaker)
 
