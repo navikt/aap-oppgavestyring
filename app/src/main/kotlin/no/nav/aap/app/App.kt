@@ -137,7 +137,7 @@ private fun Routing.api(repo: Repo, config: KafkaConfig, kafka: KStreams) {
 
     authenticate {
         route("/api") {
-            get("/personopplysinger/{personident}") {
+            get("/personopplysninger/{personident}") {
                 val personident = call.parameters.getOrFail("personident")
                 when (val opplysninger = repo.hentPersonopplysninger(personident)) {
                     null -> call.respond(HttpStatusCode.NotFound)
