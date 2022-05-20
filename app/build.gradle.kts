@@ -18,7 +18,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
 
     implementation("com.github.navikt.aap-libs:kafka:0.0.45")
-    implementation("com.github.navikt.aap-libs:ktor-utils:0.0.45")
+    implementation("com.github.navikt.aap-libs:ktor-utils:0.1.4")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2")
     implementation("io.micrometer:micrometer-registry-prometheus:1.8.5")
