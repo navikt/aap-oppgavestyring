@@ -19,545 +19,552 @@ import no.nav.aap.app.frontendView.*
 import no.nav.aap.app.kafka.*
 import no.nav.aap.app.kafka.DtoVedtak
 import no.nav.aap.app.security.JwtGenerator
+import no.nav.aap.kafka.streams.test.readAndAssert
 import org.apache.kafka.streams.TestInputTopic
+import org.apache.kafka.streams.TestOutputTopic
 import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import org.testcontainers.containers.PostgreSQLContainer
 import java.time.LocalDate
 import java.util.*
 import kotlin.test.assertNotNull
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class AppTest {
+    private lateinit var mocks: MockEnvironment
+    private lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
+    private lateinit var mottakerTopic: TestInputTopic<String, DtoMottaker>
+    private lateinit var manuellOutputTopic: TestOutputTopic<String, ManuellKafkaDto>
+
+    @BeforeAll
+    fun setupMockEnvironment() {
+        mocks = MockEnvironment()
+    }
+
+    @AfterAll
+    fun closeMockEnvironment() = mocks.close()
+
+    @AfterEach
+    fun assertNoUnassertedRecordsLeftOnTopic() {
+        if (::manuellOutputTopic.isInitialized) {
+            manuellOutputTopic.readAndAssert().isEmpty()
+        }
+    }
 
     @Test
     fun `actuators available without auth`() {
-        MockEnvironment().use { mocks ->
-            testApplication {
-                environment { config = mocks.applicationConfig() }
-                application { server(mocks.kafka) }
+        testApplication {
+            environment { config = mocks.applicationConfig() }
+            application { server(mocks.kafka) }
 
-                runBlocking {
-                    val live = client.get("actuator/live")
-                    assertEquals(HttpStatusCode.OK, live.status)
+            runBlocking {
+                val live = client.get("actuator/live")
+                assertEquals(HttpStatusCode.OK, live.status)
 
-                    val ready = client.get("actuator/ready")
-                    assertEquals(HttpStatusCode.OK, ready.status)
+                val ready = client.get("actuator/ready")
+                assertEquals(HttpStatusCode.OK, ready.status)
 
-                    val metrics = client.get("actuator/metrics")
-                    assertEquals(HttpStatusCode.OK, metrics.status)
-                    assertNotNull(metrics.bodyAsText())
-                }
+                val metrics = client.get("actuator/metrics")
+                assertEquals(HttpStatusCode.OK, metrics.status)
+                assertNotNull(metrics.bodyAsText())
             }
         }
     }
 
     @Test
     fun `Authentisering av endepunkt for sending av løsning`() {
-        MockEnvironment().use { mocks ->
-            testApplication {
-                environment { config = mocks.applicationConfig() }
-                application { server(mocks.kafka) }
+        testApplication {
+            environment { config = mocks.applicationConfig() }
+            application { server(mocks.kafka) }
 
-                postLøsning("""{"løsning_11_3_manuell":{"erOppfylt":true}}""")
-            }
+            postLøsning("""{"løsning_11_3_manuell":{"erOppfylt":true}}""")
         }
     }
 
     @Test
     fun `Henter alle saker`() {
-        MockEnvironment().use { mocks ->
-            lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
-            val app = TestApplication {
-                environment { config = mocks.applicationConfig() }
-                application {
-                    server(mocks.kafka)
-                    søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
-                    mocks.kafka.outputTopic(Topics.manuell)
-                }
+        lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
+        val app = TestApplication {
+            environment { config = mocks.applicationConfig() }
+            application {
+                server(mocks.kafka)
+                søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                mocks.kafka.outputTopic(Topics.manuell)
             }
+        }
 
-            val client = app.createClient {
-                install(ContentNegotiation) {
-                    jackson {
-                        registerModule(JavaTimeModule())
-                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    }
+        val client = app.createClient {
+            install(ContentNegotiation) {
+                jackson {
+                    registerModule(JavaTimeModule())
+                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 }
             }
-            runBlocking { client.get("/actuator/live") }
-            søkerTopic.produce("12345678910") {
-                SøkereKafkaDto(
-                    "12345678910",
-                    LocalDate.of(1990, 1, 1),
-                    listOf(
-                        Sak(
-                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                            sakstyper = listOf(
-                                Sakstype(
-                                    "STANDARD",
-                                    true,
-                                    listOf(
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
-                                            paragraf = "PARAGRAF_11_2",
-                                            ledd = listOf("LEDD_1", "LEDD_2"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
-                                            paragraf = "PARAGRAF_11_3",
-                                            ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
-                                            paragraf = "PARAGRAF_11_4",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "OPPFYLT",
-                                            måVurderesManuelt = false
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
-                                            paragraf = "PARAGRAF_11_4",
-                                            ledd = listOf("LEDD_2", "LEDD_3"),
-                                            tilstand = "IKKE_RELEVANT",
-                                            måVurderesManuelt = false
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
-                                            paragraf = "PARAGRAF_11_5",
-                                            ledd = listOf("LEDD_1", "LEDD_2"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
-                                            paragraf = "PARAGRAF_11_6",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
-                                            paragraf = "PARAGRAF_11_12",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
-                                            paragraf = "PARAGRAF_11_29",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        )
+        }
+        runBlocking { client.get("/actuator/live") }
+        søkerTopic.produce("12345678910") {
+            SøkereKafkaDto(
+                "12345678910",
+                LocalDate.of(1990, 1, 1),
+                listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        sakstyper = listOf(
+                            Sakstype(
+                                "STANDARD",
+                                true,
+                                listOf(
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
+                                        paragraf = "PARAGRAF_11_2",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
+                                        paragraf = "PARAGRAF_11_3",
+                                        ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "OPPFYLT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_2", "LEDD_3"),
+                                        tilstand = "IKKE_RELEVANT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
+                                        paragraf = "PARAGRAF_11_5",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
+                                        paragraf = "PARAGRAF_11_6",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
+                                        paragraf = "PARAGRAF_11_12",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
+                                        paragraf = "PARAGRAF_11_29",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
                                     )
                                 )
-                            ),
-                            vurderingsdato = LocalDate.of(2022, 1, 1),
-                            vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
-                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                            tilstand = "SØKNAD_MOTTATT",
-                            vedtak = null
-                        )
-                    )
-                )
-            }
-
-            val saker = client.getSaker("/api/sak")
-
-            val expected = listOf(
-                FrontendSøker(
-                    personident = "12345678910",
-                    fødselsdato = LocalDate.of(1990, 1, 1),
-                    skjermet = false,
-                    sak = FrontendSak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                            )
+                        ),
+                        vurderingsdato = LocalDate.of(2022, 1, 1),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        type = "STANDARD",
-                        paragraf_11_2 = FrontendParagraf_11_2(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_3 = FrontendParagraf_11_3(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_4 = FrontendParagraf_11_4(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
-                            erOppfylt = true,
-                            måVurderesManuelt = false
-                        ),
-                        paragraf_11_5 = FrontendParagraf_11_5(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_6 = FrontendParagraf_11_6(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_12 = FrontendParagraf_11_12(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_29 = FrontendParagraf_11_29(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
+                        tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
                     )
                 )
             )
-            assertEquals(expected, saker)
-
-            app.stop()
         }
+
+        val saker = client.getSaker("/api/sak")
+
+        val expected = listOf(
+            FrontendSøker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                skjermet = false,
+                sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    type = "STANDARD",
+                    paragraf_11_2 = FrontendParagraf_11_2(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_3 = FrontendParagraf_11_3(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_4 = FrontendParagraf_11_4(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
+                        erOppfylt = true,
+                        måVurderesManuelt = false
+                    ),
+                    paragraf_11_5 = FrontendParagraf_11_5(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_6 = FrontendParagraf_11_6(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_12 = FrontendParagraf_11_12(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_29 = FrontendParagraf_11_29(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    vedtak = null
+                )
+            )
+        )
+        assertEquals(expected, saker)
+
+        app.stop()
     }
 
     @Test
     fun `Henter alle saker til en søker`() {
-        MockEnvironment().use { mocks ->
-            lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
-            val app = TestApplication {
-                environment { config = mocks.applicationConfig() }
-                application {
-                    server(mocks.kafka)
-                    søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
-                    mocks.kafka.outputTopic(Topics.manuell)
+        val app = TestApplication {
+            environment { config = mocks.applicationConfig() }
+            application {
+                server(mocks.kafka)
+                søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                mocks.kafka.outputTopic(Topics.manuell)
+            }
+        }
+
+        val client = app.createClient {
+            install(ContentNegotiation) {
+                jackson {
+                    registerModule(JavaTimeModule())
+                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 }
             }
+        }
 
-            val client = app.createClient {
-                install(ContentNegotiation) {
-                    jackson {
-                        registerModule(JavaTimeModule())
-                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    }
-                }
-            }
+        runBlocking { client.get("/actuator/live") }
 
-            runBlocking { client.get("/actuator/live") }
-
-            søkerTopic.produce("12345678910") {
-                SøkereKafkaDto(
-                    personident = "12345678910",
-                    fødselsdato = LocalDate.of(1990, 1, 1),
-                    saker = listOf(
-                        Sak(
-                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                            sakstyper = listOf(
-                                Sakstype(
-                                    "STANDARD",
-                                    true,
-                                    listOf(
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
-                                            paragraf = "PARAGRAF_11_2",
-                                            ledd = listOf("LEDD_1", "LEDD_2"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
-                                            paragraf = "PARAGRAF_11_3",
-                                            ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
-                                            paragraf = "PARAGRAF_11_4",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "OPPFYLT",
-                                            måVurderesManuelt = false
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
-                                            paragraf = "PARAGRAF_11_4",
-                                            ledd = listOf("LEDD_2", "LEDD_3"),
-                                            tilstand = "IKKE_RELEVANT",
-                                            måVurderesManuelt = false
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
-                                            paragraf = "PARAGRAF_11_5",
-                                            ledd = listOf("LEDD_1", "LEDD_2"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
-                                            paragraf = "PARAGRAF_11_6",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
-                                            paragraf = "PARAGRAF_11_12",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        ),
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
-                                            paragraf = "PARAGRAF_11_29",
-                                            ledd = listOf("LEDD_1"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        )
+        søkerTopic.produce("12345678910") {
+            SøkereKafkaDto(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        sakstyper = listOf(
+                            Sakstype(
+                                "STANDARD",
+                                true,
+                                listOf(
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
+                                        paragraf = "PARAGRAF_11_2",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
+                                        paragraf = "PARAGRAF_11_3",
+                                        ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "OPPFYLT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
+                                        paragraf = "PARAGRAF_11_4",
+                                        ledd = listOf("LEDD_2", "LEDD_3"),
+                                        tilstand = "IKKE_RELEVANT",
+                                        måVurderesManuelt = false
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
+                                        paragraf = "PARAGRAF_11_5",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
+                                        paragraf = "PARAGRAF_11_6",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
+                                        paragraf = "PARAGRAF_11_12",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
+                                        paragraf = "PARAGRAF_11_29",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
                                     )
                                 )
-                            ),
-                            vurderingsdato = LocalDate.of(2022, 1, 1),
-                            vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
-                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                            tilstand = "SØKNAD_MOTTATT",
-                            vedtak = null
-                        )
-                    )
-                )
-            }
-
-            val saker = client.getSaker("/api/sak/12345678910")
-            val expected = listOf(
-                FrontendSøker(
-                    personident = "12345678910",
-                    fødselsdato = LocalDate.of(1990, 1, 1),
-                    skjermet = false,
-                    sak = FrontendSak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                            )
+                        ),
+                        vurderingsdato = LocalDate.of(2022, 1, 1),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        type = "STANDARD",
-                        paragraf_11_2 = FrontendParagraf_11_2(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_3 = FrontendParagraf_11_3(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_4 = FrontendParagraf_11_4(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
-                            erOppfylt = true,
-                            måVurderesManuelt = false
-                        ),
-                        paragraf_11_5 = FrontendParagraf_11_5(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_6 = FrontendParagraf_11_6(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_12 = FrontendParagraf_11_12(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
-                        paragraf_11_29 = FrontendParagraf_11_29(
-                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
-                            erOppfylt = false,
-                            måVurderesManuelt = true
-                        ),
+                        tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
                     )
                 )
             )
-
-            assertEquals(expected, saker)
-            app.stop()
         }
+
+        val saker = client.getSaker("/api/sak/12345678910")
+        val expected = listOf(
+            FrontendSøker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                skjermet = false,
+                sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    type = "STANDARD",
+                    paragraf_11_2 = FrontendParagraf_11_2(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_3 = FrontendParagraf_11_3(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_4 = FrontendParagraf_11_4(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
+                        erOppfylt = true,
+                        måVurderesManuelt = false
+                    ),
+                    paragraf_11_5 = FrontendParagraf_11_5(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_6 = FrontendParagraf_11_6(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_12 = FrontendParagraf_11_12(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    paragraf_11_29 = FrontendParagraf_11_29(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
+                        erOppfylt = false,
+                        måVurderesManuelt = true
+                    ),
+                    vedtak = null
+                )
+            )
+        )
+
+        assertEquals(expected, saker)
+        app.stop()
     }
 
     @Test
     fun `Lytter på og lagrer mottaker fra utbetaling`() {
-        MockEnvironment().use { mocks ->
-            lateinit var mottakerTopic: TestInputTopic<String, DtoMottaker>
-            val app = TestApplication {
-                environment { config = mocks.applicationConfig() }
-                application {
-                    server(mocks.kafka)
-                    mottakerTopic = mocks.kafka.inputTopic(Topics.mottakere)
-                    mocks.kafka.outputTopic(Topics.manuell)
-                }
+        val app = TestApplication {
+            environment { config = mocks.applicationConfig() }
+            application {
+                server(mocks.kafka)
+                mottakerTopic = mocks.kafka.inputTopic(Topics.mottakere)
+                mocks.kafka.outputTopic(Topics.manuell)
             }
-
-            val client = app.createClient {
-                install(ContentNegotiation) {
-                    jackson {
-                        registerModule(JavaTimeModule())
-                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    }
-                }
-            }
-
-            runBlocking { client.get("/actuator/live") }
-
-            assertEquals(0, rowCount(mocks, "mottaker"))
-
-            mottakerTopic.produce("12345678910") {
-                DtoMottaker(
-                    personident = "12345678910",
-                    fødselsdato = LocalDate.of(1990, 1, 1),
-                    vedtakshistorikk = listOf(
-                        DtoVedtak(
-                            vedtaksid = UUID.randomUUID(),
-                            innvilget = true,
-                            grunnlagsfaktor = 4.0,
-                            vedtaksdato = LocalDate.of(2022, 5, 2),
-                            virkningsdato = LocalDate.of(2022, 5, 2),
-                            fødselsdato = LocalDate.of(1990, 1, 1)
-                        )
-                    ),
-                    aktivitetstidslinje = listOf(
-                        DtoMeldeperiode(
-                            dager = listOf(
-                                DtoDag(
-                                    dato = LocalDate.of(2022, 5, 2),
-                                    arbeidstimer = 0.0,
-                                    type = "ARBEIDSDAG"
-                                )
-                            )
-                        )
-                    ),
-                    utbetalingstidslinjehistorikk = listOf(
-                        DtoUtbetalingstidslinje(
-                            dager = listOf(
-                                DtoUtbetalingstidslinjedag(
-                                    dato = LocalDate.of(2022, 5, 2),
-                                    grunnlagsfaktor = 4.0,
-                                    barnetillegg = 0.0,
-                                    grunnlag = 425596.0,
-                                    dagsats = 1080.0,
-                                    høyestebeløpMedBarnetillegg = 1473.0,
-                                    beløpMedBarnetillegg = 1080.0,
-                                    beløp = 1080.0,
-                                    arbeidsprosent = 0.0,
-                                )
-                            )
-                        )
-                    ),
-                    oppdragshistorikk = listOf(
-                        DtoOppdrag(
-                            mottaker = "12345678910",
-                            fagområde = "Arbeidsavklaringspenger",
-                            linjer = listOf(
-                                DtoUtbetalingslinje(
-                                    fom = LocalDate.of(2022, 5, 2),
-                                    tom = LocalDate.of(2022, 5, 2),
-                                    satstype = "DAG",
-                                    beløp = 1080,
-                                    aktuellDagsinntekt = 1080,
-                                    grad = 100,
-                                    refFagsystemId = null,
-                                    delytelseId = 1,
-                                    refDelytelseId = null,
-                                    endringskode = "NY",
-                                    klassekode = "RefusjonIkkeOpplysningspliktig",
-                                    datoStatusFom = null
-                                )
-                            ),
-                            fagsystemId = "NQGM2S4XEJEJ3AYTU7NJDMDNO4",
-                            endringskode = "NY",
-                            nettoBeløp = 1080,
-                            overføringstidspunkt = LocalDate.of(2022, 5, 2).atStartOfDay(),
-                            avstemmingsnøkkel = null,
-                            status = null,
-                            tidsstempel = LocalDate.of(2022, 5, 2).atStartOfDay()
-                        )
-                    ),
-                    tilstand = "UTBETALING_BEREGNET"
-                )
-            }
-
-            assertEquals(1, rowCount(mocks, "mottaker"))
-
-            app.stop()
         }
+
+        val client = app.createClient {
+            install(ContentNegotiation) {
+                jackson {
+                    registerModule(JavaTimeModule())
+                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                }
+            }
+        }
+
+        runBlocking { client.get("/actuator/live") }
+
+        assertEquals(0, rowCount(mocks, "mottaker"))
+
+        mottakerTopic.produce("12345678910") {
+            DtoMottaker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                vedtakshistorikk = listOf(
+                    DtoVedtak(
+                        vedtaksid = UUID.randomUUID(),
+                        innvilget = true,
+                        grunnlagsfaktor = 4.0,
+                        vedtaksdato = LocalDate.of(2022, 5, 2),
+                        virkningsdato = LocalDate.of(2022, 5, 2),
+                        fødselsdato = LocalDate.of(1990, 1, 1)
+                    )
+                ),
+                aktivitetstidslinje = listOf(
+                    DtoMeldeperiode(
+                        dager = listOf(
+                            DtoDag(
+                                dato = LocalDate.of(2022, 5, 2),
+                                arbeidstimer = 0.0,
+                                type = "ARBEIDSDAG"
+                            )
+                        )
+                    )
+                ),
+                utbetalingstidslinjehistorikk = listOf(
+                    DtoUtbetalingstidslinje(
+                        dager = listOf(
+                            DtoUtbetalingstidslinjedag(
+                                dato = LocalDate.of(2022, 5, 2),
+                                grunnlagsfaktor = 4.0,
+                                barnetillegg = 0.0,
+                                grunnlag = 425596.0,
+                                dagsats = 1080.0,
+                                høyestebeløpMedBarnetillegg = 1473.0,
+                                beløpMedBarnetillegg = 1080.0,
+                                beløp = 1080.0,
+                                arbeidsprosent = 0.0,
+                            )
+                        )
+                    )
+                ),
+                oppdragshistorikk = listOf(
+                    DtoOppdrag(
+                        mottaker = "12345678910",
+                        fagområde = "Arbeidsavklaringspenger",
+                        linjer = listOf(
+                            DtoUtbetalingslinje(
+                                fom = LocalDate.of(2022, 5, 2),
+                                tom = LocalDate.of(2022, 5, 2),
+                                satstype = "DAG",
+                                beløp = 1080,
+                                aktuellDagsinntekt = 1080,
+                                grad = 100,
+                                refFagsystemId = null,
+                                delytelseId = 1,
+                                refDelytelseId = null,
+                                endringskode = "NY",
+                                klassekode = "RefusjonIkkeOpplysningspliktig",
+                                datoStatusFom = null
+                            )
+                        ),
+                        fagsystemId = "NQGM2S4XEJEJ3AYTU7NJDMDNO4",
+                        endringskode = "NY",
+                        nettoBeløp = 1080,
+                        overføringstidspunkt = LocalDate.of(2022, 5, 2).atStartOfDay(),
+                        avstemmingsnøkkel = null,
+                        status = null,
+                        tidsstempel = LocalDate.of(2022, 5, 2).atStartOfDay()
+                    )
+                ),
+                tilstand = "UTBETALING_BEREGNET"
+            )
+        }
+
+        assertEquals(1, rowCount(mocks, "mottaker"))
+
+        app.stop()
     }
 
     @Test
     fun `Slett søker ved tombstone`() {
-        MockEnvironment().use { mocks ->
-            lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
-            val app = TestApplication {
-                environment { config = mocks.applicationConfig() }
-                application {
-                    server(mocks.kafka)
-                    søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
-                    mocks.kafka.outputTopic(Topics.manuell)
+        val app = TestApplication {
+            environment { config = mocks.applicationConfig() }
+            application {
+                server(mocks.kafka)
+                søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                mocks.kafka.outputTopic(Topics.manuell)
+            }
+        }
+
+        val client = app.createClient {
+            install(ContentNegotiation) {
+                jackson {
+                    registerModule(JavaTimeModule())
+                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 }
             }
+        }
 
-            val client = app.createClient {
-                install(ContentNegotiation) {
-                    jackson {
-                        registerModule(JavaTimeModule())
-                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    }
-                }
-            }
+        runBlocking { client.get("/actuator/live") }
 
-            runBlocking { client.get("/actuator/live") }
-
-            søkerTopic.produce("12345678910") {
-                SøkereKafkaDto(
-                    "12345678910",
-                    LocalDate.of(1990, 1, 1),
-                    listOf(
-                        Sak(
-                            UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                            sakstyper = listOf(
-                                Sakstype(
-                                    "STANDARD",
-                                    true,
-                                    listOf(
-                                        vilkarsvurdering(
-                                            vilkårsvurderingsid = UUID.randomUUID().toString(),
-                                            paragraf = "PARAGRAF_11_2",
-                                            ledd = listOf("LEDD_1", "LEDD_2"),
-                                            tilstand = "SØKNAD_MOTTATT",
-                                            måVurderesManuelt = true
-                                        )
+        søkerTopic.produce("12345678910") {
+            SøkereKafkaDto(
+                "12345678910",
+                LocalDate.of(1990, 1, 1),
+                listOf(
+                    Sak(
+                        UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        sakstyper = listOf(
+                            Sakstype(
+                                "STANDARD",
+                                true,
+                                listOf(
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = UUID.randomUUID().toString(),
+                                        paragraf = "PARAGRAF_11_2",
+                                        ledd = listOf("LEDD_1", "LEDD_2"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        måVurderesManuelt = true
                                     )
                                 )
-                            ),
-                            vurderingsdato = LocalDate.of(2022, 1, 1),
-                            vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
-                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                            tilstand = "SØKNAD_MOTTATT",
-                            vedtak = null
-                        )
+                            )
+                        ),
+                        vurderingsdato = LocalDate.of(2022, 1, 1),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        tilstand = "SØKNAD_MOTTATT",
+                        vedtak = null
                     )
                 )
-            }
-            assertEquals(1, client.getSaker("/api/sak").size)
-
-            søkerTopic.produceTombstone("12345678910")
-            assertEquals(0, client.getSaker("/api/sak").size)
-
-            assertEquals(0, rowCount(mocks, "soker"))
-            assertEquals(0, rowCount(mocks, "personopplysninger"))
-            assertEquals(0, rowCount(mocks, "mottaker"))
-            assertEquals(0, rowCount(mocks, "sak"))
-            assertEquals(0, rowCount(mocks, "oppgave"))
-            assertEquals(0, rowCount(mocks, "rolle"))
-            app.stop()
+            )
         }
+        assertEquals(1, client.getSaker("/api/sak").size)
+
+        søkerTopic.produceTombstone("12345678910")
+        assertEquals(0, client.getSaker("/api/sak").size)
+
+        assertEquals(0, rowCount(mocks, "soker"))
+        assertEquals(0, rowCount(mocks, "personopplysninger"))
+        assertEquals(0, rowCount(mocks, "mottaker"))
+        assertEquals(0, rowCount(mocks, "sak"))
+        assertEquals(0, rowCount(mocks, "oppgave"))
+        assertEquals(0, rowCount(mocks, "rolle"))
+        app.stop()
     }
 
     private fun rowCount(mocks: MockEnvironment, tabell: String): Int {
@@ -630,7 +637,6 @@ internal class AppTest {
     }
 
     private fun HttpClient.getSaker(path: String): List<FrontendSøker> = runBlocking {
-        println("get saker")
         val response = get(path) {
             bearerAuth(JwtGenerator.generate().serialize())
             accept(ContentType.Application.Json)

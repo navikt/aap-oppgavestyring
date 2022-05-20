@@ -1,59 +1,17 @@
 package no.nav.aap.app.dao
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.*
-import org.flywaydb.core.Flyway
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.testcontainers.containers.PostgreSQLContainer
 import java.time.LocalDate
 import java.util.*
-import javax.sql.DataSource
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class SøkerDaoTest {
-
-    private val postgres = PostgreSQLContainer<Nothing>("postgres:14")
-    private lateinit var dataSource: DataSource
-    private lateinit var flyway: Flyway
-
-    private lateinit var søkerDao: SøkerDao
-
-    @BeforeAll
-    internal fun beforeAll() {
-        postgres.start()
-        dataSource = HikariDataSource(HikariConfig().apply {
-            jdbcUrl = postgres.jdbcUrl
-            username = postgres.username
-            password = postgres.password
-            maximumPoolSize = 3
-            minimumIdle = 1
-            initializationFailTimeout = 5000
-            idleTimeout = 10001
-            connectionTimeout = 1000
-            maxLifetime = 30001
-        })
-
-        flyway = Flyway
-            .configure()
-            .dataSource(dataSource)
-            .load()
-
-        søkerDao = SøkerDao(dataSource)
-    }
-
-    @BeforeEach
-    internal fun beforeEach() {
-        flyway.clean()
-        flyway.migrate()
-    }
+internal class SøkerDaoTest : DatabaseTestBase() {
+    private val søkerDao = SøkerDao(dataSource)
 
     @Test
     fun `Lagrer liste med frontendsak i database`() {

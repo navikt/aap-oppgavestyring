@@ -11,14 +11,9 @@ import io.ktor.server.routing.*
 import no.nav.aap.kafka.streams.test.KafkaStreamsMock
 import org.apache.kafka.streams.TestInputTopic
 import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy
-import java.time.Duration
 
 class MockEnvironment : AutoCloseable {
-    val postgres: PostgreSQLContainer<Nothing> = PostgreSQLContainer<Nothing>("postgres:14").apply {
-        withStartupCheckStrategy(MinimumDurationRunningStartupCheckStrategy(Duration.ofSeconds(2)))
-        start()
-    }
+    val postgres = PostgreSQLContainer<Nothing>("postgres:14").apply { start() }
 
     private val oauth = embeddedServer(Netty, port = 9999) {
         install(ContentNegotiation) { jackson {} }
