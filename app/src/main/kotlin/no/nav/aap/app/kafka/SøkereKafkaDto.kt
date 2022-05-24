@@ -64,8 +64,19 @@ data class LøsningParagraf_11_5_yrkesskade(
     val arbeidsevneErNedsattMedMinst30Prosent: Boolean
 )
 
-data class LøsningParagraf_11_6(val erOppfylt: Boolean)
-data class LøsningParagraf_11_12_ledd1(val erOppfylt: Boolean)
+data class LøsningParagraf_11_6(
+    val harBehovForBehandling: Boolean,
+    val harBehovForTiltak: Boolean,
+    val harMulighetForÅKommeIArbeid: Boolean
+)
+
+data class LøsningParagraf_11_12_ledd1(
+    val bestemmesAv: String,
+    val unntak: String,
+    val unntaksbegrunnelse: String,
+    val manueltSattVirkningsdato: LocalDate
+)
+
 data class LøsningParagraf_11_22(
     val erOppfylt: Boolean,
     val andelNedsattArbeidsevne: Int,

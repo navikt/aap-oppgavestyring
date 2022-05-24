@@ -1,5 +1,6 @@
 package no.nav.aap.app.frontendView
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -38,19 +39,28 @@ data class FrontendParagraf_11_4(
 data class FrontendParagraf_11_5(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean
+    val måVurderesManuelt: Boolean,
+    val kravOmNedsattArbeidsevneErOppfylt: Boolean?,
+    val nedsettelseSkyldesSykdomEllerSkade: Boolean?
 )
 
 data class FrontendParagraf_11_6(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean
+    val måVurderesManuelt: Boolean,
+    val harBehovForBehandling: Boolean?,
+    val harBehovForTiltak: Boolean?,
+    val harMulighetForÅKommeIArbeid: Boolean?
 )
 
 data class FrontendParagraf_11_12(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean
+    val måVurderesManuelt: Boolean,
+    val bestemmesAv: String?,
+    val unntak: String?,
+    val unntaksbegrunnelse: String?,
+    val manueltSattVirkningsdato: LocalDate?
 )
 
 data class FrontendParagraf_11_29(

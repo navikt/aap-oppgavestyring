@@ -47,23 +47,38 @@ private fun Vilkårsvurdering.toFrontendParagraf11_4() = FrontendParagraf_11_4(
     måVurderesManuelt = måVurderesManuelt
 )
 
-private fun Vilkårsvurdering.toFrontendParagraf11_5() = FrontendParagraf_11_5(
-    vilkårsvurderingsid = vilkårsvurderingsid,
-    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = måVurderesManuelt
-)
+private fun Vilkårsvurdering.toFrontendParagraf11_5(): FrontendParagraf_11_5 {
+    return FrontendParagraf_11_5(
+        vilkårsvurderingsid = vilkårsvurderingsid,
+        erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+        måVurderesManuelt = måVurderesManuelt,
+        kravOmNedsattArbeidsevneErOppfylt = løsning_11_5_manuell?.kravOmNedsattArbeidsevneErOppfylt,
+        nedsettelseSkyldesSykdomEllerSkade = løsning_11_5_manuell?.nedsettelseSkyldesSykdomEllerSkade
+    )
+}
 
-private fun Vilkårsvurdering.toFrontendParagraf11_6() = FrontendParagraf_11_6(
-    vilkårsvurderingsid = vilkårsvurderingsid,
-    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = måVurderesManuelt
-)
+private fun Vilkårsvurdering.toFrontendParagraf11_6(): FrontendParagraf_11_6 {
+    return FrontendParagraf_11_6(
+        vilkårsvurderingsid = vilkårsvurderingsid,
+        erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+        måVurderesManuelt = måVurderesManuelt,
+        harBehovForBehandling = løsning_11_6_manuell?.harBehovForBehandling,
+        harBehovForTiltak = løsning_11_6_manuell?.harBehovForTiltak,
+        harMulighetForÅKommeIArbeid = løsning_11_6_manuell?.harMulighetForÅKommeIArbeid
+    )
+}
 
-private fun Vilkårsvurdering.toFrontendParagraf11_12() = FrontendParagraf_11_12(
-    vilkårsvurderingsid = vilkårsvurderingsid,
-    erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = måVurderesManuelt
-)
+private fun Vilkårsvurdering.toFrontendParagraf11_12(): FrontendParagraf_11_12 {
+    return FrontendParagraf_11_12(
+        vilkårsvurderingsid = vilkårsvurderingsid,
+        erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
+        måVurderesManuelt = måVurderesManuelt,
+        bestemmesAv = løsning_11_12_ledd1_manuell?.bestemmesAv,
+        unntak = løsning_11_12_ledd1_manuell?.unntak,
+        unntaksbegrunnelse = løsning_11_12_ledd1_manuell?.unntaksbegrunnelse,
+        manueltSattVirkningsdato = løsning_11_12_ledd1_manuell?.manueltSattVirkningsdato
+    )
+}
 
 private fun Vilkårsvurdering.toFrontendParagraf11_29() = FrontendParagraf_11_29(
     vilkårsvurderingsid = vilkårsvurderingsid,

@@ -25,8 +25,20 @@ data class DtoLøsningParagraf_11_5(
     val kravOmNedsattArbeidsevneErOppfylt: Boolean,
     val nedsettelseSkyldesSykdomEllerSkade: Boolean
 )
-data class DtoLøsningParagraf_11_6(val erOppfylt: Boolean)
-data class DtoLøsningParagraf_11_12_ledd1(val erOppfylt: Boolean)
+
+data class DtoLøsningParagraf_11_6(
+    val harBehovForBehandling: Boolean,
+    val harBehovForTiltak: Boolean,
+    val harMulighetForÅKommeIArbeid: Boolean
+)
+
+data class DtoLøsningParagraf_11_12_ledd1(
+    val bestemmesAv: String,
+    val unntak: String,
+    val unntaksbegrunnelse: String,
+    val manueltSattVirkningsdato: LocalDate
+)
+
 data class DtoLøsningParagraf_11_29(val erOppfylt: Boolean)
 data class DtoLøsningVurderingAvBeregningsdato(val beregningsdato: LocalDate)
 
@@ -34,9 +46,27 @@ fun DtoManuell.toKafkaDto(): ManuellKafkaDto = ManuellKafkaDto(
     løsning_11_2_manuell?.let { Løsning_11_2_manuell(it.erMedlem) },
     løsning_11_3_manuell?.let { Løsning_11_3_manuell(it.erOppfylt) },
     løsning_11_4_ledd2_ledd3_manuell?.let { Løsning_11_4_ledd2_ledd3_manuell(it.erOppfylt) },
-    løsning_11_5_manuell?.let { Løsning_11_5_manuell(it.kravOmNedsattArbeidsevneErOppfylt, it.nedsettelseSkyldesSykdomEllerSkade) },
-    løsning_11_6_manuell?.let { Løsning_11_6_manuell(it.erOppfylt) },
-    løsning_11_12_ledd1_manuell?.let { Løsning_11_12_ledd1_manuell(it.erOppfylt) },
+    løsning_11_5_manuell?.let {
+        Løsning_11_5_manuell(
+            it.kravOmNedsattArbeidsevneErOppfylt,
+            it.nedsettelseSkyldesSykdomEllerSkade
+        )
+    },
+    løsning_11_6_manuell?.let {
+        Løsning_11_6_manuell(
+            harBehovForBehandling = it.harBehovForBehandling,
+            harBehovForTiltak = it.harBehovForTiltak,
+            harMulighetForÅKommeIArbeid = it.harMulighetForÅKommeIArbeid
+        )
+    },
+    løsning_11_12_ledd1_manuell?.let {
+        Løsning_11_12_ledd1_manuell(
+            bestemmesAv = it.bestemmesAv,
+            unntak = it.unntak,
+            unntaksbegrunnelse = it.unntaksbegrunnelse,
+            manueltSattVirkningsdato = it.manueltSattVirkningsdato
+        )
+    },
     løsning_11_29_manuell?.let { Løsning_11_29_manuell(it.erOppfylt) },
     løsningVurderingAvBeregningsdato?.let { LøsningVurderingAvBeregningsdato(it.beregningsdato) }
 )

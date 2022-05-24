@@ -21,7 +21,18 @@ data class Løsning_11_5_manuell(
     val nedsettelseSkyldesSykdomEllerSkade: Boolean
 )
 
-data class Løsning_11_6_manuell(val erOppfylt: Boolean)
-data class Løsning_11_12_ledd1_manuell(val erOppfylt: Boolean)
+data class Løsning_11_6_manuell(
+    val harBehovForBehandling: Boolean,
+    val harBehovForTiltak: Boolean,
+    val harMulighetForÅKommeIArbeid: Boolean
+)
+
+data class Løsning_11_12_ledd1_manuell(
+    val bestemmesAv: String,
+    val unntak: String,
+    val unntaksbegrunnelse: String,
+    val manueltSattVirkningsdato: LocalDate
+)
+
 data class Løsning_11_29_manuell(val erOppfylt: Boolean)
 data class LøsningVurderingAvBeregningsdato(val beregningsdato: LocalDate)

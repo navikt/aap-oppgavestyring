@@ -41,17 +41,26 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                 paragraf_11_5 = FrontendParagraf_11_5(
                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                     erOppfylt = false,
-                    måVurderesManuelt = true
+                    måVurderesManuelt = true,
+                    kravOmNedsattArbeidsevneErOppfylt = null,
+                    nedsettelseSkyldesSykdomEllerSkade = null
                 ),
                 paragraf_11_6 = FrontendParagraf_11_6(
                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                     erOppfylt = false,
-                    måVurderesManuelt = true
+                    måVurderesManuelt = true,
+                    harBehovForBehandling = null,
+                    harBehovForTiltak = null,
+                    harMulighetForÅKommeIArbeid = null
                 ),
                 paragraf_11_12 = FrontendParagraf_11_12(
                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                     erOppfylt = false,
-                    måVurderesManuelt = true
+                    måVurderesManuelt = true,
+                    bestemmesAv = null,
+                    unntak = null,
+                    unntaksbegrunnelse = null,
+                    manueltSattVirkningsdato = null
                 ),
                 paragraf_11_29 = FrontendParagraf_11_29(
                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
