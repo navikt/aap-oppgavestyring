@@ -42,11 +42,6 @@ fun main() {
     embeddedServer(Netty, port = 8080, module = Application::server).start(wait = true)
 }
 
-fun authorizeRoles(credential: JWTCredential, roles: List<String>): JWTPrincipal? {
-    val groups: List<String> = credential.getListClaim("groups", String::class)
-    return if (groups.any { it in roles }) JWTPrincipal(credential.payload) else null
-}
-
 internal fun Application.server(kafka: KStreams = KafkaStreams) {
     val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
     val config = loadConfig<Config>()
@@ -69,8 +64,12 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
             realm = "hent oppgaver"
             verifier(jwkProvider, config.oauth.azure.issuer)
             validate { cred ->
-                val claimedRoles = cred.getListClaim("groups", String::class)
-                val authorizedRoles = config.oauth.roles
+                val claimedRoles = cred.getListClaim("groups", String::class).also {
+                    secureLog.info("claimed groups: $it")
+                }
+                val authorizedRoles = config.oauth.roles.also {
+                    secureLog.info("authorized groups: $it")
+                }
                 if (claimedRoles.any { it in authorizedRoles }) JWTPrincipal(cred.payload) else null
             }
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "not authed") }
