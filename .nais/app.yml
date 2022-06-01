@@ -8,7 +8,7 @@ metadata:
   annotations:
     kafka.nais.io/removeDataWhenResourceIsDeleted: {{kafka.permanent-delete-topics}}
     githubUrl: "https://github.com/navikt/aap-oppgavestyring"
-    format: json
+    format: "json"
 spec:
   image: {{image}}
   secureLogs:
