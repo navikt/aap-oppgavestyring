@@ -12,6 +12,7 @@ data class Config(
 
 data class OAuthConfig(
     val azure: IssuerConfig,
+    val roles: List<String>
 )
 
 data class IssuerConfig(

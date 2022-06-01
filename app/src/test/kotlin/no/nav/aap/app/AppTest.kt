@@ -660,7 +660,7 @@ internal class AppTest {
             accept(ContentType.Application.Json)
         }
 
-        assertEquals(response.status, HttpStatusCode.OK)
+        assertEquals(HttpStatusCode.OK, response.status)
         response.body()
     }
 }

@@ -32,7 +32,7 @@ object JwtGenerator {
         .issuer("azure")
         .audience("oppgavestyring")
         .jwtID(UUID.randomUUID().toString())
-        .claim("test", "test")
+        .claim("groups", listOf("role-saksbehandler", "role-beslutter"))
         .notBeforeTime(now)
         .issueTime(now)
         .expirationTime(Date(now.time + TimeUnit.MINUTES.toMillis((60 * 60 * 3600).toLong()))).build()

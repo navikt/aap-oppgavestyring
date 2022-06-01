@@ -1,1 +1,10 @@
-kafka-pool: nav-dev
+kafka:
+  pool: nav-dev
+  permanent-delete-topics: true
+
+# 0000-GA-AAP_SAKSBEHANDLER
+ROLE_SAKSBEHANDLER: 8bb0ee13-49cd-4e75-8c3d-a13420c8b376
+
+#0000-GA-AAP_BESLUTTER
+ROLE_BESLUTTER: f0f6cad5-e3c0-4308-99a2-3630ac60174a
+

@@ -5,6 +5,10 @@ metadata:
   namespace: aap
   labels:
     team: aap
+  annotations:
+    kafka.nais.io/removeDataWhenResourceIsDeleted: {{kafka.permanent-delete-topics}}
+    githubUrl: "https://github.com/navikt/aap-oppgavestyring"
+    format: json
 spec:
   image: {{image}}
   secureLogs:
@@ -16,8 +20,15 @@ spec:
   azure:
     application:
       enabled: true
+      allowAllUsers: true
+      claims:
+        groups:
+            - id: {{role.aap.saksbehandler}}
+            - id: {{role.aap.beslutter}}
+        extra:
+          - NAVident
   kafka:
-    pool: {{kafka-pool}}
+    pool: {{kafka.pool}}
     streams: true
   gcp:
     sqlInstances:
@@ -52,7 +63,7 @@ spec:
     path: /actuator/metrics
 
   env:
-    - name: LOG_APPENDER
-      value: json
-    - name: KAFKA_SECURITY_ENABLED
-      value: "true"
+  {{#each role.aap}}
+    - name: {{@key}}
+      value: "{{this}}"
+  {{/each}}
