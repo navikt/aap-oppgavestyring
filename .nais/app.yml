@@ -26,7 +26,7 @@ spec:
           - NAVident
         groups:
         {{#each roles.group as |group|}}
-           - id: {{group}}
+           - id: "{{group}}"
         {{/each}}
   kafka:
     pool: {{kafka.pool}}
@@ -65,6 +65,6 @@ spec:
 
   env:
   {{#each roles as |role|}}
-    - name: {{role.name}}
-      value: {{role.group}}
+    - name: "{{role.name}}"
+      value: "{{role.group}}"
   {{/each}}
