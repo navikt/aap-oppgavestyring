@@ -22,11 +22,11 @@ spec:
       enabled: true
       allowAllUsers: true
       claims:
+        extra: [ NAVident ]
         groups:
-            - id: {{role.aap.saksbehandler}}
-            - id: {{role.aap.beslutter}}
-        extra:
-          - NAVident
+        {{#each role.aap}}
+            - id: {{this}}
+        {{/each}}
   kafka:
     pool: {{kafka.pool}}
     streams: true
