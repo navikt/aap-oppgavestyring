@@ -22,7 +22,8 @@ spec:
       enabled: true
       allowAllUsers: true
       claims:
-        extra: [ NAVident ]
+        extra:
+          - NAVident
         groups:
         {{#each roles.group as |group|}}
            - id: {{group}}
