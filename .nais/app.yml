@@ -24,8 +24,8 @@ spec:
       claims:
         extra: [ NAVident ]
         groups:
-        {{#each roles}}
-            - id: "{{this}}"
+        {{#each roles.group as |group|}}
+           - id: {{group}}
         {{/each}}
   kafka:
     pool: {{kafka.pool}}
@@ -63,7 +63,7 @@ spec:
     path: /actuator/metrics
 
   env:
-  {{#each roles}}
-    - name: {{@key}}
-      value: "{{this}}"
+  {{#each roles as |role|}}
+    - name: {{role.name}}
+      value: {{role.group}}
   {{/each}}
