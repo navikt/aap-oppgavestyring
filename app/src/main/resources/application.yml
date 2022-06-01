@@ -17,5 +17,5 @@ oauth:
     audience: ${AZURE_APP_CLIENT_ID}
     jwksUrl: ${AZURE_OPENID_CONFIG_JWKS_URI}
   roles:
-    - ${ROLE_SAKSBEHANDLER}
-    - ${ROLE_BESLUTTER}
+    - ${AAP_SAKSBEHANDLER}
+    - ${AAP_BESLUTTER}
