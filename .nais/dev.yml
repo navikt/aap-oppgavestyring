@@ -1,6 +1,6 @@
 kafka:
   pool: nav-dev
-  permanent-delete-topics: true
+  permanent-delete-topics: "true"
 
 roles:
   - name: AAP_SAKSBEHANDLER
