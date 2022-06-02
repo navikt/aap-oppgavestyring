@@ -52,6 +52,7 @@ CREATE TABLE personopplysninger
     er_skjermet            BOOL,
     er_skjermet_fom        DATE NULL,
     er_skjermet_tom        DATE NULL,
+    CONSTRAINT fk_personident_soker FOREIGN KEY (personident) REFERENCES soker (personident),
     CONSTRAINT personoppl_unique_personident UNIQUE (personident)
 );
 

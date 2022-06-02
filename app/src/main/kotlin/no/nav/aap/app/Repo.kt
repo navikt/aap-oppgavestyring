@@ -5,6 +5,7 @@ import no.nav.aap.app.db.DBTildeling
 import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
+import no.nav.aap.app.modell.InnloggetBruker
 import no.nav.aap.app.modell.Rolle
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -22,7 +23,7 @@ internal class Repo(dataSource: DataSource) {
 
     internal fun lagreSøker(frontendSøker: FrontendSøker) = søkerDao.insert(frontendSøker)
 
-    internal fun hentSøkere() = søkerDao.select()
+    internal fun hentSøkere() = søkerDao.select(InnloggetBruker("", listOf(), listOf()))
 
     internal fun slettSøker(personident: String) {
         søkerDao.delete(personident)

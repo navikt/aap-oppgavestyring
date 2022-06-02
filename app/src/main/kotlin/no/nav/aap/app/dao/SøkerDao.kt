@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.frontendView.FrontendSøker
+import no.nav.aap.app.modell.InnloggetBruker
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
@@ -36,14 +37,18 @@ internal class SøkerDao(private val dataSource: DataSource) {
         }
     }
 
-    internal fun select() =
+    internal fun select(innloggetBruker: InnloggetBruker) =
         sessionOf(dataSource).use { session ->
             @Language("PostgreSQL")
             val query = """
-                SELECT data FROM soker
+                SELECT s.data FROM soker s 
+                INNER JOIN personopplysninger p ON s.personident = p.personident
+                WHERE p.adressebeskyttelse IN (:roller)
                 """
             session.run(
-                queryOf(query).map {
+                queryOf(query, mapOf(
+                    "roller" to innloggetBruker.adressebeskyttelseRoller().joinToString(",")
+                )).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))
                 }.asList
             )
