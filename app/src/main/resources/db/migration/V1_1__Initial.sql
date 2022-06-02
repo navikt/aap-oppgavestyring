@@ -13,7 +13,7 @@ CREATE TABLE sak
     personident              TEXT,
     saksid                   UUID UNIQUE,
     diskresjonskode          TEXT,
-    skjermet              BOOL,
+    skjermet                 BOOL,
     lokalkontor_enhetsnummer TEXT
 );
 
@@ -36,17 +36,22 @@ CREATE TABLE rolle
 
 CREATE TABLE tildeling
 (
-    saksid  UUID,
-    ident   TEXT,
-    rolle   TEXT,
+    saksid    UUID,
+    ident     TEXT,
+    rolle     TEXT,
     opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_tildeling UNIQUE (saksid, ident, rolle)
 );
 
 CREATE TABLE personopplysninger
 (
-    personident TEXT,
-    data        JSON,
+    personident            TEXT,
+    norg_enhet_id          TEXT,
+    adressebeskyttelse     TEXT,
+    geografisk_tilknytning TEXT,
+    er_skjermet            BOOL,
+    er_skjermet_fom        DATE NULL,
+    er_skjermet_tom        DATE NULL,
     CONSTRAINT personoppl_unique_personident UNIQUE (personident)
 );
 
