@@ -63,16 +63,12 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
         jwt {
             realm = "hent oppgaver"
             verifier(jwkProvider, config.oauth.azure.issuer)
+            challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "oppgavestyring sin dørvakt stoppet deg") }
             validate { cred ->
-                val claimedRoles = cred.getListClaim("groups", String::class).also {
-                    secureLog.info("claimed groups: $it")
-                }
-                val authorizedRoles = config.oauth.roles.also {
-                    secureLog.info("authorized groups: $it")
-                }
+                val claimedRoles = cred.getListClaim("groups", String::class)
+                val authorizedRoles = config.oauth.roles
                 if (claimedRoles.any { it in authorizedRoles }) JWTPrincipal(cred.payload) else null
             }
-            challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "not authed") }
         }
     }
 
