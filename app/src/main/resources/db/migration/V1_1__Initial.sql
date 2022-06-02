@@ -1,3 +1,6 @@
+-- give access to IAM users (GCP)
+GRANT ALL ON ALL TABLES IN SCHEMA PUBLIC TO cloudsqliamuser;
+
 CREATE TABLE soker
 (
     personident TEXT,
@@ -38,4 +41,18 @@ CREATE TABLE tildeling
     rolle   TEXT,
     opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_tildeling UNIQUE (saksid, ident, rolle)
+);
+
+CREATE TABLE personopplysninger
+(
+    personident TEXT,
+    data        JSON,
+    CONSTRAINT personoppl_unique_personident UNIQUE (personident)
+);
+
+CREATE TABLE mottaker
+(
+    personident TEXT,
+    data        JSON,
+    CONSTRAINT unique_mottaker_personident UNIQUE (personident)
 );
