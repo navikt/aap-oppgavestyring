@@ -19,7 +19,7 @@ class MockEnvironment : AutoCloseable {
         install(ContentNegotiation) { jackson {} }
         routing {
             get("/jwks") {
-                call.respond(this::class.java.getResource("/jwkset.json")!!.readText())
+                call.respondText(this::class.java.getResource("/jwkset.json")!!.readText())
             }
         }
     }.start()
