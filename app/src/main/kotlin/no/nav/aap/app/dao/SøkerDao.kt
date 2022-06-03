@@ -54,14 +54,20 @@ internal class SøkerDao(private val dataSource: DataSource) {
             )
         }
 
-    internal fun select(personidenter: List<String>) =
+    internal fun select(personidenter: List<String>, innloggetBruker: InnloggetBruker) =
         sessionOf(dataSource).use { session ->
             @Language("PostgreSQL")
             val query = """
-                SELECT data FROM soker WHERE personident IN (${personidenter.joinToString { "?" }})
+                SELECT s.data FROM soker s 
+                INNER JOIN personopplysninger p ON s.personident = p.personident
+                WHERE s.personident IN (:identer)
+                AND p.adressebeskyttelse IN (:roller)
                 """
             session.run(
-                queryOf(query, *personidenter.toTypedArray()).map {
+                queryOf(query, mapOf(
+                    "identer" to personidenter.joinToString(","),
+                    "roller" to innloggetBruker.adressebeskyttelseRoller().joinToString(",")
+                )).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))
                 }.asList
             )

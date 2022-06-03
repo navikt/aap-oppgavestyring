@@ -75,9 +75,27 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         søkerDao.insert(frontendSøker)
 
+        val personopplysninger = FrontendPersonopplysninger(
+            personident = "12345678910",
+            norgEnhetId = "1234",
+            adressebeskyttelse = "UGRADERT",
+            geografiskTilknytning = "0001",
+            erSkjermet = false,
+            erSkjermetFom = null,
+            erSkjermetTom = null
+        )
+
+        personopplysningerDao.insert(personopplysninger)
+
         assertEquals(1, rowCount("soker"))
 
-        val frontendsøkere = søkerDao.select(listOf("12345678910"))
+        val innloggetBruker = InnloggetBruker(
+            ident = "Z000001",
+            roller = listOf("UGRADERT"),
+            tilknyttetEnhet = listOf("1234")
+        )
+
+        val frontendsøkere = søkerDao.select(listOf("12345678910"), innloggetBruker)
 
         assertEquals(frontendSøker, frontendsøkere.single())
     }

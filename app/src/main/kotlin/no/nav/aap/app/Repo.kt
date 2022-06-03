@@ -19,7 +19,7 @@ internal class Repo(dataSource: DataSource) {
     private val sakDao = SakDao(dataSource)
     private val tildelingDao = TildelingDao(dataSource)
 
-    internal fun hentSøker(personident: String) = søkerDao.select(listOf(personident))
+    internal fun hentSøker(personident: String) = søkerDao.select(listOf(personident), InnloggetBruker("", listOf(), listOf()))
 
     internal fun lagreSøker(frontendSøker: FrontendSøker) = søkerDao.insert(frontendSøker)
 
