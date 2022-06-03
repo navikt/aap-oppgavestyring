@@ -23,6 +23,7 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import no.nav.aap.app.axsys.AxsysClient
 import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
 import no.nav.aap.app.kafka.PersonopplysningerKafkaDto
@@ -77,6 +78,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     val datasource = initDatasource(config.database)
     migrate(datasource)
     val repo = Repo(datasource)
+    val innloggetBrukerProvider = InnloggetBrukerProvider(AxsysClient(config.axsys, config.azure))
 
     kafka.start(config.kafka, prometheus) {
         val søkerKStream = consume(Topics.søkere)
@@ -108,7 +110,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
 
     routing {
         actuator(prometheus, kafka)
-        api(repo, config.kafka, kafka)
+        api(innloggetBrukerProvider, repo, config.kafka, kafka)
     }
 }
 
@@ -136,7 +138,12 @@ private fun Routing.actuator(prometheus: PrometheusMeterRegistry, kafka: KStream
     }
 }
 
-private fun Routing.api(repo: Repo, config: KafkaConfig, kafka: KStreams) {
+private fun Routing.api(
+    innloggetBrukerProvider: InnloggetBrukerProvider,
+    repo: Repo,
+    config: KafkaConfig,
+    kafka: KStreams
+) {
     val manuellProducer = kafka.createProducer(config, Topics.manuell)
 
     authenticate {
@@ -150,12 +157,12 @@ private fun Routing.api(repo: Repo, config: KafkaConfig, kafka: KStreams) {
             }
 
             get("/sak") {
-                call.respond(repo.hentSøkere())
+                call.respond(repo.hentSøkere(innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)))
             }
 
             get("/sak/{personident}") {
                 val personident = call.parameters.getOrFail("personident")
-                call.respond(repo.hentSøker(personident))
+                call.respond(repo.hentSøker(personident, innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)))
             }
 
             post("/sak/{personident}/losning") {
