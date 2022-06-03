@@ -26,8 +26,8 @@ internal class Repo(dataSource: DataSource) {
     internal fun hentSøkere(innloggetBruker: InnloggetBruker) = søkerDao.select(innloggetBruker)
 
     internal fun slettSøker(personident: String) {
-        søkerDao.delete(personident)
         personopplysningerDao.delete(personident)
+        søkerDao.delete(personident)
         mottakerDao.delete(personident)
         sakDao.delete(personident)
         tildelingDao.delete(personident)
