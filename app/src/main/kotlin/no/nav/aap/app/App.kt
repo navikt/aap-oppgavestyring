@@ -31,6 +31,7 @@ import no.nav.aap.kafka.KafkaConfig
 import no.nav.aap.kafka.streams.*
 import no.nav.aap.ktor.config.loadConfig
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.streams.StreamsBuilder
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
@@ -79,37 +80,41 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     val repo = Repo(datasource)
 
     kafka.start(config.kafka, prometheus) {
-        val søkerKStream = consume(Topics.søkere)
-
-        consume(Topics.personopplysninger)
-            .filterNotNull("filter-personopplysning-tombstones")
-            .filterNot(erUfullstendig)
-            .peek { key, value -> secureLog.info("saving [${Topics.personopplysninger}] K:$key V:$value") }
-            .foreach { personident, value -> repo.lagrePersonopplysninger(value.toFrontendView(personident)) }
-
-        val presentSøkereStream = søkerKStream.filterNotNull("filter-sokere-tombstone")
-
-        presentSøkereStream
-            .peek { key, value -> secureLog.info("saving [${Topics.søkere}] K:$key V:$value") }
-            .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
-
-        presentSøkereStream
-            .mapValues { _, _ -> PersonopplysningerKafkaDto() }
-            .produce(Topics.personopplysninger, "produce-empty-personopplysninger")
-
-        søkerKStream.filter { _, value -> value == null }
-            .peek { key, value -> secureLog.info("deleted [${Topics.søkere}] K:$key V:$value") }
-            .foreach { key, _ -> repo.slettSøker(key) }
-
-        consume(Topics.mottakere)
-            .filterNotNull("filter-mottakere-tombstone")
-            .foreach { _, mottaker -> repo.lagreMottaker(mottaker.toFrontendView()) }
+        topology(repo)
     }
 
     routing {
         actuator(prometheus, kafka)
         api(repo, config.kafka, kafka)
     }
+}
+
+internal fun StreamsBuilder.topology(repo: Repository) = apply {
+    val søkerKStream = consume(Topics.søkere)
+
+    consume(Topics.personopplysninger)
+        .filterNotNull("filter-personopplysning-tombstones")
+        .filterNot(erUfullstendig)
+        .peek { key, value -> secureLog.info("saving [${Topics.personopplysninger}] K:$key V:$value") }
+        .foreach { personident, value -> repo.lagrePersonopplysninger(value.toFrontendView(personident)) }
+
+    val presentSøkereStream = søkerKStream.filterNotNull("filter-sokere-tombstone")
+
+    presentSøkereStream
+        .peek { key, value -> secureLog.info("saving [${Topics.søkere}] K:$key V:$value") }
+        .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
+
+    presentSøkereStream
+        .mapValues { _, _ -> PersonopplysningerKafkaDto() }
+        .produce(Topics.personopplysninger, "produce-empty-personopplysninger")
+
+    søkerKStream.filter { _, value -> value == null }
+        .peek { key, value -> secureLog.info("deleted [${Topics.søkere}] K:$key V:$value") }
+        .foreach { key, _ -> repo.slettSøker(key) }
+
+    consume(Topics.mottakere)
+        .filterNotNull("filter-mottakere-tombstone")
+        .foreach { _, mottaker -> repo.lagreMottaker(mottaker.toFrontendView()) }
 }
 
 private val erUfullstendig: (_: String, value: PersonopplysningerKafkaDto) -> Boolean = { k, v ->

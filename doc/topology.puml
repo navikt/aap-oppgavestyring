@@ -1,0 +1,55 @@
+@startuml
+!theme black-knight
+queue "aap.personopplysninger.v1" <<topic>> as aap_personopplysninger_v1
+queue "aap.sokere.v1" <<topic>> as aap_sokere_v1
+queue "aap.mottakere.v1" <<topic>> as aap_mottakere_v1
+package "Sub-topology: 0" {
+	agent "consume-aap.sokere.v1" <<Source>> as consume_aap_sokere_v1
+	agent "KSTREAM-PEEK-0000000001" <<Processor>> as KSTREAM_PEEK_0000000001
+	agent "filter-sokere-tombstone" <<Processor>> as filter_sokere_tombstone
+	agent "KSTREAM-FILTER-0000000014" <<Processor>> as KSTREAM_FILTER_0000000014
+	agent "KSTREAM-MAPVALUES-0000000011" <<Processor>> as KSTREAM_MAPVALUES_0000000011
+	agent "KSTREAM-PEEK-0000000009" <<Processor>> as KSTREAM_PEEK_0000000009
+	agent "KSTREAM-PEEK-0000000012" <<Processor>> as KSTREAM_PEEK_0000000012
+	agent "KSTREAM-PEEK-0000000015" <<Processor>> as KSTREAM_PEEK_0000000015
+	agent "KSTREAM-FOREACH-0000000010" <<Processor>> as KSTREAM_FOREACH_0000000010
+	agent "KSTREAM-FOREACH-0000000016" <<Processor>> as KSTREAM_FOREACH_0000000016
+	agent "produce-empty-personopplysninger" <<Sink>> as produce_empty_personopplysninger
+	aap_sokere_v1 --> consume_aap_sokere_v1
+	aap_personopplysninger_v1 <-- produce_empty_personopplysninger
+	consume_aap_sokere_v1 --> KSTREAM_PEEK_0000000001
+	KSTREAM_PEEK_0000000001 --> filter_sokere_tombstone
+	KSTREAM_PEEK_0000000001 --> KSTREAM_FILTER_0000000014
+	filter_sokere_tombstone --> KSTREAM_MAPVALUES_0000000011
+	filter_sokere_tombstone --> KSTREAM_PEEK_0000000009
+	KSTREAM_FILTER_0000000014 --> KSTREAM_PEEK_0000000015
+	KSTREAM_MAPVALUES_0000000011 --> KSTREAM_PEEK_0000000012
+	KSTREAM_PEEK_0000000009 --> KSTREAM_FOREACH_0000000010
+	KSTREAM_PEEK_0000000012 --> produce_empty_personopplysninger
+	KSTREAM_PEEK_0000000015 --> KSTREAM_FOREACH_0000000016
+}
+package "Sub-topology: 1" {
+	agent "consume-aap.personopplysninger.v1" <<Source>> as consume_aap_personopplysninger_v1
+	agent "KSTREAM-PEEK-0000000003" <<Processor>> as KSTREAM_PEEK_0000000003
+	agent "filter-personopplysning-tombstones" <<Processor>> as filter_personopplysning_tombstones
+	agent "KSTREAM-FILTER-0000000005" <<Processor>> as KSTREAM_FILTER_0000000005
+	agent "KSTREAM-PEEK-0000000006" <<Processor>> as KSTREAM_PEEK_0000000006
+	agent "KSTREAM-FOREACH-0000000007" <<Processor>> as KSTREAM_FOREACH_0000000007
+	aap_personopplysninger_v1 --> consume_aap_personopplysninger_v1
+	consume_aap_personopplysninger_v1 --> KSTREAM_PEEK_0000000003
+	KSTREAM_PEEK_0000000003 --> filter_personopplysning_tombstones
+	filter_personopplysning_tombstones --> KSTREAM_FILTER_0000000005
+	KSTREAM_FILTER_0000000005 --> KSTREAM_PEEK_0000000006
+	KSTREAM_PEEK_0000000006 --> KSTREAM_FOREACH_0000000007
+}
+package "Sub-topology: 2" {
+	agent "consume-aap.mottakere.v1" <<Source>> as consume_aap_mottakere_v1
+	agent "KSTREAM-PEEK-0000000018" <<Processor>> as KSTREAM_PEEK_0000000018
+	agent "filter-mottakere-tombstone" <<Processor>> as filter_mottakere_tombstone
+	agent "KSTREAM-FOREACH-0000000020" <<Processor>> as KSTREAM_FOREACH_0000000020
+	aap_mottakere_v1 --> consume_aap_mottakere_v1
+	consume_aap_mottakere_v1 --> KSTREAM_PEEK_0000000018
+	KSTREAM_PEEK_0000000018 --> filter_mottakere_tombstone
+	filter_mottakere_tombstone --> KSTREAM_FOREACH_0000000020
+}
+@enduml
