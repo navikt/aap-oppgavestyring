@@ -6,7 +6,7 @@ metadata:
   labels:
     team: aap
   annotations:
-    githubUrl: "https://github.com/navikt/aap-oppgavestyring"
+    github.url: https://github.com/navikt/aap-oppgavestyring
 spec:
   image: {{image}}
   secureLogs:
