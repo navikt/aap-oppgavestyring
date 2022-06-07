@@ -4,15 +4,40 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
+import no.nav.aap.app.frontendView.FrontendSak
+import no.nav.aap.app.frontendView.FrontendSøker
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.util.*
 
 internal class PersonopplysningerDaoTest : DatabaseTestBase() {
     private val personopplysningerDao = PersonopplysningerDao(dataSource)
+    private val søkerDao = SøkerDao(dataSource)
 
     @Test
     fun `Lagrer personopplysninger i database`() {
+        søkerDao.insert(
+            FrontendSøker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                skjermet = false,
+                sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null,
+                    type = "11-5",
+                    paragraf_11_2 = null,
+                    paragraf_11_3 = null,
+                    paragraf_11_4 = null,
+                    paragraf_11_5 = null,
+                    paragraf_11_6 = null,
+                    paragraf_11_12 = null,
+                    paragraf_11_29 = null
+                )
+            )
+        )
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
             norgEnhetId = "4201",
@@ -34,6 +59,26 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Sletter personopplysninger fra database`() {
+        søkerDao.insert(
+            FrontendSøker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                skjermet = false,
+                sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null,
+                    type = "11-5",
+                    paragraf_11_2 = null,
+                    paragraf_11_3 = null,
+                    paragraf_11_4 = null,
+                    paragraf_11_5 = null,
+                    paragraf_11_6 = null,
+                    paragraf_11_12 = null,
+                    paragraf_11_29 = null
+                )
+            )
+        )
         personopplysningerDao.insert(
             FrontendPersonopplysninger(
                 personident = "12345678910",
@@ -55,6 +100,46 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Sletter ikke andre personopplysninger fra database`() {
+        søkerDao.insert(
+            FrontendSøker(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                skjermet = false,
+                sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null,
+                    type = "11-5",
+                    paragraf_11_2 = null,
+                    paragraf_11_3 = null,
+                    paragraf_11_4 = null,
+                    paragraf_11_5 = null,
+                    paragraf_11_6 = null,
+                    paragraf_11_12 = null,
+                    paragraf_11_29 = null
+                )
+            )
+        )
+        søkerDao.insert(
+            FrontendSøker(
+                personident = "01987654321",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                skjermet = false,
+                sak = FrontendSak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null,
+                    type = "11-5",
+                    paragraf_11_2 = null,
+                    paragraf_11_3 = null,
+                    paragraf_11_4 = null,
+                    paragraf_11_5 = null,
+                    paragraf_11_6 = null,
+                    paragraf_11_12 = null,
+                    paragraf_11_29 = null
+                )
+            )
+        )
         personopplysningerDao.insert(
             FrontendPersonopplysninger(
                 personident = "01987654321",

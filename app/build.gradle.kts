@@ -14,9 +14,13 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer:2.0.2")
     implementation("io.ktor:ktor-server-netty:2.0.2")
 
+    implementation("io.ktor:ktor-client-logging:2.0.2")
+    implementation("io.ktor:ktor-client-core:2.0.2")
+
     implementation("io.ktor:ktor-serialization-jackson:2.0.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
+    implementation("com.github.navikt.aap-libs:ktor-client-auth:0.1.3")
     implementation("com.github.navikt.aap-libs:kafka:0.1.8")
     implementation("com.github.navikt.aap-libs:ktor-utils:0.1.8")
 

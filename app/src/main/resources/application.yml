@@ -19,3 +19,12 @@ oauth:
   roles:
     - ${AAP_SAKSBEHANDLER}
     - ${AAP_BESLUTTER}
+
+axsys:
+  url: ${AXSYS_URL}
+  scope: ${AXSYS_SCOPE}
+
+azure:
+  clientId: ${AZURE_APP_CLIENT_ID}
+  tokenEndpoint: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+  clientSecret: ${AZURE_APP_CLIENT_SECRET}

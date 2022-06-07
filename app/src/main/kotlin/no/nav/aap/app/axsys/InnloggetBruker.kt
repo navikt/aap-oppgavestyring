@@ -1,4 +1,4 @@
-package no.nav.aap.app.modell
+package no.nav.aap.app.axsys
 
 data class InnloggetBruker(
     val ident: String,

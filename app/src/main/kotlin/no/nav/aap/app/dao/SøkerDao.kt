@@ -7,7 +7,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.frontendView.FrontendSøker
-import no.nav.aap.app.modell.InnloggetBruker
+import no.nav.aap.app.axsys.InnloggetBruker
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 

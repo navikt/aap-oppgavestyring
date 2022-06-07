@@ -85,11 +85,14 @@ internal class AppTest {
     @Test
     fun `Henter alle saker`() {
         lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
+        lateinit var personopplysningerTopic: TestInputTopic<String, PersonopplysningerKafkaDto>
+
         val app = TestApplication {
             environment { config = mocks.applicationConfig() }
             application {
                 server(mocks.kafka)
                 søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
                 mocks.kafka.outputTopic(Topics.manuell)
             }
         }
@@ -184,6 +187,19 @@ internal class AppTest {
             )
         }
 
+        personopplysningerTopic.produce("12345678910") {
+            PersonopplysningerKafkaDto(
+                norgEnhetId = "0001",
+                adressebeskyttelse = "UGRADERT",
+                geografiskTilknytning = "1234",
+                skjerming = SkjermingKafkaDto(
+                    erSkjermet = false,
+                    fom = null,
+                    tom = null
+                )
+            )
+        }
+
         val saker = client.getSaker("/api/sak")
 
         val expected = listOf(
@@ -250,11 +266,14 @@ internal class AppTest {
 
     @Test
     fun `Henter alle saker til en søker`() {
+        lateinit var personopplysningerTopic: TestInputTopic<String, PersonopplysningerKafkaDto>
+
         val app = TestApplication {
             environment { config = mocks.applicationConfig() }
             application {
                 server(mocks.kafka)
                 søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
                 mocks.kafka.outputTopic(Topics.manuell)
             }
         }
@@ -347,6 +366,19 @@ internal class AppTest {
                         tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
                     )
+                )
+            )
+        }
+
+        personopplysningerTopic.produce("12345678910") {
+            PersonopplysningerKafkaDto(
+                norgEnhetId = "0001",
+                adressebeskyttelse = "UGRADERT",
+                geografiskTilknytning = "1234",
+                skjerming = SkjermingKafkaDto(
+                    erSkjermet = false,
+                    fom = null,
+                    tom = null
                 )
             )
         }
@@ -520,11 +552,14 @@ internal class AppTest {
 
     @Test
     fun `Slett søker ved tombstone`() {
+        lateinit var personopplysningerTopic: TestInputTopic<String, PersonopplysningerKafkaDto>
+
         val app = TestApplication {
             environment { config = mocks.applicationConfig() }
             application {
                 server(mocks.kafka)
                 søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
                 mocks.kafka.outputTopic(Topics.manuell)
             }
         }
@@ -571,6 +606,20 @@ internal class AppTest {
                 )
             )
         }
+
+        personopplysningerTopic.produce("12345678910") {
+            PersonopplysningerKafkaDto(
+                norgEnhetId = "0001",
+                adressebeskyttelse = "UGRADERT",
+                geografiskTilknytning = "1234",
+                skjerming = SkjermingKafkaDto(
+                    erSkjermet = false,
+                    fom = null,
+                    tom = null
+                )
+            )
+        }
+
         assertEquals(1, client.getSaker("/api/sak").size)
 
         søkerTopic.produceTombstone("12345678910")

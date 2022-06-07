@@ -1,6 +1,7 @@
 package no.nav.aap
 
 import no.nav.aap.app.Repository
+import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
@@ -24,9 +25,9 @@ internal class GenerateUML {
         private val log = LoggerFactory.getLogger("GenerateUML")
 
         private val repo = object : Repository {
-            override fun hentSøker(personident: String) = TODO("")
+            override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) = TODO("")
             override fun lagreSøker(frontendSøker: FrontendSøker) = TODO("")
-            override fun hentSøkere() = TODO("")
+            override fun hentSøkere(innloggetBruker: InnloggetBruker) = TODO("")
             override fun slettSøker(personident: String) = TODO("")
             override fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = TODO("")
             override fun hentPersonopplysninger(personident: String) = TODO("")

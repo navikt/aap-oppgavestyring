@@ -5,16 +5,16 @@ import no.nav.aap.app.db.DBTildeling
 import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
-import no.nav.aap.app.modell.InnloggetBruker
+import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.modell.Rolle
 import org.slf4j.LoggerFactory
 import java.util.*
 import javax.sql.DataSource
 
 interface Repository {
-    fun hentSøker(personident: String): List<FrontendSøker>
+    fun hentSøker(personident: String, innloggetBruker: InnloggetBruker): List<FrontendSøker>
     fun lagreSøker(frontendSøker: FrontendSøker)
-    fun hentSøkere(): List<FrontendSøker>
+    fun hentSøkere(innloggetBruker: InnloggetBruker): List<FrontendSøker>
     fun slettSøker(personident: String)
     fun lagrePersonopplysninger(fp: FrontendPersonopplysninger)
     fun hentPersonopplysninger(personident: String): FrontendPersonopplysninger?
@@ -32,15 +32,15 @@ internal class Repo(dataSource: DataSource) : Repository {
     private val sakDao = SakDao(dataSource)
     private val tildelingDao = TildelingDao(dataSource)
 
-    override fun hentSøker(personident: String) = søkerDao.select(listOf(personident), InnloggetBruker("", listOf(), listOf()))
+    override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) = søkerDao.select(listOf(personident), innloggetBruker)
 
     override fun lagreSøker(frontendSøker: FrontendSøker) = søkerDao.insert(frontendSøker)
 
-    override fun hentSøkere(): List<FrontendSøker> = søkerDao.select(InnloggetBruker("", listOf(), listOf()))
+    override fun hentSøkere(innloggetBruker: InnloggetBruker): List<FrontendSøker> = søkerDao.select(innloggetBruker)
 
     override fun slettSøker(personident: String) {
-        søkerDao.delete(personident)
         personopplysningerDao.delete(personident)
+        søkerDao.delete(personident)
         mottakerDao.delete(personident)
         sakDao.delete(personident)
         tildelingDao.delete(personident)
