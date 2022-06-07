@@ -9,3 +9,7 @@ roles:
   - name: AAP_BESLUTTER
     ad: 0000-GA-AAP_BESLUTTER
     group: f0f6cad5-e3c0-4308-99a2-3630ac60174a
+
+axsys:
+  url: https://axsys.dev.adeo.no/api/v2
+  scope: api://dev-fss.org.axsys/.default

@@ -65,3 +65,7 @@ spec:
     - name: "{{role.name}}"
       value: "{{role.group}}"
   {{/each}}
+    - name: AXSYS_SCOPE
+      value: {{axsys.scope}}
+    - name: AXSYS_URL
+      value: {{axsys.url}}
