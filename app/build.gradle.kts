@@ -30,7 +30,7 @@ dependencies {
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.2")
 
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("com.github.seratch:kotliquery:1.7.0")
+    implementation("com.github.seratch:kotliquery:1.8.0")
     implementation("org.flywaydb:flyway-core:8.5.12")
     runtimeOnly("org.postgresql:postgresql:42.3.6")
 
