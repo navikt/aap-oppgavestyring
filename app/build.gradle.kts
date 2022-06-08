@@ -22,7 +22,7 @@ dependencies {
 
     implementation("com.github.navikt.aap-libs:ktor-client-auth:0.1.3")
     implementation("com.github.navikt.aap-libs:kafka:0.1.8")
-    implementation("com.github.navikt.aap-libs:ktor-utils:0.1.8")
+    implementation("com.github.navikt.aap-libs:ktor-utils:1.0.0")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.9.0")
