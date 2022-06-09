@@ -8,7 +8,6 @@ import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.modell.Rolle
 import no.nav.aap.app.topology
 import no.nav.aap.kafka.streams.uml.KStreamsUML
-import org.apache.kafka.streams.StreamsBuilder
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -17,7 +16,7 @@ internal class GenerateUML {
 
     @Test
     fun `generate topology UML`() {
-        val topology = StreamsBuilder().topology(repo).build()
+        val topology = topology(repo)
         KStreamsUML.create(topology).also { log.info("Generated topology UML ${it.absoluteFile}") }
     }
 

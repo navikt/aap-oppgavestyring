@@ -81,9 +81,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     val repo = Repo(datasource)
     val innloggetBrukerProvider = InnloggetBrukerProvider(AxsysClient(config.axsys, config.azure))
 
-    kafka.start(config.kafka, prometheus) {
-        topology(repo)
-    }
+    kafka.connect(config.kafka, prometheus, topology(repo))
 
     routing {
         actuator(prometheus, kafka)
@@ -91,7 +89,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     }
 }
 
-internal fun StreamsBuilder.topology(repo: Repository) = apply {
+internal fun topology(repo: Repository) = StreamsBuilder().apply {
     val søkerKStream = consume(Topics.søkere)
 
     consume(Topics.personopplysninger)
@@ -117,7 +115,7 @@ internal fun StreamsBuilder.topology(repo: Repository) = apply {
     consume(Topics.mottakere)
         .filterNotNull("filter-mottakere-tombstone")
         .foreach { _, mottaker -> repo.lagreMottaker(mottaker.toFrontendView()) }
-}
+}.build()
 
 private val erUfullstendig: (_: String, value: PersonopplysningerKafkaDto) -> Boolean = { k, v ->
     listOf(v.norgEnhetId, v.adressebeskyttelse, v.geografiskTilknytning, v.skjerming)
@@ -167,7 +165,12 @@ private fun Routing.api(
 
             get("/sak/{personident}") {
                 val personident = call.parameters.getOrFail("personident")
-                call.respond(repo.hentSøker(personident, innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)))
+                call.respond(
+                    repo.hentSøker(
+                        personident,
+                        innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
+                    )
+                )
             }
 
             post("/sak/{personident}/losning") {

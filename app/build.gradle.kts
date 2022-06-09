@@ -20,9 +20,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson:2.0.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
-    implementation("com.github.navikt.aap-libs:ktor-client-auth:0.1.3")
-    implementation("com.github.navikt.aap-libs:kafka:0.1.8")
-    implementation("com.github.navikt.aap-libs:ktor-utils:0.1.8")
+    implementation("com.github.navikt.aap-libs:ktor-client-auth:1.1.0")
+    implementation("com.github.navikt.aap-libs:kafka:1.1.0")
+    implementation("com.github.navikt.aap-libs:ktor-utils:1.1.0")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.9.0")
@@ -30,12 +30,12 @@ dependencies {
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.2")
 
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("com.github.seratch:kotliquery:1.7.0")
+    implementation("com.github.seratch:kotliquery:1.8.0")
     implementation("org.flywaydb:flyway-core:8.5.12")
     runtimeOnly("org.postgresql:postgresql:42.3.6")
 
     testImplementation(kotlin("test"))
-    testImplementation("com.github.navikt.aap-libs:kafka-test:0.1.8")
+    testImplementation("com.github.navikt.aap-libs:kafka-test:1.1.0")
     testImplementation("io.ktor:ktor-server-test-host:2.0.2")
     testImplementation("io.ktor:ktor-client-content-negotiation:2.0.2")
     testImplementation("com.nimbusds:nimbus-jose-jwt:9.23")
