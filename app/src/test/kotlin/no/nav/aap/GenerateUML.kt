@@ -24,16 +24,16 @@ internal class GenerateUML {
         private val log = LoggerFactory.getLogger("GenerateUML")
 
         private val repo = object : Repository {
-            override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) = TODO("")
-            override fun lagreSøker(frontendSøker: FrontendSøker) = TODO("")
-            override fun hentSøkere(innloggetBruker: InnloggetBruker) = TODO("")
-            override fun slettSøker(personident: String) = TODO("")
-            override fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = TODO("")
-            override fun hentPersonopplysninger(personident: String) = TODO("")
-            override fun lagreMottaker(frontendMottaker: FrontendMottaker) = TODO("")
-            override fun tildelSak(saksid: UUID, ident: String, rolle: Rolle) = TODO("")
-            override fun endreTildeling(saksid: UUID, ident: String, nyIdent: String, nyRolle: Rolle) = TODO("")
-            override fun fjernTildeling(saksid: UUID, ident: String) = TODO("")
+            override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) = error("Ikke implementert")
+            override fun lagreSøker(frontendSøker: FrontendSøker) = error("Ikke implementert")
+            override fun hentSøkere(innloggetBruker: InnloggetBruker) = error("Ikke implementert")
+            override fun slettSøker(personident: String) = error("Ikke implementert")
+            override fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = error("Ikke implementert")
+            override fun hentPersonopplysninger(personident: String) = error("Ikke implementert")
+            override fun lagreMottaker(frontendMottaker: FrontendMottaker) = error("Ikke implementert")
+            override fun tildelSak(saksid: UUID, ident: String, rolle: Rolle) = error("Ikke implementert")
+            override fun endreTildeling(saksid: UUID, ident: String, nyIdent: String, nyRolle: Rolle) = error("Ikke implementert")
+            override fun fjernTildeling(saksid: UUID, ident: String) = error("Ikke implementert")
         }
     }
 }
