@@ -17,8 +17,11 @@ oauth:
     audience: ${AZURE_APP_CLIENT_ID}
     jwksUrl: ${AZURE_OPENID_CONFIG_JWKS_URI}
   roles:
-    - ${AAP_SAKSBEHANDLER}
-    - ${AAP_BESLUTTER}
+    saksbehandler: ${AAP_SAKSBEHANDLER}
+    beslutter: ${AAP_BESLUTTER}
+    veileder: ${AAP_VEILEDER}
+    fatter: ${AAP_FATTER}
+    les: ${AAP_LES}
 
 axsys:
   url: ${AXSYS_URL}

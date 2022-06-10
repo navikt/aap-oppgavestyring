@@ -35,6 +35,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.streams.StreamsBuilder
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.sql.DataSource
 
@@ -67,8 +68,8 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
             verifier(jwkProvider, config.oauth.azure.issuer)
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "oppgavestyring sin dørvakt stoppet deg") }
             validate { cred ->
-                val claimedRoles = cred.getListClaim("groups", String::class)
-                val authorizedRoles = config.oauth.roles
+                val claimedRoles = cred.getListClaim("groups", UUID::class)
+                val authorizedRoles = config.oauth.roles.asList()
                 if (claimedRoles.any { it in authorizedRoles }) JWTPrincipal(cred.payload) else null
             }
         }

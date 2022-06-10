@@ -32,7 +32,7 @@ object JwtGenerator {
         .issuer("azure")
         .audience("oppgavestyring")
         .jwtID(UUID.randomUUID().toString())
-        .claim("groups", listOf("role-saksbehandler", "role-beslutter"))
+        .claim("groups", listOf("9eea5eb0-1f42-4661-949a-91740d817f49", "bcc57777-aba4-45ef-8f07-fa594e54a33f"))
         .claim("NAVident", "Z000001")
         .notBeforeTime(now)
         .issueTime(now)
