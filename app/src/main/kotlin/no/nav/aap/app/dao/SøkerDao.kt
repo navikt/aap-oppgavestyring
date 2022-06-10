@@ -45,14 +45,18 @@ internal class SøkerDao(private val dataSource: DataSource) {
         sessionOf(dataSource).use { session ->
             @Language("PostgreSQL")
             val query = """
-                SELECT s.data FROM soker s 
-                INNER JOIN personopplysninger p ON s.personident = p.personident
-                WHERE p.adressebeskyttelse = ANY(:roller)
+                SELECT s.data
+                FROM soker s
+                         INNER JOIN personopplysninger p ON s.personident = p.personident
+                WHERE p.adressebeskyttelse = ANY (:roller)
+                  AND (:harSkjermingsrolle OR (p.er_skjermet_fom IS NULL OR p.er_skjermet_fom > now() OR
+                                               (p.er_skjermet_tom IS NOT NULL AND p.er_skjermet_tom < now())))
                 """
             session.run(
                 queryOf(
                     query, mapOf(
-                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session)
+                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session),
+                        "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle()
                     )
                 ).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))
@@ -64,16 +68,20 @@ internal class SøkerDao(private val dataSource: DataSource) {
         sessionOf(dataSource).use { session ->
             @Language("PostgreSQL")
             val query = """
-                SELECT s.data FROM soker s 
-                INNER JOIN personopplysninger p ON s.personident = p.personident
-                WHERE s.personident = ANY(:identer)
-                AND p.adressebeskyttelse = ANY(:roller)
+                SELECT s.data
+                FROM soker s
+                         INNER JOIN personopplysninger p ON s.personident = p.personident
+                WHERE s.personident = ANY (:identer)
+                  AND p.adressebeskyttelse = ANY (:roller)
+                  AND (:harSkjermingsrolle OR (p.er_skjermet_fom IS NULL OR p.er_skjermet_fom > now() OR
+                                               (p.er_skjermet_tom IS NOT NULL AND p.er_skjermet_tom < now())))
                 """
             session.run(
                 queryOf(
                     query, mapOf(
                         "identer" to personidenter.toSqlArray(session),
-                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session)
+                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session),
+                        "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle()
                     )
                 ).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))
