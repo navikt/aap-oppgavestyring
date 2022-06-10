@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.axsys.InnloggetBruker
+import no.nav.aap.app.frontendView.FrontendSøker
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
@@ -37,18 +38,23 @@ internal class SøkerDao(private val dataSource: DataSource) {
         }
     }
 
+    private fun List<String>.toSqlArray(session: Session) =
+        session.connection.underlying.createArrayOf("text", toTypedArray())
+
     internal fun select(innloggetBruker: InnloggetBruker) =
         sessionOf(dataSource).use { session ->
             @Language("PostgreSQL")
             val query = """
                 SELECT s.data FROM soker s 
                 INNER JOIN personopplysninger p ON s.personident = p.personident
-                WHERE p.adressebeskyttelse IN (:roller)
+                WHERE p.adressebeskyttelse = ANY(:roller)
                 """
             session.run(
-                queryOf(query, mapOf(
-                    "roller" to innloggetBruker.adressebeskyttelseRoller().joinToString(",")
-                )).map {
+                queryOf(
+                    query, mapOf(
+                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session)
+                    )
+                ).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))
                 }.asList
             )
@@ -60,14 +66,16 @@ internal class SøkerDao(private val dataSource: DataSource) {
             val query = """
                 SELECT s.data FROM soker s 
                 INNER JOIN personopplysninger p ON s.personident = p.personident
-                WHERE s.personident IN (:identer)
-                AND p.adressebeskyttelse IN (:roller)
+                WHERE s.personident = ANY(:identer)
+                AND p.adressebeskyttelse = ANY(:roller)
                 """
             session.run(
-                queryOf(query, mapOf(
-                    "identer" to personidenter.joinToString(","),
-                    "roller" to innloggetBruker.adressebeskyttelseRoller().joinToString(",")
-                )).map {
+                queryOf(
+                    query, mapOf(
+                        "identer" to personidenter.toSqlArray(session),
+                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session)
+                    )
+                ).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))
                 }.asList
             )
