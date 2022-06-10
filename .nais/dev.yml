@@ -23,6 +23,15 @@ roles:
     ad: 0000-GA-AAP_LES
     group: 96e18023-db50-45f7-b023-3251279df28d
 
+    #Adressebeskyttelse
+  - name: FORTROLIG_ADRESSE
+    ad: 0000-GA-Fortrolig_Adresse
+    group: ea930b6b-9397-44d9-b9e6-f4cf527a632a
+
+  - name: STRENGT_FORTROLIG_ADRESSE
+    ad: 0000-GA-Strengt_Fortrolig_Adresse
+    group: 5ef775f2-61f8-4283-bf3d-8d03f428aa14
+
 axsys:
   url: https://axsys.dev.adeo.no/api/v2
   scope: api://dev-fss.org.axsys/.default

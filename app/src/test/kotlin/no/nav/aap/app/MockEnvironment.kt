@@ -74,6 +74,8 @@ class MockEnvironment : AutoCloseable {
         "AAP_VEILEDER" to "33b4d871-e3de-472e-be8a-762cb25c23d8",
         "AAP_FATTER" to "8f9c8d32-a4b5-4baf-95c4-3710f48edfe7",
         "AAP_LES" to "05eab1c7-9877-4566-95ee-87ab960a3c42",
+        "FORTROLIG_ADRESSE" to "5a749147-f49a-494f-94f4-19e38c3031cf",
+        "STRENGT_FORTROLIG_ADRESSE" to "8bc149cb-d73e-44af-8a89-07ccef99c22c",
         "DB_HOST" to postgres.host,
         "DB_PORT" to postgres.firstMappedPort.toString(),
         "DB_DATABASE" to postgres.databaseName,

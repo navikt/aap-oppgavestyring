@@ -69,7 +69,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "oppgavestyring sin dørvakt stoppet deg") }
             validate { cred ->
                 val claimedRoles = cred.getListClaim("groups", UUID::class)
-                val authorizedRoles = config.oauth.roles.asList()
+                val authorizedRoles = config.oauth.roles.map { it.objectId }
                 if (claimedRoles.any { it in authorizedRoles }) JWTPrincipal(cred.payload) else null
             }
         }
@@ -80,7 +80,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     val datasource = initDatasource(config.database)
     migrate(datasource)
     val repo = Repo(datasource)
-    val innloggetBrukerProvider = InnloggetBrukerProvider(AxsysClient(config.axsys, config.azure))
+    val innloggetBrukerProvider = InnloggetBrukerProvider(AxsysClient(config.axsys, config.azure), config.oauth.roles)
 
     kafka.connect(config.kafka, prometheus, topology(repo))
 

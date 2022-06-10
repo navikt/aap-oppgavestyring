@@ -91,9 +91,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("UGRADERT"),
+            roller = listOf("SAKSBEHANDLER"),
             tilknyttedeEnheter = listOf("1234"),
-            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(listOf("12345678910"), innloggetBruker)
@@ -258,9 +257,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = listOf("SAKSBEHANDLER"),
             tilknyttedeEnheter = listOf("1234"),
-            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -342,9 +340,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = listOf("SAKSBEHANDLER"),
             tilknyttedeEnheter = listOf("1234"),
-            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -426,9 +423,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = listOf("SAKSBEHANDLER"),
             tilknyttedeEnheter = listOf("1234"),
-            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -510,10 +506,9 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = listOf("SAKSBEHANDLER"),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = true,
-            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -595,11 +590,9 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = listOf("SAKSBEHANDLER"),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
-            erTilknyttetNAY = true,
-            erTilknyttetLokalkontor = false
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -681,11 +674,9 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = emptyList(),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
-            erTilknyttetNAY = false,
-            erTilknyttetLokalkontor = false
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -767,11 +758,9 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = listOf("VEILEDER"),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
-            erTilknyttetNAY = false,
-            erTilknyttetLokalkontor = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -853,11 +842,9 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf(""),
+            roller = listOf("VEILEDER"),
             tilknyttedeEnheter = listOf("4321"),
             harSkjermingsrolle = false,
-            erTilknyttetNAY = false,
-            erTilknyttetLokalkontor = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)

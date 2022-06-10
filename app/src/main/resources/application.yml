@@ -17,11 +17,20 @@ oauth:
     audience: ${AZURE_APP_CLIENT_ID}
     jwksUrl: ${AZURE_OPENID_CONFIG_JWKS_URI}
   roles:
-    saksbehandler: ${AAP_SAKSBEHANDLER}
-    beslutter: ${AAP_BESLUTTER}
-    veileder: ${AAP_VEILEDER}
-    fatter: ${AAP_FATTER}
-    les: ${AAP_LES}
+    - name: SAKSBEHANDLER
+      objectId: ${AAP_SAKSBEHANDLER}
+    - name: BESLUTTER
+      objectId: ${AAP_BESLUTTER}
+    - name: VEILEDER
+      objectId: ${AAP_VEILEDER}
+    - name: FATTER
+      objectId: ${AAP_FATTER}
+    - name: LES
+      objectId: ${AAP_LES}
+    - name: FORTROLIG_ADRESSE
+      objectId: ${FORTROLIG_ADRESSE}
+    - name: STRENGT_FORTROLIG_ADRESSE
+      objectId: ${STRENGT_FORTROLIG_ADRESSE}
 
 axsys:
   url: ${AXSYS_URL}

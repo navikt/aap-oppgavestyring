@@ -17,18 +17,13 @@ data class Config(
 
 data class OAuthConfig(
     val azure: IssuerConfig,
-    val roles: Roles,
+    val roles: List<Role>,
 )
 
-data class Roles(
-    val saksbehandler: UUID,
-    val beslutter: UUID,
-    val veileder: UUID,
-    val fatter: UUID,
-    val les: UUID,
-) {
-    fun asList() = listOf(saksbehandler, beslutter, veileder, fatter, les)
-}
+data class Role(
+    val name: String,
+    val objectId: UUID,
+)
 
 data class IssuerConfig(
     val issuer: String,
