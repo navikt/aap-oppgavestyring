@@ -92,7 +92,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
             roller = listOf("UGRADERT"),
-            tilknyttetEnhet = listOf("1234")
+            tilknyttedeEnheter = listOf("1234"),
+            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(listOf("12345678910"), innloggetBruker)
@@ -258,7 +259,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
             roller = listOf(""),
-            tilknyttetEnhet = listOf("1234")
+            tilknyttedeEnheter = listOf("1234"),
+            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -341,7 +343,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
             roller = listOf(""),
-            tilknyttetEnhet = listOf("1234")
+            tilknyttedeEnheter = listOf("1234"),
+            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -424,7 +427,8 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
             roller = listOf(""),
-            tilknyttetEnhet = listOf("1234")
+            tilknyttedeEnheter = listOf("1234"),
+            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
@@ -507,13 +511,358 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
             roller = listOf(""),
-            tilknyttetEnhet = listOf("1234"),
-            harSkjermingsrolle = true
+            tilknyttedeEnheter = listOf("1234"),
+            harSkjermingsrolle = true,
+            erTilknyttetNAY = true
         )
 
         val frontendsøkere = søkerDao.select(innloggetBruker)
 
         assertEquals(1, frontendsøkere.size)
+    }
+
+    @Test
+    fun `Innlogget som saksbehandler - norg enhet har ingen påvirkning - har derfor rett til å se denne`() {
+        val frontendSøker = FrontendSøker(
+            personident = "12345678910",
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            skjermet = false,
+            sak = FrontendSak(
+                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                type = "11-5",
+                paragraf_11_2 = FrontendParagraf_11_2(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_3 = FrontendParagraf_11_3(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_4 = FrontendParagraf_11_4(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_5 = FrontendParagraf_11_5(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    kravOmNedsattArbeidsevneErOppfylt = null,
+                    nedsettelseSkyldesSykdomEllerSkade = null
+                ),
+                paragraf_11_6 = FrontendParagraf_11_6(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    harBehovForBehandling = null,
+                    harBehovForTiltak = null,
+                    harMulighetForÅKommeIArbeid = null
+                ),
+                paragraf_11_12 = FrontendParagraf_11_12(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    bestemmesAv = null,
+                    unntak = null,
+                    unntaksbegrunnelse = null,
+                    manueltSattVirkningsdato = null
+                ),
+                paragraf_11_29 = FrontendParagraf_11_29(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                vedtak = null
+            )
+        )
+
+        søkerDao.insert(frontendSøker)
+
+        val personopplysninger = FrontendPersonopplysninger(
+            personident = "12345678910",
+            norgEnhetId = "1234",
+            adressebeskyttelse = "UGRADERT",
+            geografiskTilknytning = "0001",
+            erSkjermet = false,
+            erSkjermetFom = null,
+            erSkjermetTom = null
+        )
+
+        personopplysningerDao.insert(personopplysninger)
+
+        val innloggetBruker = InnloggetBruker(
+            ident = "Z000001",
+            roller = listOf(""),
+            tilknyttedeEnheter = listOf("1234"),
+            harSkjermingsrolle = false,
+            erTilknyttetNAY = true,
+            erTilknyttetLokalkontor = false
+        )
+
+        val frontendsøkere = søkerDao.select(innloggetBruker)
+
+        assertEquals(1, frontendsøkere.size)
+    }
+
+    @Test
+    fun `Innlogget uten saksbehandler eller veilederrolle - har ikke rett til å se denne`() {
+        val frontendSøker = FrontendSøker(
+            personident = "12345678910",
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            skjermet = false,
+            sak = FrontendSak(
+                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                type = "11-5",
+                paragraf_11_2 = FrontendParagraf_11_2(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_3 = FrontendParagraf_11_3(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_4 = FrontendParagraf_11_4(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_5 = FrontendParagraf_11_5(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    kravOmNedsattArbeidsevneErOppfylt = null,
+                    nedsettelseSkyldesSykdomEllerSkade = null
+                ),
+                paragraf_11_6 = FrontendParagraf_11_6(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    harBehovForBehandling = null,
+                    harBehovForTiltak = null,
+                    harMulighetForÅKommeIArbeid = null
+                ),
+                paragraf_11_12 = FrontendParagraf_11_12(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    bestemmesAv = null,
+                    unntak = null,
+                    unntaksbegrunnelse = null,
+                    manueltSattVirkningsdato = null
+                ),
+                paragraf_11_29 = FrontendParagraf_11_29(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                vedtak = null
+            )
+        )
+
+        søkerDao.insert(frontendSøker)
+
+        val personopplysninger = FrontendPersonopplysninger(
+            personident = "12345678910",
+            norgEnhetId = "1234",
+            adressebeskyttelse = "UGRADERT",
+            geografiskTilknytning = "0001",
+            erSkjermet = false,
+            erSkjermetFom = null,
+            erSkjermetTom = null
+        )
+
+        personopplysningerDao.insert(personopplysninger)
+
+        val innloggetBruker = InnloggetBruker(
+            ident = "Z000001",
+            roller = listOf(""),
+            tilknyttedeEnheter = listOf("1234"),
+            harSkjermingsrolle = false,
+            erTilknyttetNAY = false,
+            erTilknyttetLokalkontor = false
+        )
+
+        val frontendsøkere = søkerDao.select(innloggetBruker)
+
+        assertEquals(0, frontendsøkere.size)
+    }
+
+    @Test
+    fun `Innlogget som veileder - riktig norg enhet - har derfor rett til å se denne`() {
+        val frontendSøker = FrontendSøker(
+            personident = "12345678910",
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            skjermet = false,
+            sak = FrontendSak(
+                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                type = "11-5",
+                paragraf_11_2 = FrontendParagraf_11_2(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_3 = FrontendParagraf_11_3(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_4 = FrontendParagraf_11_4(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_5 = FrontendParagraf_11_5(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    kravOmNedsattArbeidsevneErOppfylt = null,
+                    nedsettelseSkyldesSykdomEllerSkade = null
+                ),
+                paragraf_11_6 = FrontendParagraf_11_6(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    harBehovForBehandling = null,
+                    harBehovForTiltak = null,
+                    harMulighetForÅKommeIArbeid = null
+                ),
+                paragraf_11_12 = FrontendParagraf_11_12(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    bestemmesAv = null,
+                    unntak = null,
+                    unntaksbegrunnelse = null,
+                    manueltSattVirkningsdato = null
+                ),
+                paragraf_11_29 = FrontendParagraf_11_29(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                vedtak = null
+            )
+        )
+
+        søkerDao.insert(frontendSøker)
+
+        val personopplysninger = FrontendPersonopplysninger(
+            personident = "12345678910",
+            norgEnhetId = "1234",
+            adressebeskyttelse = "UGRADERT",
+            geografiskTilknytning = "0001",
+            erSkjermet = false,
+            erSkjermetFom = null,
+            erSkjermetTom = null
+        )
+
+        personopplysningerDao.insert(personopplysninger)
+
+        val innloggetBruker = InnloggetBruker(
+            ident = "Z000001",
+            roller = listOf(""),
+            tilknyttedeEnheter = listOf("1234"),
+            harSkjermingsrolle = false,
+            erTilknyttetNAY = false,
+            erTilknyttetLokalkontor = true
+        )
+
+        val frontendsøkere = søkerDao.select(innloggetBruker)
+
+        assertEquals(1, frontendsøkere.size)
+    }
+
+    @Test
+    fun `Innlogget som veileder - annen norg enhet - har derfor ikke rett til å se denne`() {
+        val frontendSøker = FrontendSøker(
+            personident = "12345678910",
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            skjermet = false,
+            sak = FrontendSak(
+                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                type = "11-5",
+                paragraf_11_2 = FrontendParagraf_11_2(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_3 = FrontendParagraf_11_3(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_4 = FrontendParagraf_11_4(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                paragraf_11_5 = FrontendParagraf_11_5(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    kravOmNedsattArbeidsevneErOppfylt = null,
+                    nedsettelseSkyldesSykdomEllerSkade = null
+                ),
+                paragraf_11_6 = FrontendParagraf_11_6(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    harBehovForBehandling = null,
+                    harBehovForTiltak = null,
+                    harMulighetForÅKommeIArbeid = null
+                ),
+                paragraf_11_12 = FrontendParagraf_11_12(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true,
+                    bestemmesAv = null,
+                    unntak = null,
+                    unntaksbegrunnelse = null,
+                    manueltSattVirkningsdato = null
+                ),
+                paragraf_11_29 = FrontendParagraf_11_29(
+                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                    erOppfylt = false,
+                    måVurderesManuelt = true
+                ),
+                vedtak = null
+            )
+        )
+
+        søkerDao.insert(frontendSøker)
+
+        val personopplysninger = FrontendPersonopplysninger(
+            personident = "12345678910",
+            norgEnhetId = "1234",
+            adressebeskyttelse = "UGRADERT",
+            geografiskTilknytning = "0001",
+            erSkjermet = false,
+            erSkjermetFom = null,
+            erSkjermetTom = null
+        )
+
+        personopplysningerDao.insert(personopplysninger)
+
+        val innloggetBruker = InnloggetBruker(
+            ident = "Z000001",
+            roller = listOf(""),
+            tilknyttedeEnheter = listOf("4321"),
+            harSkjermingsrolle = false,
+            erTilknyttetNAY = false,
+            erTilknyttetLokalkontor = true
+        )
+
+        val frontendsøkere = søkerDao.select(innloggetBruker)
+
+        assertEquals(0, frontendsøkere.size)
     }
 
     private fun rowCount(tabell: String): Int {

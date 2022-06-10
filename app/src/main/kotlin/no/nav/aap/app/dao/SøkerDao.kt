@@ -51,12 +51,16 @@ internal class SøkerDao(private val dataSource: DataSource) {
                 WHERE p.adressebeskyttelse = ANY (:roller)
                   AND (:harSkjermingsrolle OR (p.er_skjermet_fom IS NULL OR p.er_skjermet_fom > now() OR
                                                (p.er_skjermet_tom IS NOT NULL AND p.er_skjermet_tom < now())))
+                  AND (:erTilknyttetNAY OR (:erTilknyttetLokalkontor AND p.norg_enhet_id = ANY (:tilknyttedeEnheter)))
                 """
             session.run(
                 queryOf(
                     query, mapOf(
                         "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session),
-                        "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle()
+                        "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle(),
+                        "erTilknyttetNAY" to innloggetBruker.erTilknyttetNAY(),
+                        "erTilknyttetLokalkontor" to innloggetBruker.erTilknyttetLokalkontor(),
+                        "tilknyttedeEnheter" to innloggetBruker.tilknyttedeEnheter().toSqlArray(session),
                     )
                 ).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))
@@ -75,13 +79,17 @@ internal class SøkerDao(private val dataSource: DataSource) {
                   AND p.adressebeskyttelse = ANY (:roller)
                   AND (:harSkjermingsrolle OR (p.er_skjermet_fom IS NULL OR p.er_skjermet_fom > now() OR
                                                (p.er_skjermet_tom IS NOT NULL AND p.er_skjermet_tom < now())))
+                  AND (:erTilknyttetNAY OR (:erTilknyttetLokalkontor AND p.norg_enhet_id = ANY (:tilknyttedeEnheter)))
                 """
             session.run(
                 queryOf(
                     query, mapOf(
                         "identer" to personidenter.toSqlArray(session),
                         "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session),
-                        "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle()
+                        "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle(),
+                        "erTilknyttetNAY" to innloggetBruker.erTilknyttetNAY(),
+                        "erTilknyttetLokalkontor" to innloggetBruker.erTilknyttetLokalkontor(),
+                        "tilknyttedeEnheter" to innloggetBruker.tilknyttedeEnheter().toSqlArray(session),
                     )
                 ).map {
                     objectMapper.readValue<FrontendSøker>(it.string("data"))

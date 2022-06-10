@@ -12,7 +12,7 @@ class InnloggetBrukerProvider(private val axsysClient: AxsysClient) {
         return InnloggetBruker(
             ident = ident,
             roller = roller,
-            tilknyttetEnhet = axsysClient.hentEnheter(ident)
+            tilknyttedeEnheter = axsysClient.hentEnheter(ident)
         )
     }
 
