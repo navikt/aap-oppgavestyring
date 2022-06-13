@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import no.nav.aap.app.RoleName
 import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.kafka.SøkereKafkaDto
@@ -57,7 +58,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
             session.run(
                 queryOf(
                     query, mapOf(
-                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session),
+                        "roller" to innloggetBruker.adressebeskyttelseRoller().map(RoleName::name).toSqlArray(session),
                         "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle(),
                         "erTilknyttetNAY" to innloggetBruker.erTilknyttetNAY(),
                         "erTilknyttetLokalkontor" to innloggetBruker.erTilknyttetLokalkontor(),
@@ -86,7 +87,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
                 queryOf(
                     query, mapOf(
                         "identer" to personidenter.toSqlArray(session),
-                        "roller" to innloggetBruker.adressebeskyttelseRoller().toSqlArray(session),
+                        "roller" to innloggetBruker.adressebeskyttelseRoller().map(RoleName::name).toSqlArray(session),
                         "harSkjermingsrolle" to innloggetBruker.harSkjermingsrolle(),
                         "erTilknyttetNAY" to innloggetBruker.erTilknyttetNAY(),
                         "erTilknyttetLokalkontor" to innloggetBruker.erTilknyttetLokalkontor(),

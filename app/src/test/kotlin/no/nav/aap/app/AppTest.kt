@@ -1,6 +1,5 @@
 package no.nav.aap.app
 
-import com.auth0.jwt.JWT
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.nimbusds.jwt.SignedJWT

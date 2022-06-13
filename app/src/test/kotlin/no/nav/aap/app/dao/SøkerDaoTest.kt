@@ -2,6 +2,7 @@ package no.nav.aap.app.dao
 
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import no.nav.aap.app.RoleName
 import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.*
@@ -111,7 +112,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("SAKSBEHANDLER"),
+            roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
 
@@ -296,7 +297,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("SAKSBEHANDLER"),
+            roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
 
@@ -398,7 +399,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("SAKSBEHANDLER"),
+            roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
 
@@ -500,7 +501,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("SAKSBEHANDLER"),
+            roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
 
@@ -602,7 +603,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("SAKSBEHANDLER"),
+            roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = true,
         )
@@ -705,7 +706,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("SAKSBEHANDLER"),
+            roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
         )
@@ -911,7 +912,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("VEILEDER"),
+            roller = listOf(RoleName.VEILEDER),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
         )
@@ -1014,7 +1015,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
         val innloggetBruker = InnloggetBruker(
             ident = "Z000001",
-            roller = listOf("VEILEDER"),
+            roller = listOf(RoleName.VEILEDER),
             tilknyttedeEnheter = listOf("4321"),
             harSkjermingsrolle = false,
         )

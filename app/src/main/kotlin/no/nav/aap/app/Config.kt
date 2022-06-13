@@ -21,7 +21,7 @@ data class OAuthConfig(
 )
 
 data class Role(
-    val name: String,
+    val name: RoleName,
     val objectId: UUID,
 )
 
@@ -30,3 +30,7 @@ data class IssuerConfig(
     val audience: String,
     val jwksUrl: URL,
 )
+
+enum class RoleName {
+    SAKSBEHANDLER, BESLUTTER, VEILEDER, FATTER, LES, FORTROLIG_ADRESSE, STRENGT_FORTROLIG_ADRESSE, UGRADERT
+}
