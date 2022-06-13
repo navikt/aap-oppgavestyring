@@ -21,25 +21,29 @@ data class FrontendSak(
 data class FrontendParagraf_11_2(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean
+    val måVurderesManuelt: Boolean,
+    val kanRedigere: Boolean = false
 )
 
 data class FrontendParagraf_11_3(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean
+    val måVurderesManuelt: Boolean,
+    val kanRedigere: Boolean = false
 )
 
 data class FrontendParagraf_11_4(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean
+    val måVurderesManuelt: Boolean,
+    val kanRedigere: Boolean = false
 )
 
 data class FrontendParagraf_11_5(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
     val måVurderesManuelt: Boolean,
+    val kanRedigere: Boolean = false,
     val kravOmNedsattArbeidsevneErOppfylt: Boolean?,
     val nedsettelseSkyldesSykdomEllerSkade: Boolean?
 )
@@ -48,6 +52,7 @@ data class FrontendParagraf_11_6(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
     val måVurderesManuelt: Boolean,
+    val kanRedigere: Boolean = false,
     val harBehovForBehandling: Boolean?,
     val harBehovForTiltak: Boolean?,
     val harMulighetForÅKommeIArbeid: Boolean?
@@ -57,6 +62,7 @@ data class FrontendParagraf_11_12(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
     val måVurderesManuelt: Boolean,
+    val kanRedigere: Boolean = false,
     val bestemmesAv: String?,
     val unntak: String?,
     val unntaksbegrunnelse: String?,
@@ -66,5 +72,6 @@ data class FrontendParagraf_11_12(
 data class FrontendParagraf_11_29(
     val vilkårsvurderingsid: UUID,
     val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean
+    val måVurderesManuelt: Boolean,
+    val kanRedigere: Boolean = false
 )

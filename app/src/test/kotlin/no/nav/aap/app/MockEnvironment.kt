@@ -12,6 +12,7 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import no.nav.aap.app.axsys.Enhet
 import no.nav.aap.app.axsys.Tilganger
+import no.nav.aap.app.security.TestAzureGroups
 import no.nav.aap.kafka.streams.test.KafkaStreamsMock
 import org.apache.kafka.streams.TestInputTopic
 import org.testcontainers.containers.PostgreSQLContainer
@@ -69,13 +70,13 @@ class MockEnvironment : AutoCloseable {
         "KAFKA_TRUSTSTORE_PATH" to "",
         "KAFKA_KEYSTORE_PATH" to "",
         "KAFKA_CREDSTORE_PASSWORD" to "",
-        "AAP_SAKSBEHANDLER" to "9eea5eb0-1f42-4661-949a-91740d817f49",
-        "AAP_BESLUTTER" to "bcc57777-aba4-45ef-8f07-fa594e54a33f",
-        "AAP_VEILEDER" to "33b4d871-e3de-472e-be8a-762cb25c23d8",
-        "AAP_FATTER" to "8f9c8d32-a4b5-4baf-95c4-3710f48edfe7",
-        "AAP_LES" to "05eab1c7-9877-4566-95ee-87ab960a3c42",
-        "FORTROLIG_ADRESSE" to "5a749147-f49a-494f-94f4-19e38c3031cf",
-        "STRENGT_FORTROLIG_ADRESSE" to "8bc149cb-d73e-44af-8a89-07ccef99c22c",
+        "AAP_SAKSBEHANDLER" to TestAzureGroups.SAKSBEHANDLER.uuid,
+        "AAP_BESLUTTER" to TestAzureGroups.BESLUTTER.uuid,
+        "AAP_VEILEDER" to TestAzureGroups.VEILEDER.uuid,
+        "AAP_FATTER" to TestAzureGroups.FATTER.uuid,
+        "AAP_LES" to TestAzureGroups.LES.uuid,
+        "FORTROLIG_ADRESSE" to TestAzureGroups.FORTROLIG_ADRESSE.uuid,
+        "STRENGT_FORTROLIG_ADRESSE" to TestAzureGroups.STRENGT_FORTROLIG_ADRESSE.uuid,
         "DB_HOST" to postgres.host,
         "DB_PORT" to postgres.firstMappedPort.toString(),
         "DB_DATABASE" to postgres.databaseName,

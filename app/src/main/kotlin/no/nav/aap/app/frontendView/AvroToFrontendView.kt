@@ -1,78 +1,85 @@
 package no.nav.aap.app.frontendView
 
+import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.kafka.*
 import no.nav.aap.app.modell.Paragraf
 import java.time.Year
 
-internal fun SøkereKafkaDto.toFrontendView(): FrontendSøker =
+internal fun SøkereKafkaDto.toFrontendView(innloggetBruker: InnloggetBruker): FrontendSøker =
     FrontendSøker(
         personident = personident,
         fødselsdato = fødselsdato,
-        sak = saker.first().toFrontendView(),
+        sak = saker.first().toFrontendView(innloggetBruker),
         skjermet = false // TODO: Hent fra avro Soker
     )
 
-private fun Sak.toFrontendView(): FrontendSak = FrontendSak(
+private fun Sak.toFrontendView(innloggetBruker: InnloggetBruker): FrontendSak = FrontendSak(
     saksid = saksid,
     søknadstidspunkt = søknadstidspunkt,
     type = sakstyper.first { it.aktiv }.type,
     vedtak = vedtak?.toFrontendView(),
-    paragraf_11_2 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_2.name)?.toFrontendParagraf11_2(),
-    paragraf_11_3 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_3.name)?.toFrontendParagraf11_3(),
-    paragraf_11_4 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_4.name)?.toFrontendParagraf11_4(),
-    paragraf_11_5 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_5.name)?.toFrontendParagraf11_5(),
-    paragraf_11_6 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_6.name)?.toFrontendParagraf11_6(),
-    paragraf_11_12 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_12.name)?.toFrontendParagraf11_12(),
-    paragraf_11_29 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_29.name)?.toFrontendParagraf11_29()
+    paragraf_11_2 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_2.name)?.toFrontendParagraf11_2(kanRedigere = innloggetBruker.erTilknyttetNAY()),
+    paragraf_11_3 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_3.name)?.toFrontendParagraf11_3(kanRedigere = innloggetBruker.erTilknyttetNAY()),
+    paragraf_11_4 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_4.name)?.toFrontendParagraf11_4(kanRedigere = innloggetBruker.erTilknyttetNAY()),
+    paragraf_11_5 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_5.name)?.toFrontendParagraf11_5(kanRedigere = innloggetBruker.erTilknyttetLokalkontor()),
+    paragraf_11_6 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_6.name)?.toFrontendParagraf11_6(kanRedigere = innloggetBruker.erTilknyttetNAY()),
+    paragraf_11_12 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_12.name)?.toFrontendParagraf11_12(kanRedigere = innloggetBruker.erTilknyttetNAY()),
+    paragraf_11_29 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_29.name)?.toFrontendParagraf11_29(kanRedigere = innloggetBruker.erTilknyttetNAY())
 )
 
 private fun Iterable<Sakstype>.finnVilkårsvurdering(paragrafnavn: String) =
     this.first { it.aktiv }.vilkårsvurderinger.firstOrNull { it.paragraf == paragrafnavn }
 
-private fun Vilkårsvurdering.toFrontendParagraf11_2() = FrontendParagraf_11_2(
+private fun Vilkårsvurdering.toFrontendParagraf11_2(kanRedigere: Boolean) = FrontendParagraf_11_2(
     vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = måVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt,
+    kanRedigere = kanRedigere
 )
 
-private fun Vilkårsvurdering.toFrontendParagraf11_3() = FrontendParagraf_11_3(
+private fun Vilkårsvurdering.toFrontendParagraf11_3(kanRedigere: Boolean) = FrontendParagraf_11_3(
     vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = måVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt,
+    kanRedigere = kanRedigere
 )
 
-private fun Vilkårsvurdering.toFrontendParagraf11_4() = FrontendParagraf_11_4(
+private fun Vilkårsvurdering.toFrontendParagraf11_4(kanRedigere: Boolean) = FrontendParagraf_11_4(
     vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = måVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt,
+    kanRedigere = kanRedigere
 )
 
-private fun Vilkårsvurdering.toFrontendParagraf11_5(): FrontendParagraf_11_5 {
+private fun Vilkårsvurdering.toFrontendParagraf11_5(kanRedigere: Boolean): FrontendParagraf_11_5 {
     return FrontendParagraf_11_5(
         vilkårsvurderingsid = vilkårsvurderingsid,
         erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
         måVurderesManuelt = måVurderesManuelt,
+        kanRedigere = kanRedigere,
         kravOmNedsattArbeidsevneErOppfylt = løsning_11_5_manuell?.kravOmNedsattArbeidsevneErOppfylt,
         nedsettelseSkyldesSykdomEllerSkade = løsning_11_5_manuell?.nedsettelseSkyldesSykdomEllerSkade
     )
 }
 
-private fun Vilkårsvurdering.toFrontendParagraf11_6(): FrontendParagraf_11_6 {
+private fun Vilkårsvurdering.toFrontendParagraf11_6(kanRedigere: Boolean): FrontendParagraf_11_6 {
     return FrontendParagraf_11_6(
         vilkårsvurderingsid = vilkårsvurderingsid,
         erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
         måVurderesManuelt = måVurderesManuelt,
+        kanRedigere = kanRedigere,
         harBehovForBehandling = løsning_11_6_manuell?.harBehovForBehandling,
         harBehovForTiltak = løsning_11_6_manuell?.harBehovForTiltak,
         harMulighetForÅKommeIArbeid = løsning_11_6_manuell?.harMulighetForÅKommeIArbeid
     )
 }
 
-private fun Vilkårsvurdering.toFrontendParagraf11_12(): FrontendParagraf_11_12 {
+private fun Vilkårsvurdering.toFrontendParagraf11_12(kanRedigere: Boolean): FrontendParagraf_11_12 {
     return FrontendParagraf_11_12(
         vilkårsvurderingsid = vilkårsvurderingsid,
         erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
         måVurderesManuelt = måVurderesManuelt,
+        kanRedigere = kanRedigere,
         bestemmesAv = løsning_11_12_ledd1_manuell?.bestemmesAv,
         unntak = løsning_11_12_ledd1_manuell?.unntak,
         unntaksbegrunnelse = løsning_11_12_ledd1_manuell?.unntaksbegrunnelse,
@@ -80,10 +87,11 @@ private fun Vilkårsvurdering.toFrontendParagraf11_12(): FrontendParagraf_11_12 
     )
 }
 
-private fun Vilkårsvurdering.toFrontendParagraf11_29() = FrontendParagraf_11_29(
+private fun Vilkårsvurdering.toFrontendParagraf11_29(kanRedigere: Boolean) = FrontendParagraf_11_29(
     vilkårsvurderingsid = vilkårsvurderingsid,
     erOppfylt = tilstand in listOf("OPPFYLT", "OPPFYLT_MASKINELT"), // TODO
-    måVurderesManuelt = måVurderesManuelt
+    måVurderesManuelt = måVurderesManuelt,
+    kanRedigere = kanRedigere
 )
 
 private fun Vedtak.toFrontendView() = FrontendVedtak(

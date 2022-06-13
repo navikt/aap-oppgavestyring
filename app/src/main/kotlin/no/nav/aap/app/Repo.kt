@@ -34,11 +34,13 @@ internal class Repo(dataSource: DataSource) : Repository {
     private val sakDao = SakDao(dataSource)
     private val tildelingDao = TildelingDao(dataSource)
 
-    override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) = søkerDao.select(listOf(personident), innloggetBruker).map { it.toFrontendView() }
+    override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) =
+        søkerDao.select(listOf(personident), innloggetBruker).map { it.toFrontendView(innloggetBruker) }
 
     override fun lagreSøker(søker: SøkereKafkaDto) = søkerDao.insert(søker)
 
-    override fun hentSøkere(innloggetBruker: InnloggetBruker): List<FrontendSøker> = søkerDao.select(innloggetBruker).map { it.toFrontendView() }
+    override fun hentSøkere(innloggetBruker: InnloggetBruker) =
+        søkerDao.select(innloggetBruker).map { it.toFrontendView(innloggetBruker) }
 
     override fun slettSøker(personident: String) {
         personopplysningerDao.delete(personident)

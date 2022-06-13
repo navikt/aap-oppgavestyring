@@ -17,7 +17,7 @@ object JwtGenerator {
     private val jwkSet: JWKSet get() = JWKSet.parse(this::class.java.getResource("/jwkset.json")!!.readText())
     private val rsaKey: RSAKey get() = jwkSet.getKeyByKeyId("localhost-signer") as RSAKey
 
-    fun generate(): SignedJWT = createSignedJWT(rsaKey, claims())
+    fun generateSaksbehandlerToken(): SignedJWT = createSignedJWT(rsaKey, claims(listOf(TestAzureGroups.SAKSBEHANDLER)))
 
     private fun createSignedJWT(rsaJwk: RSAKey, claimsSet: JWTClaimsSet): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rsaJwk.keyID).type(JOSEObjectType.JWT).build()
@@ -27,14 +27,24 @@ object JwtGenerator {
         }
     }
 
-    private fun claims(now: Date = Date()) = JWTClaimsSet.Builder()
+    private fun claims( groups: List<TestAzureGroups>, now: Date = Date()) = JWTClaimsSet.Builder()
         .subject(null)
         .issuer("azure")
         .audience("oppgavestyring")
         .jwtID(UUID.randomUUID().toString())
-        .claim("groups", listOf("9eea5eb0-1f42-4661-949a-91740d817f49", "bcc57777-aba4-45ef-8f07-fa594e54a33f"))
+        .claim("groups", groups.map { it.uuid })
         .claim("NAVident", "Z000001")
         .notBeforeTime(now)
         .issueTime(now)
         .expirationTime(Date(now.time + TimeUnit.MINUTES.toMillis((60 * 60 * 3600).toLong()))).build()
+}
+
+enum class TestAzureGroups(val uuid: String) {
+    SAKSBEHANDLER("9eea5eb0-1f42-4661-949a-91740d817f49"),
+    BESLUTTER("bcc57777-aba4-45ef-8f07-fa594e54a33f"),
+    VEILEDER("bcc57777-aba4-45ef-8f07-fa594e54a44c"),
+    FATTER("bcc57777-aba4-45ef-8f07-fa594e54a55a"),
+    LES("bcc57777-aba4-45ef-8f07-fa594e54a66b"),
+    FORTROLIG_ADRESSE("bcc57777-aba4-45ef-8f07-fa594e54b22c"),
+    STRENGT_FORTROLIG_ADRESSE("bcc57555-aba4-45ef-8f07-fa594e54b22c")
 }

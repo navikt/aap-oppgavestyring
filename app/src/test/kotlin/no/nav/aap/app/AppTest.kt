@@ -1,7 +1,9 @@
 package no.nav.aap.app
 
+import com.auth0.jwt.JWT
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.nimbusds.jwt.SignedJWT
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.client.*
@@ -200,7 +202,7 @@ internal class AppTest {
             )
         }
 
-        val saker = client.getSaker("/api/sak")
+        val saker = client.getSaker("/api/sak", JwtGenerator::generateSaksbehandlerToken)
 
         val expected = listOf(
             FrontendSøker(
@@ -214,22 +216,26 @@ internal class AppTest {
                     paragraf_11_2 = FrontendParagraf_11_2(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
                         erOppfylt = false,
-                        måVurderesManuelt = true
+                        måVurderesManuelt = true,
+                        kanRedigere = true
                     ),
                     paragraf_11_3 = FrontendParagraf_11_3(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
                         erOppfylt = false,
-                        måVurderesManuelt = true
+                        måVurderesManuelt = true,
+                        kanRedigere = true
                     ),
                     paragraf_11_4 = FrontendParagraf_11_4(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
                         erOppfylt = true,
-                        måVurderesManuelt = false
+                        måVurderesManuelt = false,
+                        kanRedigere = true
                     ),
                     paragraf_11_5 = FrontendParagraf_11_5(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
                         erOppfylt = false,
                         måVurderesManuelt = true,
+                        kanRedigere = false,
                         kravOmNedsattArbeidsevneErOppfylt = null,
                         nedsettelseSkyldesSykdomEllerSkade = null
                     ),
@@ -237,6 +243,7 @@ internal class AppTest {
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
                         erOppfylt = false,
                         måVurderesManuelt = true,
+                        kanRedigere = true,
                         harBehovForBehandling = null,
                         harBehovForTiltak = null,
                         harMulighetForÅKommeIArbeid = null
@@ -245,6 +252,7 @@ internal class AppTest {
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
                         erOppfylt = false,
                         måVurderesManuelt = true,
+                        kanRedigere = true,
                         bestemmesAv = null,
                         unntak = null,
                         unntaksbegrunnelse = null,
@@ -253,7 +261,8 @@ internal class AppTest {
                     paragraf_11_29 = FrontendParagraf_11_29(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
                         erOppfylt = false,
-                        måVurderesManuelt = true
+                        måVurderesManuelt = true,
+                        kanRedigere = true
                     ),
                     vedtak = null
                 )
@@ -383,7 +392,7 @@ internal class AppTest {
             )
         }
 
-        val saker = client.getSaker("/api/sak/12345678910")
+        val saker = client.getSaker("/api/sak/12345678910", JwtGenerator::generateSaksbehandlerToken)
         val expected = listOf(
             FrontendSøker(
                 personident = "12345678910",
@@ -396,22 +405,26 @@ internal class AppTest {
                     paragraf_11_2 = FrontendParagraf_11_2(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
                         erOppfylt = false,
-                        måVurderesManuelt = true
+                        måVurderesManuelt = true,
+                        kanRedigere = true
                     ),
                     paragraf_11_3 = FrontendParagraf_11_3(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
                         erOppfylt = false,
-                        måVurderesManuelt = true
+                        måVurderesManuelt = true,
+                        kanRedigere = true
                     ),
                     paragraf_11_4 = FrontendParagraf_11_4(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
                         erOppfylt = true,
-                        måVurderesManuelt = false
+                        måVurderesManuelt = false,
+                        kanRedigere = true
                     ),
                     paragraf_11_5 = FrontendParagraf_11_5(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
                         erOppfylt = false,
                         måVurderesManuelt = true,
+                        kanRedigere = false,
                         kravOmNedsattArbeidsevneErOppfylt = null,
                         nedsettelseSkyldesSykdomEllerSkade = null
                     ),
@@ -419,6 +432,7 @@ internal class AppTest {
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
                         erOppfylt = false,
                         måVurderesManuelt = true,
+                        kanRedigere = true,
                         harBehovForBehandling = null,
                         harBehovForTiltak = null,
                         harMulighetForÅKommeIArbeid = null
@@ -427,6 +441,7 @@ internal class AppTest {
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
                         erOppfylt = false,
                         måVurderesManuelt = true,
+                        kanRedigere = true,
                         bestemmesAv = null,
                         unntak = null,
                         unntaksbegrunnelse = null,
@@ -435,7 +450,8 @@ internal class AppTest {
                     paragraf_11_29 = FrontendParagraf_11_29(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
                         erOppfylt = false,
-                        måVurderesManuelt = true
+                        måVurderesManuelt = true,
+                        kanRedigere = true
                     ),
                     vedtak = null
                 )
@@ -620,10 +636,10 @@ internal class AppTest {
             )
         }
 
-        assertEquals(1, client.getSaker("/api/sak").size)
+        assertEquals(1, client.getSaker("/api/sak", JwtGenerator::generateSaksbehandlerToken).size)
 
         søkerTopic.produceTombstone("12345678910")
-        assertEquals(0, client.getSaker("/api/sak").size)
+        assertEquals(0, client.getSaker("/api/sak", JwtGenerator::generateSaksbehandlerToken).size)
 
         assertEquals(0, rowCount(mocks, "soker"))
         assertEquals(0, rowCount(mocks, "personopplysninger"))
@@ -695,7 +711,7 @@ internal class AppTest {
 
     private suspend fun ApplicationTestBuilder.postLøsning(body: String) {
         val response = client.post("/api/sak/123/losning") {
-            bearerAuth(JwtGenerator.generate().serialize())
+            bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
             contentType(ContentType.Application.Json)
             setBody(body)
         }
@@ -703,9 +719,9 @@ internal class AppTest {
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
-    private fun HttpClient.getSaker(path: String): List<FrontendSøker> = runBlocking {
+    private fun HttpClient.getSaker(path: String, tokenSupplier: () -> SignedJWT): List<FrontendSøker> = runBlocking {
         val response = get(path) {
-            bearerAuth(JwtGenerator.generate().serialize())
+            bearerAuth(tokenSupplier().serialize())
             accept(ContentType.Application.Json)
         }
 
