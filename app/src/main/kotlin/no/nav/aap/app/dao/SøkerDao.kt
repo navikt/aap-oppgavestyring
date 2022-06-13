@@ -9,6 +9,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.frontendView.FrontendSøker
+import no.nav.aap.app.kafka.SøkereKafkaDto
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
@@ -18,7 +19,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
 
-    internal fun insert(søker: FrontendSøker) {
+    internal fun insert(søker: SøkereKafkaDto) {
         sessionOf(dataSource).use { session ->
             session.transaction { tSession ->
                 @Language("PostgreSQL")
@@ -41,7 +42,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
     private fun List<String>.toSqlArray(session: Session) =
         session.connection.underlying.createArrayOf("text", toTypedArray())
 
-    internal fun select(innloggetBruker: InnloggetBruker) =
+    internal fun select(innloggetBruker: InnloggetBruker): List<SøkereKafkaDto> =
         sessionOf(dataSource).use { session ->
             @Language("PostgreSQL")
             val query = """
@@ -63,7 +64,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
                         "tilknyttedeEnheter" to innloggetBruker.tilknyttedeEnheter().toSqlArray(session),
                     )
                 ).map {
-                    objectMapper.readValue<FrontendSøker>(it.string("data"))
+                    objectMapper.readValue<SøkereKafkaDto>(it.string("data"))
                 }.asList
             )
         }
@@ -92,7 +93,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
                         "tilknyttedeEnheter" to innloggetBruker.tilknyttedeEnheter().toSqlArray(session),
                     )
                 ).map {
-                    objectMapper.readValue<FrontendSøker>(it.string("data"))
+                    objectMapper.readValue<SøkereKafkaDto>(it.string("data"))
                 }.asList
             )
         }

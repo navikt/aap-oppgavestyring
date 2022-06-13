@@ -6,6 +6,9 @@ import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSak
 import no.nav.aap.app.frontendView.FrontendSøker
+import no.nav.aap.app.kafka.Sak
+import no.nav.aap.app.kafka.SøkereKafkaDto
+import no.nav.aap.app.kafka.VurderingAvBeregningsdato
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -19,22 +22,22 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
     @Test
     fun `Lagrer personopplysninger i database`() {
         søkerDao.insert(
-            FrontendSøker(
+            SøkereKafkaDto(
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
-                skjermet = false,
-                sak = FrontendSak(
-                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                    vedtak = null,
-                    type = "11-5",
-                    paragraf_11_2 = null,
-                    paragraf_11_3 = null,
-                    paragraf_11_4 = null,
-                    paragraf_11_5 = null,
-                    paragraf_11_6 = null,
-                    paragraf_11_12 = null,
-                    paragraf_11_29 = null
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        tilstand = "",
+                        sakstyper = listOf(),
+                        vurderingsdato = LocalDate.now(),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                            tilstand = "",
+                            løsningVurderingAvBeregningsdato = null
+                        ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        vedtak = null
+                    )
                 )
             )
         )
@@ -60,22 +63,22 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
     @Test
     fun `Sletter personopplysninger fra database`() {
         søkerDao.insert(
-            FrontendSøker(
+            SøkereKafkaDto(
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
-                skjermet = false,
-                sak = FrontendSak(
-                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                    vedtak = null,
-                    type = "11-5",
-                    paragraf_11_2 = null,
-                    paragraf_11_3 = null,
-                    paragraf_11_4 = null,
-                    paragraf_11_5 = null,
-                    paragraf_11_6 = null,
-                    paragraf_11_12 = null,
-                    paragraf_11_29 = null
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        tilstand = "",
+                        sakstyper = listOf(),
+                        vurderingsdato = LocalDate.now(),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                            tilstand = "",
+                            løsningVurderingAvBeregningsdato = null
+                        ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        vedtak = null
+                    )
                 )
             )
         )
@@ -101,42 +104,42 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
     @Test
     fun `Sletter ikke andre personopplysninger fra database`() {
         søkerDao.insert(
-            FrontendSøker(
+            SøkereKafkaDto(
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
-                skjermet = false,
-                sak = FrontendSak(
-                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                    vedtak = null,
-                    type = "11-5",
-                    paragraf_11_2 = null,
-                    paragraf_11_3 = null,
-                    paragraf_11_4 = null,
-                    paragraf_11_5 = null,
-                    paragraf_11_6 = null,
-                    paragraf_11_12 = null,
-                    paragraf_11_29 = null
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        tilstand = "",
+                        sakstyper = listOf(),
+                        vurderingsdato = LocalDate.now(),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                            tilstand = "",
+                            løsningVurderingAvBeregningsdato = null
+                        ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        vedtak = null
+                    )
                 )
             )
         )
         søkerDao.insert(
-            FrontendSøker(
+            SøkereKafkaDto(
                 personident = "01987654321",
                 fødselsdato = LocalDate.of(1990, 1, 1),
-                skjermet = false,
-                sak = FrontendSak(
-                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                    vedtak = null,
-                    type = "11-5",
-                    paragraf_11_2 = null,
-                    paragraf_11_3 = null,
-                    paragraf_11_4 = null,
-                    paragraf_11_5 = null,
-                    paragraf_11_6 = null,
-                    paragraf_11_12 = null,
-                    paragraf_11_29 = null
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        tilstand = "",
+                        sakstyper = listOf(),
+                        vurderingsdato = LocalDate.now(),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                            tilstand = "",
+                            løsningVurderingAvBeregningsdato = null
+                        ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        vedtak = null
+                    )
                 )
             )
         )

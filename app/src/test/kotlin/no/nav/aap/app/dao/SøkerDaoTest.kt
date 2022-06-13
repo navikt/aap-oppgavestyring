@@ -5,6 +5,7 @@ import kotliquery.sessionOf
 import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.*
+import no.nav.aap.app.kafka.*
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -17,59 +18,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Lagrer liste med frontendsak i database`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -103,22 +123,22 @@ internal class SøkerDaoTest : DatabaseTestBase() {
     @Test
     fun `Sletter søker fra database`() {
         søkerDao.insert(
-            FrontendSøker(
+            SøkereKafkaDto(
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
-                skjermet = false,
-                sak = FrontendSak(
-                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                    vedtak = null,
-                    type = "11-5",
-                    paragraf_11_2 = null,
-                    paragraf_11_3 = null,
-                    paragraf_11_4 = null,
-                    paragraf_11_5 = null,
-                    paragraf_11_6 = null,
-                    paragraf_11_12 = null,
-                    paragraf_11_29 = null
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        tilstand = "",
+                        sakstyper = listOf(),
+                        vurderingsdato = LocalDate.now(),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                            tilstand = "",
+                            løsningVurderingAvBeregningsdato = null
+                        ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        vedtak = null
+                    )
                 )
             )
         )
@@ -133,22 +153,22 @@ internal class SøkerDaoTest : DatabaseTestBase() {
     @Test
     fun `Sletter ikke annen søker fra database`() {
         søkerDao.insert(
-            FrontendSøker(
+            SøkereKafkaDto(
                 personident = "01987654321",
                 fødselsdato = LocalDate.of(1990, 1, 1),
-                skjermet = false,
-                sak = FrontendSak(
-                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                    vedtak = null,
-                    type = "11-5",
-                    paragraf_11_2 = null,
-                    paragraf_11_3 = null,
-                    paragraf_11_4 = null,
-                    paragraf_11_5 = null,
-                    paragraf_11_6 = null,
-                    paragraf_11_12 = null,
-                    paragraf_11_29 = null
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        tilstand = "",
+                        sakstyper = listOf(),
+                        vurderingsdato = LocalDate.now(),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                            tilstand = "",
+                            løsningVurderingAvBeregningsdato = null
+                        ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        vedtak = null
+                    )
                 )
             )
         )
@@ -156,22 +176,22 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         assertEquals(1, rowCount("soker"))
 
         søkerDao.insert(
-            FrontendSøker(
+            SøkereKafkaDto(
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
-                skjermet = false,
-                sak = FrontendSak(
-                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                    vedtak = null,
-                    type = "11-5",
-                    paragraf_11_2 = null,
-                    paragraf_11_3 = null,
-                    paragraf_11_4 = null,
-                    paragraf_11_5 = null,
-                    paragraf_11_6 = null,
-                    paragraf_11_12 = null,
-                    paragraf_11_29 = null
+                saker = listOf(
+                    Sak(
+                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                        tilstand = "",
+                        sakstyper = listOf(),
+                        vurderingsdato = LocalDate.now(),
+                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                            tilstand = "",
+                            løsningVurderingAvBeregningsdato = null
+                        ),
+                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                        vedtak = null
+                    )
                 )
             )
         )
@@ -185,59 +205,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Bruker har fortrolig adresse, innlogget saksbehandler har ikke rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -268,59 +307,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Bruker har skjerming fom og ingen tom, innlogget saksbehandler har ikke rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -351,59 +409,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Bruker har ikke skjerming, fom og tom er begge passert, innlogget saksbehandler har rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -434,59 +511,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Bruker har skjerming, innlogget saksbehandler har rollen, og derfor rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -518,59 +614,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Innlogget som saksbehandler - norg enhet har ingen påvirkning - har derfor rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -602,59 +717,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Innlogget uten saksbehandler eller veilederrolle - har ikke rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -686,59 +820,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Innlogget som veileder - riktig norg enhet - har derfor rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 
@@ -770,59 +923,78 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Innlogget som veileder - annen norg enhet - har derfor ikke rett til å se denne`() {
-        val frontendSøker = FrontendSøker(
+        val frontendSøker = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
-            skjermet = false,
-            sak = FrontendSak(
-                saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                type = "11-5",
-                paragraf_11_2 = FrontendParagraf_11_2(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_3 = FrontendParagraf_11_3(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_4 = FrontendParagraf_11_4(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                paragraf_11_5 = FrontendParagraf_11_5(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    kravOmNedsattArbeidsevneErOppfylt = null,
-                    nedsettelseSkyldesSykdomEllerSkade = null
-                ),
-                paragraf_11_6 = FrontendParagraf_11_6(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    harBehovForBehandling = null,
-                    harBehovForTiltak = null,
-                    harMulighetForÅKommeIArbeid = null
-                ),
-                paragraf_11_12 = FrontendParagraf_11_12(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true,
-                    bestemmesAv = null,
-                    unntak = null,
-                    unntaksbegrunnelse = null,
-                    manueltSattVirkningsdato = null
-                ),
-                paragraf_11_29 = FrontendParagraf_11_29(
-                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
-                    erOppfylt = false,
-                    måVurderesManuelt = true
-                ),
-                vedtak = null
+            saker = listOf(
+                Sak(
+                    saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                    tilstand = "",
+                    sakstyper = listOf(
+                        Sakstype(
+                            type = "11-5",
+                            aktiv = true,
+                            vilkårsvurderinger = listOf(
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    paragraf = "PARAGRAF_11_2",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    paragraf = "PARAGRAF_11_3",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    paragraf = "PARAGRAF_11_4",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    paragraf = "PARAGRAF_11_5",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    paragraf = "PARAGRAF_11_6",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    paragraf = "PARAGRAF_11_12",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                ),
+                                Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    paragraf = "PARAGRAF_11_29",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    måVurderesManuelt = true
+                                )
+                            )
+                        )
+                    ),
+                    vurderingsdato = LocalDate.now(),
+                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        tilstand = "",
+                        løsningVurderingAvBeregningsdato = null
+                    ),
+                    søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                    vedtak = null
+                )
             )
         )
 

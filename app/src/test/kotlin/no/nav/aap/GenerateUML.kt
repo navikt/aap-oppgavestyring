@@ -5,6 +5,7 @@ import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
+import no.nav.aap.app.kafka.SøkereKafkaDto
 import no.nav.aap.app.modell.Rolle
 import no.nav.aap.app.topology
 import no.nav.aap.kafka.streams.uml.KStreamsUML
@@ -25,7 +26,7 @@ internal class GenerateUML {
 
         private val repo = object : Repository {
             override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) = error("Ikke implementert")
-            override fun lagreSøker(frontendSøker: FrontendSøker) = error("Ikke implementert")
+            override fun lagreSøker(søker: SøkereKafkaDto) = error("Ikke implementert")
             override fun hentSøkere(innloggetBruker: InnloggetBruker) = error("Ikke implementert")
             override fun slettSøker(personident: String) = error("Ikke implementert")
             override fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = error("Ikke implementert")

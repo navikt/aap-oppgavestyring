@@ -103,7 +103,7 @@ internal fun topology(repo: Repository) = StreamsBuilder().apply {
 
     presentSøkereStream
         .peek { key, value -> secureLog.info("saving [${Topics.søkere}] K:$key V:$value") }
-        .foreach { _, value -> repo.lagreSøker(value.toFrontendView()) }
+        .foreach { _, value -> repo.lagreSøker(value) }
 
     presentSøkereStream
         .mapValues { _, _ -> PersonopplysningerKafkaDto() }
