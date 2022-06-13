@@ -1,6 +1,7 @@
 package no.nav.aap.app.axsys
 
 import no.nav.aap.app.RoleName
+import no.nav.aap.app.frontendView.Autorisasjon
 
 data class InnloggetBruker(
     val ident: String,
@@ -16,4 +17,14 @@ data class InnloggetBruker(
     fun erTilknyttetNAY() = roller.any { it in listOf(RoleName.SAKSBEHANDLER, RoleName.BESLUTTER) }
     fun erTilknyttetLokalkontor() = roller.any { it in listOf(RoleName.VEILEDER, RoleName.FATTER) }
     fun tilknyttedeEnheter() = tilknyttedeEnheter
+
+    internal fun hentAutorisasjonForNAY(): Autorisasjon {
+        //FIXME: Mangler skille mellom ENDRE og GODKJENNE
+        return if (erTilknyttetNAY()) Autorisasjon.ENDRE else Autorisasjon.LESE
+    }
+
+    internal fun hentAutorisasjonForLokalkontor(): Autorisasjon {
+        //FIXME: Mangler skille mellom ENDRE og GODKJENNE
+        return if (erTilknyttetLokalkontor()) Autorisasjon.ENDRE else Autorisasjon.LESE
+    }
 }

@@ -33,7 +33,7 @@ data class Vilkårsvurdering(
     val paragraf: String,
     val ledd: List<String>,
     val tilstand: String,
-    val måVurderesManuelt: Boolean,
+    val utfall: String,
     val løsning_medlemskap_yrkesskade_maskinell: LøsningMaskinellMedlemskapYrkesskade? = null,
     val løsning_medlemskap_yrkesskade_manuell: LøsningManuellMedlemskapYrkesskade? = null,
     val løsning_11_2_maskinell: LøsningParagraf_11_2? = null,

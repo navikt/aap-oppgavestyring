@@ -124,56 +124,56 @@ internal class AppTest {
                                         paragraf = "PARAGRAF_11_2",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
                                         paragraf = "PARAGRAF_11_3",
                                         ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "OPPFYLT",
-                                        måVurderesManuelt = false
+                                        utfall = "OPPFYLT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_2", "LEDD_3"),
                                         tilstand = "IKKE_RELEVANT",
-                                        måVurderesManuelt = false
+                                        utfall = "IKKE_RELEVANT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
                                         paragraf = "PARAGRAF_11_5",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
                                         paragraf = "PARAGRAF_11_6",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
                                         paragraf = "PARAGRAF_11_12",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
                                         paragraf = "PARAGRAF_11_29",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     )
                                 )
                             )
@@ -214,44 +214,38 @@ internal class AppTest {
                     type = "STANDARD",
                     paragraf_11_2 = FrontendParagraf_11_2(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE
                     ),
                     paragraf_11_3 = FrontendParagraf_11_3(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                     ),
                     paragraf_11_4 = FrontendParagraf_11_4(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
-                        erOppfylt = true,
-                        måVurderesManuelt = false,
-                        kanRedigere = true
+                        utfall = "OPPFYLT",
+                        autorisasjon = Autorisasjon.ENDRE
                     ),
                     paragraf_11_5 = FrontendParagraf_11_5(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = false,
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.LESE,
                         kravOmNedsattArbeidsevneErOppfylt = null,
                         nedsettelseSkyldesSykdomEllerSkade = null
                     ),
                     paragraf_11_6 = FrontendParagraf_11_6(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true,
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                         harBehovForBehandling = null,
                         harBehovForTiltak = null,
                         harMulighetForÅKommeIArbeid = null
                     ),
                     paragraf_11_12 = FrontendParagraf_11_12(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true,
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                         bestemmesAv = null,
                         unntak = null,
                         unntaksbegrunnelse = null,
@@ -259,9 +253,8 @@ internal class AppTest {
                     ),
                     paragraf_11_29 = FrontendParagraf_11_29(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                     ),
                     vedtak = null
                 )
@@ -314,56 +307,56 @@ internal class AppTest {
                                         paragraf = "PARAGRAF_11_2",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
                                         paragraf = "PARAGRAF_11_3",
                                         ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "OPPFYLT",
-                                        måVurderesManuelt = false
+                                        utfall = "OPPFYLT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_2", "LEDD_3"),
                                         tilstand = "IKKE_RELEVANT",
-                                        måVurderesManuelt = false
+                                        utfall = "IKKE_RELEVANT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
                                         paragraf = "PARAGRAF_11_5",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
                                         paragraf = "PARAGRAF_11_6",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
                                         paragraf = "PARAGRAF_11_12",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
                                         paragraf = "PARAGRAF_11_29",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     )
                                 )
                             )
@@ -403,44 +396,38 @@ internal class AppTest {
                     type = "STANDARD",
                     paragraf_11_2 = FrontendParagraf_11_2(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE
                     ),
                     paragraf_11_3 = FrontendParagraf_11_3(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                     ),
                     paragraf_11_4 = FrontendParagraf_11_4(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
-                        erOppfylt = true,
-                        måVurderesManuelt = false,
-                        kanRedigere = true
+                        utfall = "OPPFYLT",
+                        autorisasjon = Autorisasjon.ENDRE
                     ),
                     paragraf_11_5 = FrontendParagraf_11_5(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417305"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = false,
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.LESE,
                         kravOmNedsattArbeidsevneErOppfylt = null,
                         nedsettelseSkyldesSykdomEllerSkade = null
                     ),
                     paragraf_11_6 = FrontendParagraf_11_6(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417306"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true,
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                         harBehovForBehandling = null,
                         harBehovForTiltak = null,
                         harMulighetForÅKommeIArbeid = null
                     ),
                     paragraf_11_12 = FrontendParagraf_11_12(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417307"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true,
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                         bestemmesAv = null,
                         unntak = null,
                         unntaksbegrunnelse = null,
@@ -448,9 +435,8 @@ internal class AppTest {
                     ),
                     paragraf_11_29 = FrontendParagraf_11_29(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
-                        erOppfylt = false,
-                        måVurderesManuelt = true,
-                        kanRedigere = true
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
                     ),
                     vedtak = null
                 )
@@ -607,7 +593,7 @@ internal class AppTest {
                                         paragraf = "PARAGRAF_11_2",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
-                                        måVurderesManuelt = true
+                                        utfall = "IKKE_VURDERT"
                                     )
                                 )
                             )
@@ -677,7 +663,7 @@ internal class AppTest {
         paragraf: String,
         ledd: List<String>,
         tilstand: String,
-        måVurderesManuelt: Boolean,
+        utfall: String,
         løsningYrkesskade_manuell: LøsningManuellMedlemskapYrkesskade? = null,
         løsningYrkesskade_maskinell: LøsningMaskinellMedlemskapYrkesskade? = null,
         losning_11_2_manuell: LøsningParagraf_11_2? = null,
@@ -693,7 +679,7 @@ internal class AppTest {
         paragraf = paragraf,
         ledd = ledd,
         tilstand = tilstand,
-        måVurderesManuelt = måVurderesManuelt,
+        utfall = utfall,
         løsning_medlemskap_yrkesskade_maskinell = løsningYrkesskade_maskinell,
         løsning_medlemskap_yrkesskade_manuell = løsningYrkesskade_manuell,
         løsning_11_2_maskinell = losning_11_2_maskinell,

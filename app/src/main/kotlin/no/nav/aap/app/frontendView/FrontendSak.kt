@@ -18,41 +18,40 @@ data class FrontendSak(
     val paragraf_11_29: FrontendParagraf_11_29?
 )
 
+enum class Autorisasjon {
+    LESE, ENDRE, GODKJENNE
+}
+
 data class FrontendParagraf_11_2(
     val vilkårsvurderingsid: UUID,
-    val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean,
-    val kanRedigere: Boolean = false
+    val utfall: String,
+    val autorisasjon: Autorisasjon
 )
 
 data class FrontendParagraf_11_3(
     val vilkårsvurderingsid: UUID,
-    val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean,
-    val kanRedigere: Boolean = false
+    val utfall: String,
+    val autorisasjon: Autorisasjon
 )
 
 data class FrontendParagraf_11_4(
     val vilkårsvurderingsid: UUID,
-    val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean,
-    val kanRedigere: Boolean = false
+    val utfall: String,
+    val autorisasjon: Autorisasjon
 )
 
 data class FrontendParagraf_11_5(
     val vilkårsvurderingsid: UUID,
-    val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean,
-    val kanRedigere: Boolean = false,
+    val utfall: String,
+    val autorisasjon: Autorisasjon,
     val kravOmNedsattArbeidsevneErOppfylt: Boolean?,
     val nedsettelseSkyldesSykdomEllerSkade: Boolean?
 )
 
 data class FrontendParagraf_11_6(
     val vilkårsvurderingsid: UUID,
-    val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean,
-    val kanRedigere: Boolean = false,
+    val utfall: String,
+    val autorisasjon: Autorisasjon,
     val harBehovForBehandling: Boolean?,
     val harBehovForTiltak: Boolean?,
     val harMulighetForÅKommeIArbeid: Boolean?
@@ -60,9 +59,8 @@ data class FrontendParagraf_11_6(
 
 data class FrontendParagraf_11_12(
     val vilkårsvurderingsid: UUID,
-    val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean,
-    val kanRedigere: Boolean = false,
+    val utfall: String,
+    val autorisasjon: Autorisasjon,
     val bestemmesAv: String?,
     val unntak: String?,
     val unntaksbegrunnelse: String?,
@@ -71,7 +69,6 @@ data class FrontendParagraf_11_12(
 
 data class FrontendParagraf_11_29(
     val vilkårsvurderingsid: UUID,
-    val erOppfylt: Boolean?,
-    val måVurderesManuelt: Boolean,
-    val kanRedigere: Boolean = false
+    val utfall: String,
+    val autorisasjon: Autorisasjon
 )
