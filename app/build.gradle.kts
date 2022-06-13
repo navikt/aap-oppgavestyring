@@ -20,7 +20,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson:2.0.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
-    implementation("com.github.navikt.aap-libs:ktor-client-auth:1.1.1")
+    implementation("com.github.navikt.aap-libs:ktor-client-auth:1.2.0")
     implementation("com.github.navikt.aap-libs:kafka:1.1.1")
     implementation("com.github.navikt.aap-libs:ktor-utils:1.1.1")
 
