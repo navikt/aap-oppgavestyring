@@ -2,9 +2,10 @@ package no.nav.aap.app.axsys
 
 import no.nav.aap.app.RoleName
 import no.nav.aap.app.frontendView.Autorisasjon
+import no.nav.aap.app.kafka.Vilkårsvurdering
 
 data class InnloggetBruker(
-    val ident: String,
+    val brukernavn: String,
     val roller: List<RoleName>,
     val tilknyttedeEnheter: List<String>,
     //FIXME
@@ -18,13 +19,17 @@ data class InnloggetBruker(
     fun erTilknyttetLokalkontor() = roller.any { it in listOf(RoleName.VEILEDER, RoleName.FATTER) }
     fun tilknyttedeEnheter() = tilknyttedeEnheter
 
-    internal fun hentAutorisasjonForNAY(): Autorisasjon {
-        //FIXME: Mangler skille mellom ENDRE og GODKJENNE
-        return if (erTilknyttetNAY()) Autorisasjon.ENDRE else Autorisasjon.LESE
+    internal fun hentAutorisasjonForNAY(vilkårsvurdering: Vilkårsvurdering): Autorisasjon {
+        if (!erTilknyttetNAY()) return Autorisasjon.LESE
+        if (roller.none { it == RoleName.BESLUTTER }) return Autorisasjon.ENDRE
+
+        return vilkårsvurdering.hentAutorisasjon(brukernavn)
     }
 
-    internal fun hentAutorisasjonForLokalkontor(): Autorisasjon {
-        //FIXME: Mangler skille mellom ENDRE og GODKJENNE
-        return if (erTilknyttetLokalkontor()) Autorisasjon.ENDRE else Autorisasjon.LESE
+    internal fun hentAutorisasjonForLokalkontor(vilkårsvurdering: Vilkårsvurdering): Autorisasjon {
+        if (!erTilknyttetLokalkontor()) return Autorisasjon.LESE
+        if (roller.none { it == RoleName.FATTER }) return Autorisasjon.ENDRE
+
+        return vilkårsvurdering.hentAutorisasjon(brukernavn)
     }
 }

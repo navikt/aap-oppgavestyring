@@ -22,6 +22,10 @@ enum class Autorisasjon {
     LESE, ENDRE, GODKJENNE
 }
 
+enum class Utfall {
+    OPPFYLT, IKKE_OPPFYLT, IKKE_VURDERT, IKKE_RELEVANT
+}
+
 data class FrontendParagraf_11_2(
     val vilkårsvurderingsid: UUID,
     val utfall: String,

@@ -6,6 +6,7 @@ import no.nav.aap.app.RoleName
 import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
+import no.nav.aap.app.frontendView.Utfall
 import no.nav.aap.app.kafka.*
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -36,49 +37,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -111,7 +112,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         assertEquals(1, rowCount("soker"))
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
@@ -223,49 +224,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -296,7 +297,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
@@ -325,49 +326,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -398,7 +399,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
@@ -427,49 +428,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -500,7 +501,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
         )
@@ -529,49 +530,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -602,7 +603,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = true,
@@ -632,49 +633,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -705,7 +706,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
@@ -735,49 +736,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -808,7 +809,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = emptyList(),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
@@ -838,49 +839,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -911,7 +912,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.VEILEDER),
             tilknyttedeEnheter = listOf("1234"),
             harSkjermingsrolle = false,
@@ -941,49 +942,49 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -1014,7 +1015,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         personopplysningerDao.insert(personopplysninger)
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.VEILEDER),
             tilknyttedeEnheter = listOf("4321"),
             harSkjermingsrolle = false,

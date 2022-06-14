@@ -1,5 +1,7 @@
 package no.nav.aap.app.kafka
 
+import no.nav.aap.app.frontendView.Autorisasjon
+import no.nav.aap.app.frontendView.Utfall
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Year
@@ -28,12 +30,15 @@ data class Sakstype(
     val vilkårsvurderinger: List<Vilkårsvurdering>,
 )
 
+// TODO: Vurdere hvordan løsning skal ligge i vilkårsvurdering
 data class Vilkårsvurdering(
     val vilkårsvurderingsid: UUID,
+    val vurdertAv: String? = null,
+    val godkjentAv: String? = null,
     val paragraf: String,
     val ledd: List<String>,
     val tilstand: String,
-    val utfall: String,
+    val utfall: Utfall,
     val løsning_medlemskap_yrkesskade_maskinell: LøsningMaskinellMedlemskapYrkesskade? = null,
     val løsning_medlemskap_yrkesskade_manuell: LøsningManuellMedlemskapYrkesskade? = null,
     val løsning_11_2_maskinell: LøsningParagraf_11_2? = null,
@@ -46,7 +51,13 @@ data class Vilkårsvurdering(
     val løsning_11_12_ledd1_manuell: LøsningParagraf_11_12_ledd1? = null,
     val løsning_11_22_manuell: LøsningParagraf_11_22? = null,
     val løsning_11_29_manuell: LøsningParagraf_11_29? = null,
-)
+) {
+    internal fun hentAutorisasjon(brukernavn: String): Autorisasjon {
+        if (utfall == Utfall.IKKE_VURDERT) return Autorisasjon.ENDRE
+        if (brukernavn == vurdertAv) return Autorisasjon.ENDRE
+        return Autorisasjon.GODKJENNE
+    }
+}
 
 data class LøsningMaskinellMedlemskapYrkesskade(val erMedlem: String)
 data class LøsningManuellMedlemskapYrkesskade(val erMedlem: String)

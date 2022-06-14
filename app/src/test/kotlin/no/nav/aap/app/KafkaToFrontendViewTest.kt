@@ -2,6 +2,7 @@ package no.nav.aap.app
 
 import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.frontendView.Autorisasjon
+import no.nav.aap.app.frontendView.Utfall
 import no.nav.aap.app.frontendView.toFrontendView
 import no.nav.aap.app.kafka.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,49 +31,49 @@ class KafkaToFrontendViewTest {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -89,7 +90,7 @@ class KafkaToFrontendViewTest {
         )
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
             tilknyttedeEnheter = listOf("0001")
         )
@@ -137,49 +138,49 @@ class KafkaToFrontendViewTest {
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "OPPFYLT"
+                                    utfall = Utfall.OPPFYLT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 ),
                                 Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
-                                    utfall = "IKKE_VURDERT"
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
@@ -196,7 +197,7 @@ class KafkaToFrontendViewTest {
         )
 
         val innloggetBruker = InnloggetBruker(
-            ident = "Z000001",
+            brukernavn = "test@est.com",
             roller = listOf(RoleName.VEILEDER),
             tilknyttedeEnheter = listOf("0001")
         )
