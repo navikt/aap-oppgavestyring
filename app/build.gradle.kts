@@ -20,9 +20,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson:2.0.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
-    implementation("com.github.navikt.aap-libs:ktor-client-auth:1.1.1")
-    implementation("com.github.navikt.aap-libs:kafka:1.1.1")
-    implementation("com.github.navikt.aap-libs:ktor-utils:1.1.1")
+    implementation("com.github.navikt.aap-libs:ktor-client-auth:2.0.2")
+    implementation("com.github.navikt.aap-libs:kafka:2.0.2")
+    implementation("com.github.navikt.aap-libs:ktor-utils:2.0.2")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.9.0")
@@ -35,7 +35,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql:42.3.6")
 
     testImplementation(kotlin("test"))
-    testImplementation("com.github.navikt.aap-libs:kafka-test:1.1.1")
+    testImplementation("com.github.navikt.aap-libs:kafka-test:2.0.2")
     testImplementation("io.ktor:ktor-server-test-host:2.0.2")
     testImplementation("io.ktor:ktor-client-content-negotiation:2.0.2")
     testImplementation("com.nimbusds:nimbus-jose-jwt:9.23")

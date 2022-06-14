@@ -13,6 +13,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -81,6 +82,38 @@ internal class AppTest {
 
             postLøsning("""{"løsning_11_3_manuell":{"erOppfylt":true}}""")
         }
+    }
+
+    @Test
+    fun `Sending av løsning legger på brukernavn fra token på kafkamelding`() {
+        val app = TestApplication {
+            environment { config = mocks.applicationConfig() }
+            application {
+                server(mocks.kafka)
+            }
+        }
+
+        val client = app.createClient {
+            install(ContentNegotiation) {
+                jackson {
+                    registerModule(JavaTimeModule())
+                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                }
+            }
+        }
+        runBlocking { client.get("/actuator/live") }
+        runBlocking {
+            client.post("/api/sak/123/losning") {
+                bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
+                contentType(ContentType.Application.Json)
+                setBody(DtoManuell(løsning_11_3_manuell = DtoLøsningParagraf_11_3(
+                    erOppfylt = true
+                )))
+            }
+        }
+
+        val producer = mocks.kafka.getProducer(Topics.manuell)
+        assertEquals("test.test@test.com", producer.history().single().value().vurdertAv)
     }
 
     @Test

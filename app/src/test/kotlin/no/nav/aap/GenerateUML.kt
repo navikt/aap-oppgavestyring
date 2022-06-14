@@ -4,13 +4,13 @@ import no.nav.aap.app.Repository
 import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
-import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.kafka.SøkereKafkaDto
 import no.nav.aap.app.modell.Rolle
 import no.nav.aap.app.topology
-import no.nav.aap.kafka.streams.uml.KStreamsUML
+import no.nav.aap.kafka.streams.topology.Mermaid
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.util.*
 
 internal class GenerateUML {
@@ -18,7 +18,13 @@ internal class GenerateUML {
     @Test
     fun `generate topology UML`() {
         val topology = topology(repo)
-        KStreamsUML.create(topology).also { log.info("Generated topology UML ${it.absoluteFile}") }
+        val graf = Mermaid.graph("oppgavestyring", topology)
+        File("../doc/topologi.mermaid").apply { writeText(graf) }
+        File("../doc/topologi.md").apply { writeText("""
+            ```mermaid
+            $graf
+            ```
+            """.trimIndent()) }
     }
 
     private companion object {
