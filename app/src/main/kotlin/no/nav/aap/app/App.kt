@@ -178,10 +178,10 @@ private fun Routing.api(
             post("/sak/{personident}/losning") {
                 val personident = call.parameters.getOrFail("personident")
                 secureLog.info("Skal løse oppgave for $personident")
-                val user = requireNotNull( call.principal<JWTPrincipal>()?.getClaim("preferred_username", String::class)) { "Brukernavn null i token" }
+                val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
                 val løsning = call.receive<DtoManuell>()
                 withContext(Dispatchers.IO) {
-                    manuellProducer.send(ProducerRecord(Topics.manuell.name, personident, løsning.toKafkaDto(user))).get()
+                    manuellProducer.send(ProducerRecord(Topics.manuell.name, personident, løsning.toKafkaDto(innloggetBruker.brukernavn))).get()
                 }
                 call.respond(HttpStatusCode.OK, "OK")
             }
