@@ -2,4 +2,4 @@
 Oppgavestyring av oppgaver mellom NAY og NAV Kontor
 
 # Topology
-![img](doc/topology.svg)
+[topoligi.mermaid](doc/topologi.mermaid)

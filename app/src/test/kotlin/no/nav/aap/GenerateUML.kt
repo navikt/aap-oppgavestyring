@@ -20,11 +20,6 @@ internal class GenerateUML {
         val topology = topology(repo)
         val graf = Mermaid.graph("oppgavestyring", topology)
         File("../doc/topologi.mermaid").apply { writeText(graf) }
-        File("../doc/topologi.md").apply { writeText("""
-            ```mermaid
-            $graf
-            ```
-            """.trimIndent()) }
     }
 
     private companion object {

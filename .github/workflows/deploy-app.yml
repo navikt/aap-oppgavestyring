@@ -7,7 +7,6 @@ on:
     paths-ignore:
       - '.nais/topic-*.yml'
       - '.github/**'
-      - 'doc/**'
 env:
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
