@@ -70,7 +70,8 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
             validate { cred ->
                 val claimedRoles = cred.getListClaim("groups", UUID::class)
                 val authorizedRoles = config.oauth.roles.map { it.objectId }
-                if (claimedRoles.any { it in authorizedRoles }) JWTPrincipal(cred.payload) else null
+                val username = cred.getClaim("preferred_username", String::class)
+                if (claimedRoles.any { it in authorizedRoles } && username != null) JWTPrincipal(cred.payload) else null
             }
         }
     }
@@ -177,9 +178,10 @@ private fun Routing.api(
             post("/sak/{personident}/losning") {
                 val personident = call.parameters.getOrFail("personident")
                 secureLog.info("Skal løse oppgave for $personident")
+                val user = requireNotNull( call.principal<JWTPrincipal>()?.getClaim("preferred_username", String::class)) { "Brukernavn null i token" }
                 val løsning = call.receive<DtoManuell>()
                 withContext(Dispatchers.IO) {
-                    manuellProducer.send(ProducerRecord(Topics.manuell.name, personident, løsning.toKafkaDto())).get()
+                    manuellProducer.send(ProducerRecord(Topics.manuell.name, personident, løsning.toKafkaDto(user))).get()
                 }
                 call.respond(HttpStatusCode.OK, "OK")
             }

@@ -42,24 +42,25 @@ data class DtoLøsningParagraf_11_12_ledd1(
 data class DtoLøsningParagraf_11_29(val erOppfylt: Boolean)
 data class DtoLøsningVurderingAvBeregningsdato(val beregningsdato: LocalDate)
 
-fun DtoManuell.toKafkaDto(): ManuellKafkaDto = ManuellKafkaDto(
-    løsning_11_2_manuell?.let { Løsning_11_2_manuell(it.erMedlem) },
-    løsning_11_3_manuell?.let { Løsning_11_3_manuell(it.erOppfylt) },
-    løsning_11_4_ledd2_ledd3_manuell?.let { Løsning_11_4_ledd2_ledd3_manuell(it.erOppfylt) },
-    løsning_11_5_manuell?.let {
+fun DtoManuell.toKafkaDto(vurdertAv: String): ManuellKafkaDto = ManuellKafkaDto(
+    vurdertAv = vurdertAv,
+    løsning_11_2_manuell = løsning_11_2_manuell?.let { Løsning_11_2_manuell(it.erMedlem) },
+    løsning_11_3_manuell = løsning_11_3_manuell?.let { Løsning_11_3_manuell(it.erOppfylt) },
+    løsning_11_4_ledd2_ledd3_manuell = løsning_11_4_ledd2_ledd3_manuell?.let { Løsning_11_4_ledd2_ledd3_manuell(it.erOppfylt) },
+    løsning_11_5_manuell = løsning_11_5_manuell?.let {
         Løsning_11_5_manuell(
             it.kravOmNedsattArbeidsevneErOppfylt,
             it.nedsettelseSkyldesSykdomEllerSkade
         )
     },
-    løsning_11_6_manuell?.let {
+    løsning_11_6_manuell = løsning_11_6_manuell?.let {
         Løsning_11_6_manuell(
             harBehovForBehandling = it.harBehovForBehandling,
             harBehovForTiltak = it.harBehovForTiltak,
             harMulighetForÅKommeIArbeid = it.harMulighetForÅKommeIArbeid
         )
     },
-    løsning_11_12_ledd1_manuell?.let {
+    løsning_11_12_ledd1_manuell = løsning_11_12_ledd1_manuell?.let {
         Løsning_11_12_ledd1_manuell(
             bestemmesAv = it.bestemmesAv,
             unntak = it.unntak,
@@ -67,8 +68,8 @@ fun DtoManuell.toKafkaDto(): ManuellKafkaDto = ManuellKafkaDto(
             manueltSattVirkningsdato = it.manueltSattVirkningsdato
         )
     },
-    løsning_11_29_manuell?.let { Løsning_11_29_manuell(it.erOppfylt) },
-    løsningVurderingAvBeregningsdato?.let { LøsningVurderingAvBeregningsdato(it.beregningsdato) }
+    løsning_11_29_manuell = løsning_11_29_manuell?.let { Løsning_11_29_manuell(it.erOppfylt) },
+    løsningVurderingAvBeregningsdato = løsningVurderingAvBeregningsdato?.let { LøsningVurderingAvBeregningsdato(it.beregningsdato) }
 )
 
 data class DtoSøker(

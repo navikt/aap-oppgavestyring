@@ -3,6 +3,7 @@ package no.nav.aap.app.kafka
 import java.time.LocalDate
 
 data class ManuellKafkaDto(
+    val vurdertAv: String,
     val løsning_11_2_manuell: Løsning_11_2_manuell? = null,
     val løsning_11_3_manuell: Løsning_11_3_manuell? = null,
     val løsning_11_4_ledd2_ledd3_manuell: Løsning_11_4_ledd2_ledd3_manuell? = null,

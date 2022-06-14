@@ -34,6 +34,7 @@ object JwtGenerator {
         .jwtID(UUID.randomUUID().toString())
         .claim("groups", groups.map { it.uuid })
         .claim("NAVident", "Z000001")
+        .claim("preferred_username", "test.test@test.com")
         .notBeforeTime(now)
         .issueTime(now)
         .expirationTime(Date(now.time + TimeUnit.MINUTES.toMillis((60 * 60 * 3600).toLong()))).build()
