@@ -68,10 +68,14 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
             verifier(jwkProvider, config.oauth.azure.issuer)
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "oppgavestyring sin dørvakt stoppet deg") }
             validate { cred ->
+                if (cred.getClaim("preferred_username", String::class) == null) return@validate null
+                if (cred.getClaim("NAVident", String::class) == null) return@validate null
+
                 val claimedRoles = cred.getListClaim("groups", UUID::class)
                 val authorizedRoles = config.oauth.roles.map { it.objectId }
-                val username = cred.getClaim("preferred_username", String::class)
-                if (claimedRoles.any { it in authorizedRoles } && username != null) JWTPrincipal(cred.payload) else null
+                if (claimedRoles.none(authorizedRoles::contains)) return@validate null
+
+                JWTPrincipal(cred.payload)
             }
         }
     }
@@ -181,7 +185,13 @@ private fun Routing.api(
                 val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
                 val løsning = call.receive<DtoManuell>()
                 withContext(Dispatchers.IO) {
-                    manuellProducer.send(ProducerRecord(Topics.manuell.name, personident, løsning.toKafkaDto(innloggetBruker.brukernavn))).get()
+                    manuellProducer.send(
+                        ProducerRecord(
+                            Topics.manuell.name,
+                            personident,
+                            løsning.toKafkaDto(innloggetBruker.brukernavn)
+                        )
+                    ).get()
                 }
                 call.respond(HttpStatusCode.OK, "OK")
             }
