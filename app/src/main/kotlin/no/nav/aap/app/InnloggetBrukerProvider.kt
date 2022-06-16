@@ -8,8 +8,10 @@ import java.util.*
 class InnloggetBrukerProvider(private val axsysClient: AxsysClient, private val configRoles: List<Role>) {
 
     suspend fun hentInnloggetBruker(principal: JWTPrincipal): InnloggetBruker {
-        val ident = requireNotNull(principal.getClaim("NAVident", String::class)) {"NAVident er null i token"}
-        val brukernavn = requireNotNull(principal.getClaim("preferred_username", String::class)) {"preferred_username er null i token"}
+        val ident = requireNotNull(principal.getClaim("NAVident", String::class)) { "NAVident er null i token" }
+        val brukernavn = requireNotNull(
+            principal.getClaim("preferred_username", String::class)
+        ) { "preferred_username er null i token" }
 
         val roller = principal.getListClaim("groups", UUID::class)
             .map { claimObjectId -> configRoles.single { configRole -> configRole.objectId == claimObjectId }.name }
@@ -19,5 +21,4 @@ class InnloggetBrukerProvider(private val axsysClient: AxsysClient, private val 
             tilknyttedeEnheter = axsysClient.hentEnheter(ident)
         )
     }
-
 }

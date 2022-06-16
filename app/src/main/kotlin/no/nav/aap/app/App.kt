@@ -63,8 +63,8 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
         .build()
 
     install(Authentication) {
-        jwt {
-            realm = "hent oppgaver"
+        fun AuthenticationConfig.jwt(name: String, realm: String, roles: List<RoleName>? = null) = jwt(name) {
+            this.realm = realm
             verifier(jwkProvider, config.oauth.azure.issuer)
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "oppgavestyring sin dørvakt stoppet deg") }
             validate { cred ->
@@ -72,12 +72,17 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
                 if (cred.getClaim("NAVident", String::class) == null) return@validate null
 
                 val claimedRoles = cred.getListClaim("groups", UUID::class)
-                val authorizedRoles = config.oauth.roles.map { it.objectId }
+                val authorizedRoles = config.oauth.roles
+                    .filter { roles?.contains(it.name) ?: true }
+                    .map { it.objectId }
                 if (claimedRoles.none(authorizedRoles::contains)) return@validate null
 
                 JWTPrincipal(cred.payload)
             }
         }
+        jwt("hentStuff", "hent oppgaver")
+        jwt("løsningNAY", "løsning NAY", listOf(RoleName.SAKSBEHANDLER, RoleName.BESLUTTER))
+        jwt("løsningLokalkontor", "løsning lokalkontor", listOf(RoleName.VEILEDER, RoleName.FATTER))
     }
 
     environment.monitor.subscribe(ApplicationStopping) { kafka.close() }
@@ -155,8 +160,8 @@ private fun Routing.api(
 ) {
     val manuellProducer = kafka.createProducer(config, Topics.manuell)
 
-    authenticate {
-        route("/api") {
+    route("/api") {
+        authenticate("hentStuff") {
             get("/personopplysninger/{personident}") {
                 val personident = call.parameters.getOrFail("personident")
                 when (val opplysninger = repo.hentPersonopplysninger(personident)) {
@@ -172,28 +177,48 @@ private fun Routing.api(
             get("/sak/{personident}") {
                 val personident = call.parameters.getOrFail("personident")
                 call.respond(
-                    repo.hentSøker(
-                        personident,
-                        innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
-                    )
+                    repo.hentSøker(personident, innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!))
                 )
             }
+        }
 
-            post("/sak/{personident}/losning") {
-                val personident = call.parameters.getOrFail("personident")
-                secureLog.info("Skal løse oppgave for $personident")
-                val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
-                val løsning = call.receive<DtoManuell>()
-                withContext(Dispatchers.IO) {
-                    manuellProducer.send(
-                        ProducerRecord(
-                            Topics.manuell.name,
-                            personident,
-                            løsning.toKafkaDto(innloggetBruker.brukernavn)
-                        )
-                    ).get()
-                }
-                call.respond(HttpStatusCode.OK, "OK")
+        fun Route.postLøsning(path: String, block: suspend ApplicationCall.() -> DtoManuell) = post(path) {
+            val personident = call.parameters.getOrFail("personident")
+            secureLog.info("Skal løse oppgave for $personident")
+            val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
+            val manuell = call.block()
+            withContext(Dispatchers.IO) {
+                manuellProducer.send(
+                    ProducerRecord(Topics.manuell.name, personident, manuell.toKafkaDto(innloggetBruker.brukernavn))
+                ).get()
+            }
+            call.respond(HttpStatusCode.OK, "OK")
+        }
+
+        authenticate("løsningNAY") {
+            postLøsning("/sak/{personident}/losning/paragraf_11_2") {
+                DtoManuell(løsning_11_2_manuell = receive())
+            }
+            postLøsning("/sak/{personident}/losning/paragraf_11_3") {
+                DtoManuell(løsning_11_3_manuell = receive())
+            }
+            postLøsning("/sak/{personident}/losning/paragraf_11_4") {
+                DtoManuell(løsning_11_4_ledd2_ledd3_manuell = receive())
+            }
+            postLøsning("/sak/{personident}/losning/paragraf_11_6") {
+                DtoManuell(løsning_11_6_manuell = receive())
+            }
+            postLøsning("/sak/{personident}/losning/paragraf_11_12") {
+                DtoManuell(løsning_11_12_ledd1_manuell = receive())
+            }
+            postLøsning("/sak/{personident}/losning/paragraf_11_29") {
+                DtoManuell(løsning_11_29_manuell = receive())
+            }
+        }
+
+        authenticate("løsningLokalkontor") {
+            postLøsning("/sak/{personident}/losning/paragraf_11_5") {
+                DtoManuell(løsning_11_5_manuell = receive())
             }
         }
     }

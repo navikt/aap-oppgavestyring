@@ -74,12 +74,62 @@ internal class AppTest {
     }
 
     @Test
-    fun `Authentisering av endepunkt for sending av løsning`() {
+    fun `Authentisering av endepunkt for 11-3 for sending av løsning som saksbehandler er ok`() {
         testApplication {
             environment { config = mocks.applicationConfig() }
             application { server(mocks.kafka) }
 
-            postLøsning("""{"løsning_11_3_manuell":{"erOppfylt":true}}""")
+            val response = client.post("/api/sak/123/losning/paragraf_11_3") {
+                bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
+                contentType(ContentType.Application.Json)
+                setBody("""{"erOppfylt":true}""")
+            }
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
+    }
+
+    @Test
+    fun `Authentisering av endepunkt for 11-3 for sending av løsning som veileder er ikke ok`() {
+        testApplication {
+            environment { config = mocks.applicationConfig() }
+            application { server(mocks.kafka) }
+
+            val response = client.post("/api/sak/123/losning/paragraf_11_3") {
+                bearerAuth(JwtGenerator.generateVeilederToken().serialize())
+                contentType(ContentType.Application.Json)
+                setBody("""{"erOppfylt":true}""")
+            }
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+        }
+    }
+
+    @Test
+    fun `Authentisering av endepunkt for 11-5 for sending av løsning som veileder er ok`() {
+        testApplication {
+            environment { config = mocks.applicationConfig() }
+            application { server(mocks.kafka) }
+
+            val response = client.post("/api/sak/123/losning/paragraf_11_5") {
+                bearerAuth(JwtGenerator.generateVeilederToken().serialize())
+                contentType(ContentType.Application.Json)
+                setBody("""{"kravOmNedsattArbeidsevneErOppfylt":true, "nedsettelseSkyldesSykdomEllerSkade":true}""")
+            }
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
+    }
+
+    @Test
+    fun `Authentisering av endepunkt for 11-5 for sending av løsning som saksbehandler er ikke ok`() {
+        testApplication {
+            environment { config = mocks.applicationConfig() }
+            application { server(mocks.kafka) }
+
+            val response = client.post("/api/sak/123/losning/paragraf_11_5") {
+                bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
+                contentType(ContentType.Application.Json)
+                setBody("""{"kravOmNedsattArbeidsevneErOppfylt":true, "nedsettelseSkyldesSykdomEllerSkade":true}""")
+            }
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
     }
 
@@ -102,12 +152,10 @@ internal class AppTest {
         }
         runBlocking { client.get("/actuator/live") }
         runBlocking {
-            client.post("/api/sak/123/losning") {
+            client.post("/api/sak/123/losning/paragraf_11_3") {
                 bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
                 contentType(ContentType.Application.Json)
-                setBody(DtoManuell(løsning_11_3_manuell = DtoLøsningParagraf_11_3(
-                    erOppfylt = true
-                )))
+                setBody(DtoLøsningParagraf_11_3(erOppfylt = true))
             }
         }
 
@@ -725,16 +773,6 @@ internal class AppTest {
         løsning_11_22_manuell = null,
         løsning_11_29_manuell = losning_11_29_manuell,
     )
-
-    private suspend fun ApplicationTestBuilder.postLøsning(body: String) {
-        val response = client.post("/api/sak/123/losning") {
-            bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
-            contentType(ContentType.Application.Json)
-            setBody(body)
-        }
-
-        assertEquals(HttpStatusCode.OK, response.status)
-    }
 
     private fun HttpClient.getSaker(path: String, tokenSupplier: () -> SignedJWT): List<FrontendSøker> = runBlocking {
         val response = get(path) {

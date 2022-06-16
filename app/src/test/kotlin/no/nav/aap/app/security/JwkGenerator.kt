@@ -18,6 +18,7 @@ object JwtGenerator {
     private val rsaKey: RSAKey get() = jwkSet.getKeyByKeyId("localhost-signer") as RSAKey
 
     fun generateSaksbehandlerToken(): SignedJWT = createSignedJWT(rsaKey, claims(listOf(TestAzureGroups.SAKSBEHANDLER)))
+    fun generateVeilederToken(): SignedJWT = createSignedJWT(rsaKey, claims(listOf(TestAzureGroups.VEILEDER)))
 
     private fun createSignedJWT(rsaJwk: RSAKey, claimsSet: JWTClaimsSet): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rsaJwk.keyID).type(JOSEObjectType.JWT).build()
