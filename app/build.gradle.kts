@@ -31,7 +31,7 @@ dependencies {
 
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("com.github.seratch:kotliquery:1.8.0")
-    implementation("org.flywaydb:flyway-core:8.5.12")
+    implementation("org.flywaydb:flyway-core:8.5.13")
     runtimeOnly("org.postgresql:postgresql:42.3.6")
 
     testImplementation(kotlin("test"))
