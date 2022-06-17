@@ -33,5 +33,5 @@ roles:
     group: 5ef775f2-61f8-4283-bf3d-8d03f428aa14
 
 axsys:
-  url: https://axsys.dev.adeo.no/api/v2
+  url: https://axsys.dev-fss-pub.nais.io/api/v2
   scope: api://dev-fss.org.axsys/.default

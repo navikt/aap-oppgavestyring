@@ -15,6 +15,11 @@ spec:
     inbound:
       rules:
         - application: soknad-behandling
+    outbound:
+      rules:
+        - application: axsys
+          namespace: org
+          cluster: dev-fss
   azure:
     application:
       enabled: true
