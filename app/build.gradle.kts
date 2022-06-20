@@ -35,7 +35,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql:42.4.0")
 
     testImplementation(kotlin("test"))
-    testImplementation("com.github.navikt.aap-libs:kafka-test:2.0.2")
+    testImplementation("com.github.navikt.aap-libs:kafka-test:2.0.5")
     testImplementation("io.ktor:ktor-server-test-host:2.0.2")
     testImplementation("io.ktor:ktor-client-content-negotiation:2.0.2")
     testImplementation("com.nimbusds:nimbus-jose-jwt:9.23")
