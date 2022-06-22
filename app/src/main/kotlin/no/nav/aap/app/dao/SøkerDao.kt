@@ -9,7 +9,6 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.RoleName
 import no.nav.aap.app.axsys.InnloggetBruker
-import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.kafka.SøkereKafkaDto
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
@@ -25,13 +24,14 @@ internal class SøkerDao(private val dataSource: DataSource) {
             session.transaction { tSession ->
                 @Language("PostgreSQL")
                 val query = """
-                    INSERT INTO soker VALUES(:personident, :data::json)
-                    ON CONFLICT ON CONSTRAINT unique_personident DO UPDATE SET data = :data::json
+                    INSERT INTO soker VALUES(:personident, :version, :data::json)
+                    ON CONFLICT ON CONSTRAINT unique_personident DO UPDATE SET version = :version, data = :data::json
                     """
                 tSession.run(
                     queryOf(
                         query, mapOf(
                             "personident" to søker.personident,
+                            "version" to søker.version,
                             "data" to objectMapper.writeValueAsString(søker)
                         )
                     ).asUpdate
@@ -54,6 +54,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
                   AND (:harSkjermingsrolle OR (p.er_skjermet_fom IS NULL OR p.er_skjermet_fom > now() OR
                                                (p.er_skjermet_tom IS NOT NULL AND p.er_skjermet_tom < now())))
                   AND (:erTilknyttetNAY OR (:erTilknyttetLokalkontor AND p.norg_enhet_id = ANY (:tilknyttedeEnheter)))
+                  AND s.version = :version
                 """
             session.run(
                 queryOf(
@@ -63,6 +64,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
                         "erTilknyttetNAY" to innloggetBruker.erTilknyttetNAY(),
                         "erTilknyttetLokalkontor" to innloggetBruker.erTilknyttetLokalkontor(),
                         "tilknyttedeEnheter" to innloggetBruker.tilknyttedeEnheter().toSqlArray(session),
+                        "version" to SøkereKafkaDto.VERSION,
                     )
                 ).map {
                     objectMapper.readValue<SøkereKafkaDto>(it.string("data"))
@@ -82,6 +84,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
                   AND (:harSkjermingsrolle OR (p.er_skjermet_fom IS NULL OR p.er_skjermet_fom > now() OR
                                                (p.er_skjermet_tom IS NOT NULL AND p.er_skjermet_tom < now())))
                   AND (:erTilknyttetNAY OR (:erTilknyttetLokalkontor AND p.norg_enhet_id = ANY (:tilknyttedeEnheter)))
+                  AND s.version = :version
                 """
             session.run(
                 queryOf(
@@ -92,6 +95,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
                         "erTilknyttetNAY" to innloggetBruker.erTilknyttetNAY(),
                         "erTilknyttetLokalkontor" to innloggetBruker.erTilknyttetLokalkontor(),
                         "tilknyttedeEnheter" to innloggetBruker.tilknyttedeEnheter().toSqlArray(session),
+                        "version" to SøkereKafkaDto.VERSION,
                     )
                 ).map {
                     objectMapper.readValue<SøkereKafkaDto>(it.string("data"))

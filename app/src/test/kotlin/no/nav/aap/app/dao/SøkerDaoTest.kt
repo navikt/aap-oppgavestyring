@@ -7,7 +7,7 @@ import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.Utfall
-import no.nav.aap.app.kafka.*
+import no.nav.aap.app.kafka.SøkereKafkaDto
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -24,58 +24,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -85,14 +99,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -129,19 +144,20 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "",
                         sakstyper = listOf(),
                         vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                             tilstand = "",
                             løsningVurderingAvBeregningsdato = null
                         ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         )
 
@@ -159,19 +175,20 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                 personident = "01987654321",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "",
                         sakstyper = listOf(),
                         vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                             tilstand = "",
                             løsningVurderingAvBeregningsdato = null
                         ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         )
 
@@ -182,19 +199,20 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "",
                         sakstyper = listOf(),
                         vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                             tilstand = "",
                             løsningVurderingAvBeregningsdato = null
                         ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         )
 
@@ -211,58 +229,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -272,14 +304,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -313,58 +346,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -374,14 +421,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -415,58 +463,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -476,14 +538,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -517,58 +580,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -578,14 +655,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -620,58 +698,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -681,14 +773,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -723,58 +816,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -784,14 +891,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -826,58 +934,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -887,14 +1009,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -929,58 +1052,72 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
-                Sak(
+                SøkereKafkaDto.Sak(
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     tilstand = "",
                     sakstyper = listOf(
-                        Sakstype(
+                        SøkereKafkaDto.Sakstype(
                             type = "11-5",
                             aktiv = true,
                             vilkårsvurderinger = listOf(
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417360"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_2",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417361"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_3",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417362"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_4",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.OPPFYLT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417363"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_5",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417364"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_6",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417365"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_12",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
                                 ),
-                                Vilkårsvurdering(
+                                SøkereKafkaDto.Vilkårsvurdering(
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -990,14 +1127,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                         tilstand = "",
                         løsningVurderingAvBeregningsdato = null
                     ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
-            )
+            ),
+            version = SøkereKafkaDto.VERSION
         )
 
         søkerDao.insert(frontendSøker)
@@ -1024,6 +1162,61 @@ internal class SøkerDaoTest : DatabaseTestBase() {
         val frontendsøkere = søkerDao.select(innloggetBruker)
 
         assertEquals(0, frontendsøkere.size)
+    }
+
+    @Test
+    fun `Henter bare den versjonen av søker som støttes`() {
+        val søkerGammelVersjon = SøkereKafkaDto(
+            personident = "12345678910",
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            saker = emptyList(),
+            version = SøkereKafkaDto.VERSION - 1
+        )
+        val søkerNyVersjon = SøkereKafkaDto(
+            personident = "10987654321",
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            saker = emptyList(),
+            version = SøkereKafkaDto.VERSION
+        )
+
+        søkerDao.insert(søkerGammelVersjon)
+        søkerDao.insert(søkerNyVersjon)
+
+        val personopplysningerGammelSøker = FrontendPersonopplysninger(
+            personident = "12345678910",
+            norgEnhetId = "1234",
+            adressebeskyttelse = "UGRADERT",
+            geografiskTilknytning = "0001",
+            erSkjermet = false,
+            erSkjermetFom = null,
+            erSkjermetTom = null
+        )
+
+        val personopplysningerNySøker = FrontendPersonopplysninger(
+            personident = "10987654321",
+            norgEnhetId = "1234",
+            adressebeskyttelse = "UGRADERT",
+            geografiskTilknytning = "0001",
+            erSkjermet = false,
+            erSkjermetFom = null,
+            erSkjermetTom = null
+        )
+
+        personopplysningerDao.insert(personopplysningerGammelSøker)
+        personopplysningerDao.insert(personopplysningerNySøker)
+
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.SAKSBEHANDLER),
+            tilknyttedeEnheter = listOf("1234"),
+            harSkjermingsrolle = false,
+        )
+
+        val søkere = søkerDao.select(innloggetBruker)
+
+        assertEquals(2, rowCount("soker"))
+        assertEquals(1, søkere.size)
+        assertEquals(SøkereKafkaDto.VERSION, søkere.single().version)
     }
 
     private fun rowCount(tabell: String): Int {

@@ -3,10 +3,10 @@ package no.nav.aap.app.axsys
 import no.nav.aap.app.RoleName
 import no.nav.aap.app.frontendView.Autorisasjon
 import no.nav.aap.app.frontendView.Utfall
-import no.nav.aap.app.kafka.Vilkårsvurdering
-import org.junit.jupiter.api.Assertions.*
+import no.nav.aap.app.kafka.SøkereKafkaDto
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 internal class InnloggetBrukerTest {
 
@@ -18,8 +18,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_2",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -38,8 +40,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_2",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -58,8 +62,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_2",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -78,8 +84,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_2",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -98,9 +106,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
             vurdertAv = "test@test.com",
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_2",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -119,9 +128,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
             vurdertAv = "test2@test.com",
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_2",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -140,8 +150,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_5",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -160,8 +172,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_5",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -180,8 +194,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_5",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -200,8 +216,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_5",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -220,9 +238,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
             vurdertAv = "test@test.com",
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_5",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",
@@ -241,9 +260,10 @@ internal class InnloggetBrukerTest {
             tilknyttedeEnheter = listOf()
         )
 
-        val vilkårsvurdering = Vilkårsvurdering(
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
             vilkårsvurderingsid = UUID.randomUUID(),
             vurdertAv = "test2@test.com",
+            godkjentAv = null,
             paragraf = "PARAGRAF_11_5",
             ledd = listOf("LEDD_1"),
             tilstand = "SOKNAD_MOTTATT",

@@ -4,11 +4,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
-import no.nav.aap.app.frontendView.FrontendSak
-import no.nav.aap.app.frontendView.FrontendSøker
-import no.nav.aap.app.kafka.Sak
 import no.nav.aap.app.kafka.SøkereKafkaDto
-import no.nav.aap.app.kafka.VurderingAvBeregningsdato
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -26,19 +22,20 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "",
                         sakstyper = listOf(),
                         vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                             tilstand = "",
                             løsningVurderingAvBeregningsdato = null
                         ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         )
         val personopplysninger = FrontendPersonopplysninger(
@@ -67,19 +64,20 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "",
                         sakstyper = listOf(),
                         vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                             tilstand = "",
                             løsningVurderingAvBeregningsdato = null
                         ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         )
         personopplysningerDao.insert(
@@ -108,19 +106,20 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "",
                         sakstyper = listOf(),
                         vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                             tilstand = "",
                             løsningVurderingAvBeregningsdato = null
                         ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         )
         søkerDao.insert(
@@ -128,19 +127,20 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                 personident = "01987654321",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         tilstand = "",
                         sakstyper = listOf(),
                         vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato(
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
                             tilstand = "",
                             løsningVurderingAvBeregningsdato = null
                         ),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         )
         personopplysningerDao.insert(

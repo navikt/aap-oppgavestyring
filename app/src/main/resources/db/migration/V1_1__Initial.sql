@@ -4,6 +4,7 @@ GRANT ALL ON ALL TABLES IN SCHEMA PUBLIC TO cloudsqliamuser;
 CREATE TABLE soker
 (
     personident TEXT,
+    version     INT,
     data        JSON,
     CONSTRAINT unique_personident UNIQUE (personident)
 );

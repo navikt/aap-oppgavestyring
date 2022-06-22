@@ -189,18 +189,20 @@ internal class AppTest {
         runBlocking { client.get("/actuator/live") }
         søkerTopic.produce("12345678910") {
             SøkereKafkaDto(
-                "12345678910",
-                LocalDate.of(1990, 1, 1),
-                listOf(
-                    Sak(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                saker = listOf(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         sakstyper = listOf(
-                            Sakstype(
+                            SøkereKafkaDto.Sakstype(
                                 "STANDARD",
                                 true,
                                 listOf(
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_2",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -208,6 +210,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_3",
                                         ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -215,6 +219,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
+                                        vurdertAv = "maskinell vurdering",
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "OPPFYLT",
@@ -222,6 +228,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_2", "LEDD_3"),
                                         tilstand = "IKKE_RELEVANT",
@@ -229,6 +237,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_5",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -236,6 +246,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_6",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -243,6 +255,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_12",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -250,6 +264,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_29",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -259,12 +275,13 @@ internal class AppTest {
                             )
                         ),
                         vurderingsdato = LocalDate.of(2022, 1, 1),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         }
 
@@ -375,15 +392,17 @@ internal class AppTest {
                 personident = "12345678910",
                 fødselsdato = LocalDate.of(1990, 1, 1),
                 saker = listOf(
-                    Sak(
+                    SøkereKafkaDto.Sak(
                         saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         sakstyper = listOf(
-                            Sakstype(
+                            SøkereKafkaDto.Sakstype(
                                 "STANDARD",
                                 true,
                                 listOf(
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417301",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_2",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -391,6 +410,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417302",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_3",
                                         ledd = listOf("LEDD_1", "LEDD_2", "LEDD_3"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -398,6 +419,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417303",
+                                        vurdertAv = "maskinell vurdering",
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "OPPFYLT",
@@ -405,6 +428,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417304",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_4",
                                         ledd = listOf("LEDD_2", "LEDD_3"),
                                         tilstand = "IKKE_RELEVANT",
@@ -412,6 +437,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417305",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_5",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -419,6 +446,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417306",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_6",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -426,6 +455,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417307",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_12",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -433,6 +464,8 @@ internal class AppTest {
                                     ),
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_29",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -442,12 +475,13 @@ internal class AppTest {
                             )
                         ),
                         vurderingsdato = LocalDate.of(2022, 1, 1),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         }
 
@@ -658,18 +692,20 @@ internal class AppTest {
 
         søkerTopic.produce("12345678910") {
             SøkereKafkaDto(
-                "12345678910",
-                LocalDate.of(1990, 1, 1),
-                listOf(
-                    Sak(
+                personident = "12345678910",
+                fødselsdato = LocalDate.of(1990, 1, 1),
+                saker = listOf(
+                    SøkereKafkaDto.Sak(
                         UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                         sakstyper = listOf(
-                            Sakstype(
+                            SøkereKafkaDto.Sakstype(
                                 "STANDARD",
                                 true,
                                 listOf(
                                     vilkarsvurdering(
                                         vilkårsvurderingsid = UUID.randomUUID().toString(),
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_2",
                                         ledd = listOf("LEDD_1", "LEDD_2"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -679,12 +715,13 @@ internal class AppTest {
                             )
                         ),
                         vurderingsdato = LocalDate.of(2022, 1, 1),
-                        vurderingAvBeregningsdato = VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
+                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
                     )
-                )
+                ),
+                version = SøkereKafkaDto.VERSION
             )
         }
 
@@ -740,22 +777,26 @@ internal class AppTest {
 
     private fun vilkarsvurdering(
         vilkårsvurderingsid: String,
+        vurdertAv: String?,
+        godkjentAv: String?,
         paragraf: String,
         ledd: List<String>,
         tilstand: String,
         utfall: Utfall,
-        løsningYrkesskade_manuell: LøsningManuellMedlemskapYrkesskade? = null,
-        løsningYrkesskade_maskinell: LøsningMaskinellMedlemskapYrkesskade? = null,
-        losning_11_2_manuell: LøsningParagraf_11_2? = null,
-        losning_11_2_maskinell: LøsningParagraf_11_2? = null,
-        losning_11_3_manuell: LøsningParagraf_11_3? = null,
-        losning_11_4_l2_l3_manuell: LøsningParagraf_11_4_ledd2_ledd3? = null,
-        losning_11_5_manuell: LøsningParagraf_11_5? = null,
-        losning_11_6_manuell: LøsningParagraf_11_6? = null,
-        losning_11_12_l1_manuell: LøsningParagraf_11_12_ledd1? = null,
-        losning_11_29_manuell: LøsningParagraf_11_29? = null
-    ) = Vilkårsvurdering(
+        løsningYrkesskade_manuell: SøkereKafkaDto.LøsningManuellMedlemskapYrkesskade? = null,
+        løsningYrkesskade_maskinell: SøkereKafkaDto.LøsningMaskinellMedlemskapYrkesskade? = null,
+        losning_11_2_manuell: SøkereKafkaDto.LøsningParagraf_11_2? = null,
+        losning_11_2_maskinell: SøkereKafkaDto.LøsningParagraf_11_2? = null,
+        losning_11_3_manuell: SøkereKafkaDto.LøsningParagraf_11_3? = null,
+        losning_11_4_l2_l3_manuell: SøkereKafkaDto.LøsningParagraf_11_4_ledd2_ledd3? = null,
+        losning_11_5_manuell: SøkereKafkaDto.LøsningParagraf_11_5? = null,
+        losning_11_6_manuell: SøkereKafkaDto.LøsningParagraf_11_6? = null,
+        losning_11_12_l1_manuell: SøkereKafkaDto.LøsningParagraf_11_12_ledd1? = null,
+        losning_11_29_manuell: SøkereKafkaDto.LøsningParagraf_11_29? = null
+    ) = SøkereKafkaDto.Vilkårsvurdering(
         vilkårsvurderingsid = UUID.fromString(vilkårsvurderingsid),
+        vurdertAv = vurdertAv,
+        godkjentAv = godkjentAv,
         paragraf = paragraf,
         ledd = ledd,
         tilstand = tilstand,
