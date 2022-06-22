@@ -36,7 +36,14 @@ internal class AppTest {
     private lateinit var mocks: MockEnvironment
     private lateinit var søkerTopic: TestInputTopic<String, SøkereKafkaDto>
     private lateinit var mottakerTopic: TestInputTopic<String, DtoMottaker>
-    private lateinit var manuellOutputTopic: TestOutputTopic<String, ManuellKafkaDto>
+    private lateinit var løsning_11_2_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_2_manuell>
+    private lateinit var løsning_11_3_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_3_manuell>
+    private lateinit var løsning_11_4_ledd2_ledd3_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_4_ledd2_ledd3_manuell>
+    private lateinit var løsning_11_5_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_5_manuell>
+    private lateinit var løsning_11_6_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_6_manuell>
+    private lateinit var løsning_11_12_ledd1_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_12_ledd1_manuell>
+    private lateinit var løsning_11_29_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_29_manuell>
+    private lateinit var løsningVurderingAvBeregningsdato_OutputTopic: TestOutputTopic<String, LøsningVurderingAvBeregningsdato>
 
     @BeforeAll
     fun setupMockEnvironment() {
@@ -48,8 +55,29 @@ internal class AppTest {
 
     @AfterEach
     fun assertNoUnassertedRecordsLeftOnTopic() {
-        if (::manuellOutputTopic.isInitialized) {
-            manuellOutputTopic.readAndAssert().isEmpty()
+        if (::løsning_11_2_manuell_OutputTopic.isInitialized) {
+            løsning_11_2_manuell_OutputTopic.readAndAssert().isEmpty()
+        }
+        if (::løsning_11_3_manuell_OutputTopic.isInitialized) {
+            løsning_11_3_manuell_OutputTopic.readAndAssert().isEmpty()
+        }
+        if (::løsning_11_4_ledd2_ledd3_manuell_OutputTopic.isInitialized) {
+            løsning_11_4_ledd2_ledd3_manuell_OutputTopic.readAndAssert().isEmpty()
+        }
+        if (::løsning_11_5_manuell_OutputTopic.isInitialized) {
+            løsning_11_5_manuell_OutputTopic.readAndAssert().isEmpty()
+        }
+        if (::løsning_11_6_manuell_OutputTopic.isInitialized) {
+            løsning_11_6_manuell_OutputTopic.readAndAssert().isEmpty()
+        }
+        if (::løsning_11_12_ledd1_manuell_OutputTopic.isInitialized) {
+            løsning_11_12_ledd1_manuell_OutputTopic.readAndAssert().isEmpty()
+        }
+        if (::løsning_11_29_manuell_OutputTopic.isInitialized) {
+            løsning_11_29_manuell_OutputTopic.readAndAssert().isEmpty()
+        }
+        if (::løsningVurderingAvBeregningsdato_OutputTopic.isInitialized) {
+            løsningVurderingAvBeregningsdato_OutputTopic.readAndAssert().isEmpty()
         }
     }
 
@@ -159,7 +187,7 @@ internal class AppTest {
             }
         }
 
-        val producer = mocks.kafka.getProducer(Topics.manuell)
+        val producer = mocks.kafka.getProducer(Topics.manuell_11_3)
         assertEquals("test.test@test.com", producer.history().single().value().vurdertAv)
     }
 
@@ -174,7 +202,6 @@ internal class AppTest {
                 server(mocks.kafka)
                 søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
                 personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
-                mocks.kafka.outputTopic(Topics.manuell)
             }
         }
 
@@ -372,7 +399,6 @@ internal class AppTest {
                 server(mocks.kafka)
                 søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
                 personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
-                mocks.kafka.outputTopic(Topics.manuell)
             }
         }
 
@@ -568,7 +594,6 @@ internal class AppTest {
             application {
                 server(mocks.kafka)
                 mottakerTopic = mocks.kafka.inputTopic(Topics.mottakere)
-                mocks.kafka.outputTopic(Topics.manuell)
             }
         }
 
@@ -675,7 +700,6 @@ internal class AppTest {
                 server(mocks.kafka)
                 søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
                 personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
-                mocks.kafka.outputTopic(Topics.manuell)
             }
         }
 

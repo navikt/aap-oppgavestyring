@@ -26,11 +26,13 @@ import kotlinx.coroutines.withContext
 import no.nav.aap.app.axsys.AxsysClient
 import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
+import no.nav.aap.app.kafka.Løsning_11_2_manuell
 import no.nav.aap.app.kafka.PersonopplysningerKafkaDto
 import no.nav.aap.app.kafka.Topics
 import no.nav.aap.kafka.KafkaConfig
 import no.nav.aap.kafka.streams.*
 import no.nav.aap.ktor.config.loadConfig
+import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.streams.StreamsBuilder
 import org.flywaydb.core.Flyway
@@ -158,7 +160,14 @@ private fun Routing.api(
     config: KafkaConfig,
     kafka: KStreams
 ) {
-    val manuellProducer = kafka.createProducer(config, Topics.manuell)
+    val manuell_11_2Producer: Producer<String, Løsning_11_2_manuell> = kafka.createProducer(config, Topics.manuell_11_2)
+    val manuell_11_3Producer = kafka.createProducer(config, Topics.manuell_11_3)
+    val manuell_11_4Producer = kafka.createProducer(config, Topics.manuell_11_4)
+    val manuell_11_5Producer = kafka.createProducer(config, Topics.manuell_11_5)
+    val manuell_11_6Producer = kafka.createProducer(config, Topics.manuell_11_6)
+    val manuell_11_12Producer = kafka.createProducer(config, Topics.manuell_11_12)
+    val manuell_11_29Producer = kafka.createProducer(config, Topics.manuell_11_29)
+    val manuell_beregningsdatoProducer = kafka.createProducer(config, Topics.manuell_beregningsdato)
 
     route("/api") {
         authenticate("hentStuff") {
@@ -182,46 +191,86 @@ private fun Routing.api(
             }
         }
 
-        fun Route.postLøsning(path: String, block: suspend ApplicationCall.() -> DtoManuell) = post(path) {
-            val personident = call.parameters.getOrFail("personident")
-            secureLog.info("Skal løse oppgave for $personident")
-            val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
-            val manuell = call.block()
-            withContext(Dispatchers.IO) {
-                manuellProducer.send(
-                    ProducerRecord(Topics.manuell.name, personident, manuell.toKafkaDto(innloggetBruker.brukernavn))
-                ).get()
-            }
-            call.respond(HttpStatusCode.OK, "OK")
-        }
-
         authenticate("løsningNAY") {
-            postLøsning("/sak/{personident}/losning/paragraf_11_2") {
-                DtoManuell(løsning_11_2_manuell = receive())
-            }
-            postLøsning("/sak/{personident}/losning/paragraf_11_3") {
-                DtoManuell(løsning_11_3_manuell = receive())
-            }
-            postLøsning("/sak/{personident}/losning/paragraf_11_4") {
-                DtoManuell(løsning_11_4_ledd2_ledd3_manuell = receive())
-            }
-            postLøsning("/sak/{personident}/losning/paragraf_11_6") {
-                DtoManuell(løsning_11_6_manuell = receive())
-            }
-            postLøsning("/sak/{personident}/losning/paragraf_11_12") {
-                DtoManuell(løsning_11_12_ledd1_manuell = receive())
-            }
-            postLøsning("/sak/{personident}/losning/paragraf_11_29") {
-                DtoManuell(løsning_11_29_manuell = receive())
-            }
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_2",
+                Topics.manuell_11_2,
+                manuell_11_2Producer,
+                DtoLøsningParagraf_11_2::toKafkaDto
+            )
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_3",
+                Topics.manuell_11_3,
+                manuell_11_3Producer,
+                DtoLøsningParagraf_11_3::toKafkaDto
+            )
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_4",
+                Topics.manuell_11_4,
+                manuell_11_4Producer,
+                DtoLøsningParagraf_11_4_ledd2_ledd3::toKafkaDto
+            )
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_6",
+                Topics.manuell_11_6,
+                manuell_11_6Producer,
+                DtoLøsningParagraf_11_6::toKafkaDto
+            )
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_12",
+                Topics.manuell_11_12,
+                manuell_11_12Producer,
+                DtoLøsningParagraf_11_12_ledd1::toKafkaDto
+            )
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_29",
+                Topics.manuell_11_29,
+                manuell_11_29Producer,
+                DtoLøsningParagraf_11_29::toKafkaDto
+            )
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/beregningsdato",
+                Topics.manuell_beregningsdato,
+                manuell_beregningsdatoProducer,
+                DtoLøsningVurderingAvBeregningsdato::toKafkaDto
+            )
         }
 
         authenticate("løsningLokalkontor") {
-            postLøsning("/sak/{personident}/losning/paragraf_11_5") {
-                DtoManuell(løsning_11_5_manuell = receive())
-            }
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_5",
+                Topics.manuell_11_5,
+                manuell_11_5Producer,
+                DtoLøsningParagraf_11_5::toKafkaDto
+            )
         }
     }
+}
+
+private inline fun <reified DTO : Any, KAFKA_DTO> Route.postLøsning(
+    innloggetBrukerProvider: InnloggetBrukerProvider,
+    path: String,
+    topic: Topic<KAFKA_DTO>,
+    producer: Producer<String, KAFKA_DTO>,
+    crossinline block: DTO.(vurdertAv: String) -> KAFKA_DTO
+) = post(path) {
+    val personident = call.parameters.getOrFail("personident")
+    secureLog.info("Skal løse oppgave for $personident")
+
+    val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
+    val manuell = call.receive<DTO>().block(innloggetBruker.brukernavn)
+
+    withContext(Dispatchers.IO) { producer.send(ProducerRecord(topic.name, personident, manuell)).get() }
+
+    call.respond(HttpStatusCode.OK, "OK")
 }
 
 private fun initDatasource(dbConfig: DbConfig) = HikariDataSource(HikariConfig().apply {

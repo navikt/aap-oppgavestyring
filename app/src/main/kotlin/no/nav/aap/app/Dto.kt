@@ -18,59 +18,64 @@ data class DtoManuell(
     val løsningVurderingAvBeregningsdato: DtoLøsningVurderingAvBeregningsdato? = null,
 )
 
-data class DtoLøsningParagraf_11_2(val erMedlem: String)
-data class DtoLøsningParagraf_11_3(val erOppfylt: Boolean)
-data class DtoLøsningParagraf_11_4_ledd2_ledd3(val erOppfylt: Boolean)
+data class DtoLøsningParagraf_11_2(val erMedlem: String) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_2_manuell(vurdertAv, erMedlem)
+}
+
+data class DtoLøsningParagraf_11_3(val erOppfylt: Boolean) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_3_manuell(vurdertAv, erOppfylt)
+}
+
+data class DtoLøsningParagraf_11_4_ledd2_ledd3(val erOppfylt: Boolean) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_4_ledd2_ledd3_manuell(vurdertAv, erOppfylt)
+}
+
 data class DtoLøsningParagraf_11_5(
     val kravOmNedsattArbeidsevneErOppfylt: Boolean,
     val nedsettelseSkyldesSykdomEllerSkade: Boolean
-)
+) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_5_manuell(
+        vurdertAv = vurdertAv,
+        kravOmNedsattArbeidsevneErOppfylt = kravOmNedsattArbeidsevneErOppfylt,
+        nedsettelseSkyldesSykdomEllerSkade = nedsettelseSkyldesSykdomEllerSkade
+    )
+}
 
 data class DtoLøsningParagraf_11_6(
     val harBehovForBehandling: Boolean,
     val harBehovForTiltak: Boolean,
     val harMulighetForÅKommeIArbeid: Boolean
-)
+) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_6_manuell(
+        vurdertAv = vurdertAv,
+        harBehovForBehandling = harBehovForBehandling,
+        harBehovForTiltak = harBehovForTiltak,
+        harMulighetForÅKommeIArbeid = harMulighetForÅKommeIArbeid
+    )
+}
 
 data class DtoLøsningParagraf_11_12_ledd1(
     val bestemmesAv: String,
     val unntak: String,
     val unntaksbegrunnelse: String,
     val manueltSattVirkningsdato: LocalDate
-)
+) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_12_ledd1_manuell(
+        vurdertAv = vurdertAv,
+        bestemmesAv = bestemmesAv,
+        unntak = unntak,
+        unntaksbegrunnelse = unntaksbegrunnelse,
+        manueltSattVirkningsdato = manueltSattVirkningsdato
+    )
+}
 
-data class DtoLøsningParagraf_11_29(val erOppfylt: Boolean)
-data class DtoLøsningVurderingAvBeregningsdato(val beregningsdato: LocalDate)
+data class DtoLøsningParagraf_11_29(val erOppfylt: Boolean) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_29_manuell(vurdertAv, erOppfylt)
+}
 
-fun DtoManuell.toKafkaDto(vurdertAv: String): ManuellKafkaDto = ManuellKafkaDto(
-    vurdertAv = vurdertAv,
-    løsning_11_2_manuell = løsning_11_2_manuell?.let { Løsning_11_2_manuell(it.erMedlem) },
-    løsning_11_3_manuell = løsning_11_3_manuell?.let { Løsning_11_3_manuell(it.erOppfylt) },
-    løsning_11_4_ledd2_ledd3_manuell = løsning_11_4_ledd2_ledd3_manuell?.let { Løsning_11_4_ledd2_ledd3_manuell(it.erOppfylt) },
-    løsning_11_5_manuell = løsning_11_5_manuell?.let {
-        Løsning_11_5_manuell(
-            it.kravOmNedsattArbeidsevneErOppfylt,
-            it.nedsettelseSkyldesSykdomEllerSkade
-        )
-    },
-    løsning_11_6_manuell = løsning_11_6_manuell?.let {
-        Løsning_11_6_manuell(
-            harBehovForBehandling = it.harBehovForBehandling,
-            harBehovForTiltak = it.harBehovForTiltak,
-            harMulighetForÅKommeIArbeid = it.harMulighetForÅKommeIArbeid
-        )
-    },
-    løsning_11_12_ledd1_manuell = løsning_11_12_ledd1_manuell?.let {
-        Løsning_11_12_ledd1_manuell(
-            bestemmesAv = it.bestemmesAv,
-            unntak = it.unntak,
-            unntaksbegrunnelse = it.unntaksbegrunnelse,
-            manueltSattVirkningsdato = it.manueltSattVirkningsdato
-        )
-    },
-    løsning_11_29_manuell = løsning_11_29_manuell?.let { Løsning_11_29_manuell(it.erOppfylt) },
-    løsningVurderingAvBeregningsdato = løsningVurderingAvBeregningsdato?.let { LøsningVurderingAvBeregningsdato(it.beregningsdato) }
-)
+data class DtoLøsningVurderingAvBeregningsdato(val beregningsdato: LocalDate) {
+    internal fun toKafkaDto(vurdertAv: String) = LøsningVurderingAvBeregningsdato(vurdertAv, beregningsdato)
+}
 
 data class DtoSøker(
     val personident: String,
