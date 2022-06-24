@@ -68,7 +68,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
         fun AuthenticationConfig.jwt(name: String, realm: String, roles: List<RoleName>? = null) = jwt(name) {
             this.realm = realm
             verifier(jwkProvider, config.oauth.azure.issuer)
-            challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "oppgavestyring sin dørvakt stoppet deg") }
+            challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized, "Ikke tilgang") }
             validate { cred ->
                 if (cred.getClaim("preferred_username", String::class) == null) return@validate null
                 if (cred.getClaim("NAVident", String::class) == null) return@validate null
@@ -82,7 +82,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
                 JWTPrincipal(cred.payload)
             }
         }
-        jwt("hentStuff", "hent oppgaver")
+        jwt("les", "hent oppgaver")
         jwt("løsningNAY", "løsning NAY", listOf(RoleName.SAKSBEHANDLER, RoleName.BESLUTTER))
         jwt("løsningLokalkontor", "løsning lokalkontor", listOf(RoleName.VEILEDER, RoleName.FATTER))
     }
@@ -170,7 +170,7 @@ private fun Routing.api(
     val manuell_beregningsdatoProducer = kafka.createProducer(config, Topics.manuell_beregningsdato)
 
     route("/api") {
-        authenticate("hentStuff") {
+        authenticate("les") {
             get("/personopplysninger/{personident}") {
                 val personident = call.parameters.getOrFail("personident")
                 when (val opplysninger = repo.hentPersonopplysninger(personident)) {

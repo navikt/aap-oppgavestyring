@@ -136,7 +136,12 @@ data class SøkereKafkaDto(
     data class LøsningVurderingAvBeregningsdato(
         val vurdertAv: String,
         val beregningsdato: LocalDate
-    )
+    ) {
+        internal fun hentAutorisasjon(brukernavn: String): Autorisasjon {
+            if (brukernavn == vurdertAv) return Autorisasjon.ENDRE
+            return Autorisasjon.GODKJENNE
+        }
+    }
 
     data class Inntekt(
         val arbeidsgiver: String,

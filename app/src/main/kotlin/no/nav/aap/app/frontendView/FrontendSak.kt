@@ -15,7 +15,8 @@ data class FrontendSak(
     val paragraf_11_5: FrontendParagraf_11_5?,
     val paragraf_11_6: FrontendParagraf_11_6?,
     val paragraf_11_12: FrontendParagraf_11_12?,
-    val paragraf_11_29: FrontendParagraf_11_29?
+    val paragraf_11_29: FrontendParagraf_11_29?,
+    val beregningsdato: FrontendBeregningsdato?
 )
 
 enum class Autorisasjon {
@@ -74,5 +75,10 @@ data class FrontendParagraf_11_12(
 data class FrontendParagraf_11_29(
     val vilkårsvurderingsid: UUID,
     val utfall: String,
+    val autorisasjon: Autorisasjon
+)
+
+data class FrontendBeregningsdato(
+    val beregningsdato: LocalDate?,
     val autorisasjon: Autorisasjon
 )

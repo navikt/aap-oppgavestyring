@@ -31,7 +31,8 @@ private fun SøkereKafkaDto.Sak.toFrontendView(innloggetBruker: InnloggetBruker)
     paragraf_11_12 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_12.name)
         ?.toFrontendParagraf11_12(innloggetBruker),
     paragraf_11_29 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_29.name)
-        ?.toFrontendParagraf11_29(innloggetBruker)
+        ?.toFrontendParagraf11_29(innloggetBruker),
+    beregningsdato = vurderingAvBeregningsdato.toFrontendView(innloggetBruker)
 )
 
 private fun Iterable<SøkereKafkaDto.Sakstype>.finnVilkårsvurdering(paragrafnavn: String) =
@@ -124,4 +125,9 @@ private fun SøkereKafkaDto.Inntekt.toFrontendView() = FrontendInntekt(
     arbeidsgiver = arbeidsgiver,
     inntektsmåned = inntekstmåned,
     beløp = beløp
+)
+
+private fun SøkereKafkaDto.VurderingAvBeregningsdato.toFrontendView(innloggetBruker: InnloggetBruker) = FrontendBeregningsdato(
+    beregningsdato = løsningVurderingAvBeregningsdato?.beregningsdato,
+    autorisasjon = innloggetBruker.hentAutorisasjonForNAY(this)
 )

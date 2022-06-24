@@ -19,6 +19,13 @@ data class InnloggetBruker(
     fun erTilknyttetLokalkontor() = roller.any { it in listOf(RoleName.VEILEDER, RoleName.FATTER) }
     fun tilknyttedeEnheter() = tilknyttedeEnheter
 
+    internal fun hentAutorisasjonForNAY(beregningsdato: SøkereKafkaDto.VurderingAvBeregningsdato): Autorisasjon {
+        if (!erTilknyttetNAY()) return Autorisasjon.LESE
+        if (roller.none { it == RoleName.BESLUTTER }) return Autorisasjon.ENDRE
+
+        return beregningsdato.løsningVurderingAvBeregningsdato?.hentAutorisasjon(brukernavn) ?: Autorisasjon.LESE
+    }
+
     internal fun hentAutorisasjonForNAY(vilkårsvurdering: SøkereKafkaDto.Vilkårsvurdering): Autorisasjon {
         if (!erTilknyttetNAY()) return Autorisasjon.LESE
         if (roller.none { it == RoleName.BESLUTTER }) return Autorisasjon.ENDRE
