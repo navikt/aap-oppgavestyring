@@ -19,7 +19,7 @@ internal class SøkerDao(private val dataSource: DataSource) {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
 
-    internal fun insert(søker: SøkereKafkaDto) {
+    internal fun insert(personident: String, version: Int, søker: ByteArray) {
         sessionOf(dataSource).use { session ->
             session.transaction { tSession ->
                 @Language("PostgreSQL")
@@ -30,9 +30,9 @@ internal class SøkerDao(private val dataSource: DataSource) {
                 tSession.run(
                     queryOf(
                         query, mapOf(
-                            "personident" to søker.personident,
-                            "version" to søker.version,
-                            "data" to objectMapper.writeValueAsString(søker)
+                            "personident" to personident,
+                            "version" to version,
+                            "data" to søker.decodeToString()
                         )
                     ).asUpdate
                 )

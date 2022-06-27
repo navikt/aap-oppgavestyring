@@ -8,6 +8,7 @@ import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.Utfall
 import no.nav.aap.app.kafka.SøkereKafkaDto
+import no.nav.aap.kafka.serde.json.JsonSerde
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -20,7 +21,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Lagrer liste med frontendsak i database`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -110,7 +111,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -132,32 +140,37 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             tilknyttedeEnheter = listOf("1234"),
         )
 
-        val frontendsøkere = søkerDao.select(listOf("12345678910"), innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(listOf("12345678910"), innloggetBruker)
 
-        assertEquals(frontendSøker, frontendsøkere.single())
+        assertEquals(søkereKafkaDto, søkereKafkaDtoe.single())
     }
 
     @Test
     fun `Sletter søker fra database`() {
         søkerDao.insert(
-            SøkereKafkaDto(
-                personident = "12345678910",
-                fødselsdato = LocalDate.of(1990, 1, 1),
-                saker = listOf(
-                    SøkereKafkaDto.Sak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "",
-                        sakstyper = listOf(),
-                        vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                SøkereKafkaDto(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
+                        SøkereKafkaDto.Sak(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                             tilstand = "",
-                            løsningVurderingAvBeregningsdato = null
-                        ),
-                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        vedtak = null
-                    )
-                ),
-                version = SøkereKafkaDto.VERSION
+                            sakstyper = listOf(),
+                            vurderingsdato = LocalDate.now(),
+                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+                                tilstand = "",
+                                løsningVurderingAvBeregningsdato = null
+                            ),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            vedtak = null
+                        )
+                    ),
+                    version = SøkereKafkaDto.VERSION
+                )
             )
         )
 
@@ -171,48 +184,58 @@ internal class SøkerDaoTest : DatabaseTestBase() {
     @Test
     fun `Sletter ikke annen søker fra database`() {
         søkerDao.insert(
-            SøkereKafkaDto(
-                personident = "01987654321",
-                fødselsdato = LocalDate.of(1990, 1, 1),
-                saker = listOf(
-                    SøkereKafkaDto.Sak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "",
-                        sakstyper = listOf(),
-                        vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+            "01987654321",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                SøkereKafkaDto(
+                    personident = "01987654321",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
+                        SøkereKafkaDto.Sak(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                             tilstand = "",
-                            løsningVurderingAvBeregningsdato = null
-                        ),
-                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        vedtak = null
-                    )
-                ),
-                version = SøkereKafkaDto.VERSION
+                            sakstyper = listOf(),
+                            vurderingsdato = LocalDate.now(),
+                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+                                tilstand = "",
+                                løsningVurderingAvBeregningsdato = null
+                            ),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            vedtak = null
+                        )
+                    ),
+                    version = SøkereKafkaDto.VERSION
+                )
             )
         )
 
         assertEquals(1, rowCount("soker"))
 
         søkerDao.insert(
-            SøkereKafkaDto(
-                personident = "12345678910",
-                fødselsdato = LocalDate.of(1990, 1, 1),
-                saker = listOf(
-                    SøkereKafkaDto.Sak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "",
-                        sakstyper = listOf(),
-                        vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                SøkereKafkaDto(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
+                        SøkereKafkaDto.Sak(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                             tilstand = "",
-                            løsningVurderingAvBeregningsdato = null
-                        ),
-                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        vedtak = null
-                    )
-                ),
-                version = SøkereKafkaDto.VERSION
+                            sakstyper = listOf(),
+                            vurderingsdato = LocalDate.now(),
+                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+                                tilstand = "",
+                                løsningVurderingAvBeregningsdato = null
+                            ),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            vedtak = null
+                        )
+                    ),
+                    version = SøkereKafkaDto.VERSION
+                )
             )
         )
 
@@ -225,7 +248,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
 
     @Test
     fun `Bruker har fortrolig adresse, innlogget saksbehandler har ikke rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -315,7 +338,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -335,14 +365,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             tilknyttedeEnheter = listOf("1234"),
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(0, frontendsøkere.size)
+        assertEquals(0, søkereKafkaDtoe.size)
     }
 
     @Test
     fun `Bruker har skjerming fom og ingen tom, innlogget saksbehandler har ikke rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -432,7 +462,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -452,14 +489,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             tilknyttedeEnheter = listOf("1234"),
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(0, frontendsøkere.size)
+        assertEquals(0, søkereKafkaDtoe.size)
     }
 
     @Test
     fun `Bruker har ikke skjerming, fom og tom er begge passert, innlogget saksbehandler har rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -549,7 +586,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -569,14 +613,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             tilknyttedeEnheter = listOf("1234"),
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(1, frontendsøkere.size)
+        assertEquals(1, søkereKafkaDtoe.size)
     }
 
     @Test
     fun `Bruker har skjerming, innlogget saksbehandler har rollen, og derfor rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -666,7 +710,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -687,14 +738,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             harSkjermingsrolle = true,
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(1, frontendsøkere.size)
+        assertEquals(1, søkereKafkaDtoe.size)
     }
 
     @Test
     fun `Innlogget som saksbehandler - norg enhet har ingen påvirkning - har derfor rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -784,7 +835,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -805,14 +863,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             harSkjermingsrolle = false,
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(1, frontendsøkere.size)
+        assertEquals(1, søkereKafkaDtoe.size)
     }
 
     @Test
     fun `Innlogget uten saksbehandler eller veilederrolle - har ikke rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -902,7 +960,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -923,14 +988,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             harSkjermingsrolle = false,
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(0, frontendsøkere.size)
+        assertEquals(0, søkereKafkaDtoe.size)
     }
 
     @Test
     fun `Innlogget som veileder - riktig norg enhet - har derfor rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -1020,7 +1085,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -1041,14 +1113,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             harSkjermingsrolle = false,
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(1, frontendsøkere.size)
+        assertEquals(1, søkereKafkaDtoe.size)
     }
 
     @Test
     fun `Innlogget som veileder - annen norg enhet - har derfor ikke rett til å se denne`() {
-        val frontendSøker = SøkereKafkaDto(
+        val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
             saker = listOf(
@@ -1138,7 +1210,14 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(frontendSøker)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkereKafkaDto
+            )
+        )
 
         val personopplysninger = FrontendPersonopplysninger(
             personident = "12345678910",
@@ -1159,9 +1238,9 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             harSkjermingsrolle = false,
         )
 
-        val frontendsøkere = søkerDao.select(innloggetBruker)
+        val søkereKafkaDtoe = søkerDao.select(innloggetBruker)
 
-        assertEquals(0, frontendsøkere.size)
+        assertEquals(0, søkereKafkaDtoe.size)
     }
 
     @Test
@@ -1179,8 +1258,22 @@ internal class SøkerDaoTest : DatabaseTestBase() {
             version = SøkereKafkaDto.VERSION
         )
 
-        søkerDao.insert(søkerGammelVersjon)
-        søkerDao.insert(søkerNyVersjon)
+        søkerDao.insert(
+            "12345678910",
+            SøkereKafkaDto.VERSION - 1,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkerGammelVersjon
+            )
+        )
+        søkerDao.insert(
+            "10987654321",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                søkerNyVersjon
+            )
+        )
 
         val personopplysningerGammelSøker = FrontendPersonopplysninger(
             personident = "12345678910",

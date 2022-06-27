@@ -2,9 +2,10 @@ package no.nav.aap.app.kafka
 
 import no.nav.aap.kafka.serde.json.JsonSerde
 import no.nav.aap.kafka.streams.Topic
+import org.apache.kafka.common.serialization.Serdes.ByteArraySerde
 
 object Topics {
-    val søkere = Topic("aap.sokere.v1", JsonSerde.jackson<SøkereKafkaDto>())
+    val søkere = Topic("aap.sokere.v1", ByteArraySerde())
     val manuell_11_2 = Topic("aap.manuell.11-2.v1", JsonSerde.jackson<Løsning_11_2_manuell>())
     val manuell_11_3 = Topic("aap.manuell.11-3.v1", JsonSerde.jackson<Løsning_11_3_manuell>())
     val manuell_11_4 = Topic("aap.manuell.11-4.v1", JsonSerde.jackson<Løsning_11_4_ledd2_ledd3_manuell>())

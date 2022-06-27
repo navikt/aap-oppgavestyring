@@ -1,13 +1,12 @@
 package no.nav.aap.app
 
+import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.dao.*
 import no.nav.aap.app.db.DBTildeling
 import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
-import no.nav.aap.app.axsys.InnloggetBruker
 import no.nav.aap.app.frontendView.toFrontendView
-import no.nav.aap.app.kafka.SøkereKafkaDto
 import no.nav.aap.app.modell.Rolle
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -15,7 +14,7 @@ import javax.sql.DataSource
 
 interface Repository {
     fun hentSøker(personident: String, innloggetBruker: InnloggetBruker): List<FrontendSøker>
-    fun lagreSøker(søker: SøkereKafkaDto)
+    fun lagreSøker(personident: String, version: Int, søker: ByteArray)
     fun hentSøkere(innloggetBruker: InnloggetBruker): List<FrontendSøker>
     fun slettSøker(personident: String)
     fun lagrePersonopplysninger(fp: FrontendPersonopplysninger)
@@ -37,7 +36,7 @@ internal class Repo(dataSource: DataSource) : Repository {
     override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) =
         søkerDao.select(listOf(personident), innloggetBruker).map { it.toFrontendView(innloggetBruker) }
 
-    override fun lagreSøker(søker: SøkereKafkaDto) = søkerDao.insert(søker)
+    override fun lagreSøker(personident: String, version: Int, søker: ByteArray) = søkerDao.insert(personident, version, søker)
 
     override fun hentSøkere(innloggetBruker: InnloggetBruker) =
         søkerDao.select(innloggetBruker).map { it.toFrontendView(innloggetBruker) }

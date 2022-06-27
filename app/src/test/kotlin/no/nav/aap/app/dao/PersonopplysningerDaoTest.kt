@@ -5,6 +5,7 @@ import kotliquery.sessionOf
 import no.nav.aap.app.dao.InitTestDatabase.dataSource
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.kafka.SøkereKafkaDto
+import no.nav.aap.kafka.serde.json.JsonSerde
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -18,24 +19,29 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
     @Test
     fun `Lagrer personopplysninger i database`() {
         søkerDao.insert(
-            SøkereKafkaDto(
-                personident = "12345678910",
-                fødselsdato = LocalDate.of(1990, 1, 1),
-                saker = listOf(
-                    SøkereKafkaDto.Sak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "",
-                        sakstyper = listOf(),
-                        vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                SøkereKafkaDto(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
+                        SøkereKafkaDto.Sak(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                             tilstand = "",
-                            løsningVurderingAvBeregningsdato = null
-                        ),
-                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        vedtak = null
-                    )
-                ),
-                version = SøkereKafkaDto.VERSION
+                            sakstyper = listOf(),
+                            vurderingsdato = LocalDate.now(),
+                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+                                tilstand = "",
+                                løsningVurderingAvBeregningsdato = null
+                            ),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            vedtak = null
+                        )
+                    ),
+                    version = SøkereKafkaDto.VERSION
+                )
             )
         )
         val personopplysninger = FrontendPersonopplysninger(
@@ -60,24 +66,29 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
     @Test
     fun `Sletter personopplysninger fra database`() {
         søkerDao.insert(
-            SøkereKafkaDto(
-                personident = "12345678910",
-                fødselsdato = LocalDate.of(1990, 1, 1),
-                saker = listOf(
-                    SøkereKafkaDto.Sak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "",
-                        sakstyper = listOf(),
-                        vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                SøkereKafkaDto(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
+                        SøkereKafkaDto.Sak(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                             tilstand = "",
-                            løsningVurderingAvBeregningsdato = null
-                        ),
-                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        vedtak = null
-                    )
-                ),
-                version = SøkereKafkaDto.VERSION
+                            sakstyper = listOf(),
+                            vurderingsdato = LocalDate.now(),
+                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+                                tilstand = "",
+                                løsningVurderingAvBeregningsdato = null
+                            ),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            vedtak = null
+                        )
+                    ),
+                    version = SøkereKafkaDto.VERSION
+                )
             )
         )
         personopplysningerDao.insert(
@@ -102,45 +113,55 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
     @Test
     fun `Sletter ikke andre personopplysninger fra database`() {
         søkerDao.insert(
-            SøkereKafkaDto(
-                personident = "12345678910",
-                fødselsdato = LocalDate.of(1990, 1, 1),
-                saker = listOf(
-                    SøkereKafkaDto.Sak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "",
-                        sakstyper = listOf(),
-                        vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+            "12345678910",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                SøkereKafkaDto(
+                    personident = "12345678910",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
+                        SøkereKafkaDto.Sak(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                             tilstand = "",
-                            løsningVurderingAvBeregningsdato = null
-                        ),
-                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        vedtak = null
-                    )
-                ),
-                version = SøkereKafkaDto.VERSION
+                            sakstyper = listOf(),
+                            vurderingsdato = LocalDate.now(),
+                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+                                tilstand = "",
+                                løsningVurderingAvBeregningsdato = null
+                            ),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            vedtak = null
+                        )
+                    ),
+                    version = SøkereKafkaDto.VERSION
+                )
             )
         )
         søkerDao.insert(
-            SøkereKafkaDto(
-                personident = "01987654321",
-                fødselsdato = LocalDate.of(1990, 1, 1),
-                saker = listOf(
-                    SøkereKafkaDto.Sak(
-                        saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
-                        tilstand = "",
-                        sakstyper = listOf(),
-                        vurderingsdato = LocalDate.now(),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+            "01987654321",
+            SøkereKafkaDto.VERSION,
+            JsonSerde.jackson<SøkereKafkaDto>().serializer().serialize(
+                "aap.sokere.v1",
+                SøkereKafkaDto(
+                    personident = "01987654321",
+                    fødselsdato = LocalDate.of(1990, 1, 1),
+                    saker = listOf(
+                        SøkereKafkaDto.Sak(
+                            saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                             tilstand = "",
-                            løsningVurderingAvBeregningsdato = null
-                        ),
-                        søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
-                        vedtak = null
-                    )
-                ),
-                version = SøkereKafkaDto.VERSION
+                            sakstyper = listOf(),
+                            vurderingsdato = LocalDate.now(),
+                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
+                                tilstand = "",
+                                løsningVurderingAvBeregningsdato = null
+                            ),
+                            søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
+                            vedtak = null
+                        )
+                    ),
+                    version = SøkereKafkaDto.VERSION
+                )
             )
         )
         personopplysningerDao.insert(

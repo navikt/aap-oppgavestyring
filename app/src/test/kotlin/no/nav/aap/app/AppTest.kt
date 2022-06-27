@@ -20,6 +20,8 @@ import no.nav.aap.app.frontendView.*
 import no.nav.aap.app.kafka.*
 import no.nav.aap.app.kafka.DtoVedtak
 import no.nav.aap.app.security.JwtGenerator
+import no.nav.aap.kafka.serde.json.JsonSerde
+import no.nav.aap.kafka.streams.Topic
 import no.nav.aap.kafka.streams.test.readAndAssert
 import org.apache.kafka.streams.TestInputTopic
 import org.apache.kafka.streams.TestOutputTopic
@@ -200,7 +202,7 @@ internal class AppTest {
             environment { config = mocks.applicationConfig() }
             application {
                 server(mocks.kafka)
-                søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                søkerTopic = mocks.kafka.inputTopic(Topic("aap.sokere.v1", JsonSerde.jackson()))
                 personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
             }
         }
@@ -398,7 +400,7 @@ internal class AppTest {
             environment { config = mocks.applicationConfig() }
             application {
                 server(mocks.kafka)
-                søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                søkerTopic = mocks.kafka.inputTopic(Topic("aap.sokere.v1", JsonSerde.jackson()))
                 personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
             }
         }
@@ -700,7 +702,7 @@ internal class AppTest {
             environment { config = mocks.applicationConfig() }
             application {
                 server(mocks.kafka)
-                søkerTopic = mocks.kafka.inputTopic(Topics.søkere)
+                søkerTopic = mocks.kafka.inputTopic(Topic("aap.sokere.v1", JsonSerde.jackson()))
                 personopplysningerTopic = mocks.kafka.inputTopic(Topics.personopplysninger)
             }
         }

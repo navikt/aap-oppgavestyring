@@ -2,8 +2,10 @@ package no.nav.aap.app
 
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.http.*
@@ -102,6 +104,11 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
     }
 }
 
+private val jackson: ObjectMapper = jacksonObjectMapper().apply {
+    registerModule(JavaTimeModule())
+    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+}
+
 internal fun topology(repo: Repository) = StreamsBuilder().apply {
     val søkerKStream = consume(Topics.søkere)
 
@@ -115,7 +122,15 @@ internal fun topology(repo: Repository) = StreamsBuilder().apply {
 
     presentSøkereStream
         .peek { key, value -> secureLog.info("saving [${Topics.søkere}] K:$key V:$value") }
-        .foreach { _, value -> repo.lagreSøker(value) }
+        .mapValues("soker-finn-versjon") { value ->
+            val søker = jackson.readTree(value)
+            val personident = søker.get("personident").takeUnless { it.isNull }?.textValue()
+            requireNotNull(personident) { "Personident skal være satt i KafkaSøkereDto" }
+            val version = søker.get("version").takeUnless { it.isNull }?.intValue()
+            requireNotNull(version) { "Version skal være satt i KafkaSøkereDto" }
+            Triple(personident, version, value)
+        }
+        .foreach { _, (personident, version, value) -> repo.lagreSøker(personident, version, value) }
 
     presentSøkereStream
         .mapValues { _, _ -> PersonopplysningerKafkaDto() }
