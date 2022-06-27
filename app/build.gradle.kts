@@ -21,7 +21,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
     implementation("com.github.navikt.aap-libs:ktor-client-auth:2.0.2")
-    implementation("com.github.navikt.aap-libs:kafka:2.0.2")
+    implementation("com.github.navikt.aap-libs:kafka:2.0.14")
     implementation("com.github.navikt.aap-libs:ktor-utils:2.0.2")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
