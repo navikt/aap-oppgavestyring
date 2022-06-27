@@ -64,8 +64,8 @@ private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_5(innloggetBr
         vilkårsvurderingsid = vilkårsvurderingsid,
         utfall = utfall.name,
         autorisasjon = innloggetBruker.hentAutorisasjonForLokalkontor(this),
-        kravOmNedsattArbeidsevneErOppfylt = løsning_11_5_manuell?.kravOmNedsattArbeidsevneErOppfylt,
-        nedsettelseSkyldesSykdomEllerSkade = løsning_11_5_manuell?.nedsettelseSkyldesSykdomEllerSkade
+        kravOmNedsattArbeidsevneErOppfylt = løsning_11_5_manuell?.lastOrNull()?.kravOmNedsattArbeidsevneErOppfylt,
+        nedsettelseSkyldesSykdomEllerSkade = løsning_11_5_manuell?.lastOrNull()?.nedsettelseSkyldesSykdomEllerSkade
     )
 
 private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_6(innloggetBruker: InnloggetBruker) =
@@ -73,9 +73,9 @@ private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_6(innloggetBr
         vilkårsvurderingsid = vilkårsvurderingsid,
         utfall = utfall.name,
         autorisasjon = innloggetBruker.hentAutorisasjonForNAY(this),
-        harBehovForBehandling = løsning_11_6_manuell?.harBehovForBehandling,
-        harBehovForTiltak = løsning_11_6_manuell?.harBehovForTiltak,
-        harMulighetForÅKommeIArbeid = løsning_11_6_manuell?.harMulighetForÅKommeIArbeid
+        harBehovForBehandling = løsning_11_6_manuell?.lastOrNull()?.harBehovForBehandling,
+        harBehovForTiltak = løsning_11_6_manuell?.lastOrNull()?.harBehovForTiltak,
+        harMulighetForÅKommeIArbeid = løsning_11_6_manuell?.lastOrNull()?.harMulighetForÅKommeIArbeid
     )
 
 private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_12(innloggetBruker: InnloggetBruker) =
@@ -83,10 +83,10 @@ private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_12(innloggetB
         vilkårsvurderingsid = vilkårsvurderingsid,
         utfall = utfall.name,
         autorisasjon = innloggetBruker.hentAutorisasjonForNAY(this),
-        bestemmesAv = løsning_11_12_ledd1_manuell?.bestemmesAv,
-        unntak = løsning_11_12_ledd1_manuell?.unntak,
-        unntaksbegrunnelse = løsning_11_12_ledd1_manuell?.unntaksbegrunnelse,
-        manueltSattVirkningsdato = løsning_11_12_ledd1_manuell?.manueltSattVirkningsdato
+        bestemmesAv = løsning_11_12_ledd1_manuell?.lastOrNull()?.bestemmesAv,
+        unntak = løsning_11_12_ledd1_manuell?.lastOrNull()?.unntak,
+        unntaksbegrunnelse = løsning_11_12_ledd1_manuell?.lastOrNull()?.unntaksbegrunnelse,
+        manueltSattVirkningsdato = løsning_11_12_ledd1_manuell?.lastOrNull()?.manueltSattVirkningsdato
     )
 
 private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_29(innloggetBruker: InnloggetBruker) =
@@ -127,7 +127,8 @@ private fun SøkereKafkaDto.Inntekt.toFrontendView() = FrontendInntekt(
     beløp = beløp
 )
 
-private fun SøkereKafkaDto.VurderingAvBeregningsdato.toFrontendView(innloggetBruker: InnloggetBruker) = FrontendBeregningsdato(
-    beregningsdato = løsningVurderingAvBeregningsdato?.beregningsdato,
-    autorisasjon = innloggetBruker.hentAutorisasjonForNAY(this)
-)
+private fun SøkereKafkaDto.VurderingAvBeregningsdato.toFrontendView(innloggetBruker: InnloggetBruker) =
+    FrontendBeregningsdato(
+        beregningsdato = løsningVurderingAvBeregningsdato?.lastOrNull()?.beregningsdato,
+        autorisasjon = innloggetBruker.hentAutorisasjonForNAY(this)
+    )

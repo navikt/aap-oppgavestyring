@@ -43,7 +43,7 @@ internal class AppTest {
     private lateinit var løsning_11_6_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_6_manuell>
     private lateinit var løsning_11_12_ledd1_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_12_ledd1_manuell>
     private lateinit var løsning_11_29_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_29_manuell>
-    private lateinit var løsningVurderingAvBeregningsdato_OutputTopic: TestOutputTopic<String, LøsningVurderingAvBeregningsdato>
+    private lateinit var løsningVurderingAvBeregningsdato_OutputTopic: TestOutputTopic<String, Løsning_beregningsdato_manuell>
 
     @BeforeAll
     fun setupMockEnvironment() {
@@ -380,6 +380,7 @@ internal class AppTest {
                         utfall = "IKKE_VURDERT",
                         autorisasjon = Autorisasjon.ENDRE,
                     ),
+                    beregningsdato = FrontendBeregningsdato(null, Autorisasjon.ENDRE),
                     vedtak = null
                 )
             )
@@ -578,6 +579,7 @@ internal class AppTest {
                         utfall = "IKKE_VURDERT",
                         autorisasjon = Autorisasjon.ENDRE,
                     ),
+                    beregningsdato = FrontendBeregningsdato(null, Autorisasjon.ENDRE),
                     vedtak = null
                 )
             )
@@ -809,14 +811,16 @@ internal class AppTest {
         utfall: Utfall,
         løsningYrkesskade_manuell: SøkereKafkaDto.LøsningManuellMedlemskapYrkesskade? = null,
         løsningYrkesskade_maskinell: SøkereKafkaDto.LøsningMaskinellMedlemskapYrkesskade? = null,
-        losning_11_2_manuell: SøkereKafkaDto.LøsningParagraf_11_2? = null,
-        losning_11_2_maskinell: SøkereKafkaDto.LøsningParagraf_11_2? = null,
-        losning_11_3_manuell: SøkereKafkaDto.LøsningParagraf_11_3? = null,
-        losning_11_4_l2_l3_manuell: SøkereKafkaDto.LøsningParagraf_11_4_ledd2_ledd3? = null,
-        losning_11_5_manuell: SøkereKafkaDto.LøsningParagraf_11_5? = null,
-        losning_11_6_manuell: SøkereKafkaDto.LøsningParagraf_11_6? = null,
-        losning_11_12_l1_manuell: SøkereKafkaDto.LøsningParagraf_11_12_ledd1? = null,
-        losning_11_29_manuell: SøkereKafkaDto.LøsningParagraf_11_29? = null
+        løsning_11_2_manuell: SøkereKafkaDto.LøsningManuellParagraf_11_2? = null,
+        løsning_11_2_maskinell: SøkereKafkaDto.LøsningMaskinellParagraf_11_2? = null,
+        løsning_11_3_manuell: SøkereKafkaDto.LøsningParagraf_11_3? = null,
+        løsning_11_4_l2_l3_manuell: SøkereKafkaDto.LøsningParagraf_11_4_ledd2_ledd3? = null,
+        løsning_11_5_manuell: SøkereKafkaDto.LøsningParagraf_11_5? = null,
+        løsning_11_5_yrkesskade_manuell: SøkereKafkaDto.LøsningParagraf_11_5_yrkesskade? = null,
+        løsning_11_6_manuell: SøkereKafkaDto.LøsningParagraf_11_6? = null,
+        løsning_11_12_l1_manuell: SøkereKafkaDto.LøsningParagraf_11_12_ledd1? = null,
+        løsning_11_22_manuell: SøkereKafkaDto.LøsningParagraf_11_22? = null,
+        løsning_11_29_manuell: SøkereKafkaDto.LøsningParagraf_11_29? = null
     ) = SøkereKafkaDto.Vilkårsvurdering(
         vilkårsvurderingsid = UUID.fromString(vilkårsvurderingsid),
         vurdertAv = vurdertAv,
@@ -825,18 +829,18 @@ internal class AppTest {
         ledd = ledd,
         tilstand = tilstand,
         utfall = utfall,
-        løsning_medlemskap_yrkesskade_maskinell = løsningYrkesskade_maskinell,
-        løsning_medlemskap_yrkesskade_manuell = løsningYrkesskade_manuell,
-        løsning_11_2_maskinell = losning_11_2_maskinell,
-        løsning_11_2_manuell = losning_11_2_manuell,
-        løsning_11_3_manuell = losning_11_3_manuell,
-        løsning_11_4_ledd2_ledd3_manuell = losning_11_4_l2_l3_manuell,
-        løsning_11_5_manuell = losning_11_5_manuell,
-        løsning_11_5_yrkesskade_manuell = null,
-        løsning_11_6_manuell = losning_11_6_manuell,
-        løsning_11_12_ledd1_manuell = losning_11_12_l1_manuell,
-        løsning_11_22_manuell = null,
-        løsning_11_29_manuell = losning_11_29_manuell,
+        løsning_medlemskap_yrkesskade_maskinell = løsningYrkesskade_maskinell?.let(::listOf),
+        løsning_medlemskap_yrkesskade_manuell = løsningYrkesskade_manuell?.let(::listOf),
+        løsning_11_2_maskinell = løsning_11_2_maskinell?.let(::listOf),
+        løsning_11_2_manuell = løsning_11_2_manuell?.let(::listOf),
+        løsning_11_3_manuell = løsning_11_3_manuell?.let(::listOf),
+        løsning_11_4_ledd2_ledd3_manuell = løsning_11_4_l2_l3_manuell?.let(::listOf),
+        løsning_11_5_manuell = løsning_11_5_manuell?.let(::listOf),
+        løsning_11_5_yrkesskade_manuell = løsning_11_5_yrkesskade_manuell?.let(::listOf),
+        løsning_11_6_manuell = løsning_11_6_manuell?.let(::listOf),
+        løsning_11_12_ledd1_manuell = løsning_11_12_l1_manuell?.let(::listOf),
+        løsning_11_22_manuell = løsning_11_22_manuell?.let(::listOf),
+        løsning_11_29_manuell = løsning_11_29_manuell?.let(::listOf),
     )
 
     private fun HttpClient.getSaker(path: String, tokenSupplier: () -> SignedJWT): List<FrontendSøker> = runBlocking {

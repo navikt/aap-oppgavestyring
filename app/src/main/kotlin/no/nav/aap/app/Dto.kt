@@ -8,15 +8,16 @@ import java.time.YearMonth
 import java.util.*
 
 data class DtoLøsningParagraf_11_2(val erMedlem: String) {
-    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_2_manuell(vurdertAv, erMedlem)
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_2_manuell(vurdertAv, LocalDateTime.now(), erMedlem)
 }
 
 data class DtoLøsningParagraf_11_3(val erOppfylt: Boolean) {
-    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_3_manuell(vurdertAv, erOppfylt)
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_3_manuell(vurdertAv, LocalDateTime.now(), erOppfylt)
 }
 
 data class DtoLøsningParagraf_11_4_ledd2_ledd3(val erOppfylt: Boolean) {
-    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_4_ledd2_ledd3_manuell(vurdertAv, erOppfylt)
+    internal fun toKafkaDto(vurdertAv: String) =
+        Løsning_11_4_ledd2_ledd3_manuell(vurdertAv, LocalDateTime.now(), erOppfylt)
 }
 
 data class DtoLøsningParagraf_11_5(
@@ -25,6 +26,7 @@ data class DtoLøsningParagraf_11_5(
 ) {
     internal fun toKafkaDto(vurdertAv: String) = Løsning_11_5_manuell(
         vurdertAv = vurdertAv,
+        tidspunktForVurdering = LocalDateTime.now(),
         kravOmNedsattArbeidsevneErOppfylt = kravOmNedsattArbeidsevneErOppfylt,
         nedsettelseSkyldesSykdomEllerSkade = nedsettelseSkyldesSykdomEllerSkade
     )
@@ -37,6 +39,7 @@ data class DtoLøsningParagraf_11_6(
 ) {
     internal fun toKafkaDto(vurdertAv: String) = Løsning_11_6_manuell(
         vurdertAv = vurdertAv,
+        tidspunktForVurdering = LocalDateTime.now(),
         harBehovForBehandling = harBehovForBehandling,
         harBehovForTiltak = harBehovForTiltak,
         harMulighetForÅKommeIArbeid = harMulighetForÅKommeIArbeid
@@ -51,6 +54,7 @@ data class DtoLøsningParagraf_11_12_ledd1(
 ) {
     internal fun toKafkaDto(vurdertAv: String) = Løsning_11_12_ledd1_manuell(
         vurdertAv = vurdertAv,
+        tidspunktForVurdering = LocalDateTime.now(),
         bestemmesAv = bestemmesAv,
         unntak = unntak,
         unntaksbegrunnelse = unntaksbegrunnelse,
@@ -59,11 +63,14 @@ data class DtoLøsningParagraf_11_12_ledd1(
 }
 
 data class DtoLøsningParagraf_11_29(val erOppfylt: Boolean) {
-    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_29_manuell(vurdertAv, erOppfylt)
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_29_manuell(vurdertAv, LocalDateTime.now(), erOppfylt)
 }
 
-data class DtoLøsningVurderingAvBeregningsdato(val beregningsdato: LocalDate) {
-    internal fun toKafkaDto(vurdertAv: String) = LøsningVurderingAvBeregningsdato(vurdertAv, beregningsdato)
+data class DtoLøsningVurderingAvBeregningsdato(
+    val beregningsdato: LocalDate
+) {
+    internal fun toKafkaDto(vurdertAv: String) =
+        Løsning_beregningsdato_manuell(vurdertAv, LocalDateTime.now(), beregningsdato)
 }
 
 data class DtoSøker(

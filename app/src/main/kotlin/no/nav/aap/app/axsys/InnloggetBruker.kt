@@ -3,6 +3,7 @@ package no.nav.aap.app.axsys
 import no.nav.aap.app.RoleName
 import no.nav.aap.app.frontendView.Autorisasjon
 import no.nav.aap.app.kafka.SøkereKafkaDto
+import no.nav.aap.app.kafka.SøkereKafkaDto.LøsningVurderingAvBeregningsdato.Companion.hentAutorisasjon
 
 data class InnloggetBruker(
     val brukernavn: String,

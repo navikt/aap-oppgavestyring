@@ -14,8 +14,8 @@ data class SøkereKafkaDto(
     val saker: List<Sak>,
     val version: Int,
 ) {
-    internal companion object{
-        internal const val VERSION = 2
+    internal companion object {
+        internal const val VERSION = 4
     }
 
     data class Sak(
@@ -43,18 +43,18 @@ data class SøkereKafkaDto(
         val ledd: List<String>,
         val tilstand: String,
         val utfall: Utfall,
-        val løsning_medlemskap_yrkesskade_maskinell: LøsningMaskinellMedlemskapYrkesskade? = null,
-        val løsning_medlemskap_yrkesskade_manuell: LøsningManuellMedlemskapYrkesskade? = null,
-        val løsning_11_2_maskinell: LøsningParagraf_11_2? = null,
-        val løsning_11_2_manuell: LøsningParagraf_11_2? = null,
-        val løsning_11_3_manuell: LøsningParagraf_11_3? = null,
-        val løsning_11_4_ledd2_ledd3_manuell: LøsningParagraf_11_4_ledd2_ledd3? = null,
-        val løsning_11_5_manuell: LøsningParagraf_11_5? = null,
-        val løsning_11_5_yrkesskade_manuell: LøsningParagraf_11_5_yrkesskade? = null,
-        val løsning_11_6_manuell: LøsningParagraf_11_6? = null,
-        val løsning_11_12_ledd1_manuell: LøsningParagraf_11_12_ledd1? = null,
-        val løsning_11_22_manuell: LøsningParagraf_11_22? = null,
-        val løsning_11_29_manuell: LøsningParagraf_11_29? = null,
+        val løsning_medlemskap_yrkesskade_maskinell: List<LøsningMaskinellMedlemskapYrkesskade>? = null,
+        val løsning_medlemskap_yrkesskade_manuell: List<LøsningManuellMedlemskapYrkesskade>? = null,
+        val løsning_11_2_maskinell: List<LøsningMaskinellParagraf_11_2>? = null,
+        val løsning_11_2_manuell: List<LøsningManuellParagraf_11_2>? = null,
+        val løsning_11_3_manuell: List<LøsningParagraf_11_3>? = null,
+        val løsning_11_4_ledd2_ledd3_manuell: List<LøsningParagraf_11_4_ledd2_ledd3>? = null,
+        val løsning_11_5_manuell: List<LøsningParagraf_11_5>? = null,
+        val løsning_11_5_yrkesskade_manuell: List<LøsningParagraf_11_5_yrkesskade>? = null,
+        val løsning_11_6_manuell: List<LøsningParagraf_11_6>? = null,
+        val løsning_11_12_ledd1_manuell: List<LøsningParagraf_11_12_ledd1>? = null,
+        val løsning_11_22_manuell: List<LøsningParagraf_11_22>? = null,
+        val løsning_11_29_manuell: List<LøsningParagraf_11_29>? = null,
     ) {
         internal fun hentAutorisasjon(brukernavn: String): Autorisasjon {
             if (utfall == Utfall.IKKE_VURDERT) return Autorisasjon.ENDRE
@@ -64,25 +64,48 @@ data class SøkereKafkaDto(
     }
 
     data class LøsningMaskinellMedlemskapYrkesskade(val erMedlem: String)
-    data class LøsningManuellMedlemskapYrkesskade(val vurdertAv: String, val erMedlem: String)
-    data class LøsningParagraf_11_2(val vurdertAv: String, val erMedlem: String)
-    data class LøsningParagraf_11_3(val vurdertAv: String, val erOppfylt: Boolean)
-    data class LøsningParagraf_11_4_ledd2_ledd3(val vurdertAv: String, val erOppfylt: Boolean)
+    data class LøsningManuellMedlemskapYrkesskade(
+        val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
+        val erMedlem: String
+    )
+
+    data class LøsningMaskinellParagraf_11_2(val erMedlem: String)
+    data class LøsningManuellParagraf_11_2(
+        val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
+        val erMedlem: String
+    )
+
+    data class LøsningParagraf_11_3(
+        val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
+        val erOppfylt: Boolean
+    )
+
+    data class LøsningParagraf_11_4_ledd2_ledd3(
+        val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
+        val erOppfylt: Boolean
+    )
 
     data class LøsningParagraf_11_5(
         val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
         val kravOmNedsattArbeidsevneErOppfylt: Boolean,
         val nedsettelseSkyldesSykdomEllerSkade: Boolean
     )
 
     data class LøsningParagraf_11_5_yrkesskade(
         val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
         val arbeidsevneErNedsattMedMinst50Prosent: Boolean,
         val arbeidsevneErNedsattMedMinst30Prosent: Boolean
     )
 
     data class LøsningParagraf_11_6(
         val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
         val harBehovForBehandling: Boolean,
         val harBehovForTiltak: Boolean,
         val harMulighetForÅKommeIArbeid: Boolean
@@ -90,6 +113,7 @@ data class SøkereKafkaDto(
 
     data class LøsningParagraf_11_12_ledd1(
         val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
         val bestemmesAv: String,
         val unntak: String,
         val unntaksbegrunnelse: String,
@@ -98,13 +122,18 @@ data class SøkereKafkaDto(
 
     data class LøsningParagraf_11_22(
         val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
         val erOppfylt: Boolean,
         val andelNedsattArbeidsevne: Int,
         val år: Year,
         val antattÅrligArbeidsinntekt: Double
     )
 
-    data class LøsningParagraf_11_29(val vurdertAv: String, val erOppfylt: Boolean)
+    data class LøsningParagraf_11_29(
+        val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
+        val erOppfylt: Boolean
+    )
 
     data class Vedtak(
         val vedtaksid: UUID,
@@ -130,13 +159,19 @@ data class SøkereKafkaDto(
 
     data class VurderingAvBeregningsdato(
         val tilstand: String,
-        val løsningVurderingAvBeregningsdato: LøsningVurderingAvBeregningsdato?
+        val løsningVurderingAvBeregningsdato: List<LøsningVurderingAvBeregningsdato>?
     )
 
     data class LøsningVurderingAvBeregningsdato(
         val vurdertAv: String,
+        val tidspunktForVurdering: LocalDateTime,
         val beregningsdato: LocalDate
     ) {
+        internal companion object {
+            internal fun Iterable<LøsningVurderingAvBeregningsdato>.hentAutorisasjon(brukernavn: String): Autorisasjon =
+                last().hentAutorisasjon(brukernavn)
+        }
+
         internal fun hentAutorisasjon(brukernavn: String): Autorisasjon {
             if (brukernavn == vurdertAv) return Autorisasjon.ENDRE
             return Autorisasjon.GODKJENNE
