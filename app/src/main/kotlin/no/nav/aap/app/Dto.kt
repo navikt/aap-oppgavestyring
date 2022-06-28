@@ -62,15 +62,15 @@ data class DtoLøsningParagraf_11_12_ledd1(
     )
 }
 
-data class DtoLøsningParagraf_11_29(val erOppfylt: Boolean) {
-    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_29_manuell(vurdertAv, LocalDateTime.now(), erOppfylt)
-}
-
-data class DtoLøsningVurderingAvBeregningsdato(
+data class DtoLøsningParagraf_11_19(
     val beregningsdato: LocalDate
 ) {
     internal fun toKafkaDto(vurdertAv: String) =
-        Løsning_beregningsdato_manuell(vurdertAv, LocalDateTime.now(), beregningsdato)
+        Løsning_11_19_manuell(vurdertAv, LocalDateTime.now(), beregningsdato)
+}
+
+data class DtoLøsningParagraf_11_29(val erOppfylt: Boolean) {
+    internal fun toKafkaDto(vurdertAv: String) = Løsning_11_29_manuell(vurdertAv, LocalDateTime.now(), erOppfylt)
 }
 
 data class DtoSøker(
@@ -114,7 +114,7 @@ data class DtoVilkårsvurdering(
 
 data class DtoVurderingAvBeregningsdato(
     val tilstand: String,
-    val løsningVurderingAvBeregningsdato: DtoLøsningVurderingAvBeregningsdato?
+    val løsningVurderingAvBeregningsdato: DtoLøsningParagraf_11_19?
 )
 
 data class DtoVedtak(

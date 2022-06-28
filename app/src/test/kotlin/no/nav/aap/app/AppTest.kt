@@ -44,8 +44,8 @@ internal class AppTest {
     private lateinit var løsning_11_5_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_5_manuell>
     private lateinit var løsning_11_6_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_6_manuell>
     private lateinit var løsning_11_12_ledd1_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_12_ledd1_manuell>
+    private lateinit var løsning_11_19_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_19_manuell>
     private lateinit var løsning_11_29_manuell_OutputTopic: TestOutputTopic<String, Løsning_11_29_manuell>
-    private lateinit var løsningVurderingAvBeregningsdato_OutputTopic: TestOutputTopic<String, Løsning_beregningsdato_manuell>
 
     @BeforeAll
     fun setupMockEnvironment() {
@@ -78,8 +78,8 @@ internal class AppTest {
         if (::løsning_11_29_manuell_OutputTopic.isInitialized) {
             løsning_11_29_manuell_OutputTopic.readAndAssert().isEmpty()
         }
-        if (::løsningVurderingAvBeregningsdato_OutputTopic.isInitialized) {
-            løsningVurderingAvBeregningsdato_OutputTopic.readAndAssert().isEmpty()
+        if (::løsning_11_19_manuell_OutputTopic.isInitialized) {
+            løsning_11_19_manuell_OutputTopic.readAndAssert().isEmpty()
         }
     }
 

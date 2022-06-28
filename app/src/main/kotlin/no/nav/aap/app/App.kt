@@ -182,7 +182,7 @@ private fun Routing.api(
     val manuell_11_6Producer = kafka.createProducer(config, Topics.manuell_11_6)
     val manuell_11_12Producer = kafka.createProducer(config, Topics.manuell_11_12)
     val manuell_11_29Producer = kafka.createProducer(config, Topics.manuell_11_29)
-    val manuell_beregningsdatoProducer = kafka.createProducer(config, Topics.manuell_beregningsdato)
+    val manuell_11_19Producer = kafka.createProducer(config, Topics.manuell_11_19)
 
     route("/api") {
         authenticate("les") {
@@ -244,17 +244,24 @@ private fun Routing.api(
             )
             postLøsning(
                 innloggetBrukerProvider,
-                "/sak/{personident}/losning/paragraf_11_29",
-                Topics.manuell_11_29,
-                manuell_11_29Producer,
-                DtoLøsningParagraf_11_29::toKafkaDto
+                "/sak/{personident}/losning/paragraf_11_19",
+                Topics.manuell_11_19,
+                manuell_11_19Producer,
+                DtoLøsningParagraf_11_19::toKafkaDto
             )
             postLøsning(
                 innloggetBrukerProvider,
                 "/sak/{personident}/losning/beregningsdato",
-                Topics.manuell_beregningsdato,
-                manuell_beregningsdatoProducer,
-                DtoLøsningVurderingAvBeregningsdato::toKafkaDto
+                Topics.manuell_11_19,
+                manuell_11_19Producer,
+                DtoLøsningParagraf_11_19::toKafkaDto
+            )
+            postLøsning(
+                innloggetBrukerProvider,
+                "/sak/{personident}/losning/paragraf_11_29",
+                Topics.manuell_11_29,
+                manuell_11_29Producer,
+                DtoLøsningParagraf_11_29::toKafkaDto
             )
         }
 

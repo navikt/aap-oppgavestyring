@@ -13,8 +13,8 @@ object Topics {
     val manuell_11_6 = Topic("aap.manuell.11-6.v1", JsonSerde.jackson<Løsning_11_6_manuell>())
     val manuell_11_12 = Topic("aap.manuell.11-12.v1", JsonSerde.jackson<Løsning_11_12_ledd1_manuell>())
     val manuell_11_29 = Topic("aap.manuell.11-29.v1", JsonSerde.jackson<Løsning_11_29_manuell>())
-    val manuell_beregningsdato =
-        Topic("aap.manuell.beregningsdato.v1", JsonSerde.jackson<Løsning_beregningsdato_manuell>())
+    val manuell_11_19 =
+        Topic("aap.manuell.beregningsdato.v1", JsonSerde.jackson<Løsning_11_19_manuell>())
     val personopplysninger = Topic("aap.personopplysninger.v1", JsonSerde.jackson<PersonopplysningerKafkaDto>())
     val mottakere = Topic("aap.mottakere.v1", JsonSerde.jackson<DtoMottaker>())
 }

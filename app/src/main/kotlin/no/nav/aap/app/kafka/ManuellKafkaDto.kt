@@ -69,14 +69,14 @@ data class Løsning_11_22_manuell(
     val antattÅrligArbeidsinntekt: Double
 )
 
+data class Løsning_11_19_manuell(
+    val vurdertAv: String,
+    val tidspunktForVurdering: LocalDateTime,
+    val beregningsdato: LocalDate
+)
+
 data class Løsning_11_29_manuell(
     val vurdertAv: String,
     val tidspunktForVurdering: LocalDateTime,
     val erOppfylt: Boolean
-)
-
-data class Løsning_beregningsdato_manuell(
-    val vurdertAv: String,
-    val tidspunktForVurdering: LocalDateTime,
-    val beregningsdato: LocalDate
 )
