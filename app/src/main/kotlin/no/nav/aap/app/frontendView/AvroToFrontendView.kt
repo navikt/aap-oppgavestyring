@@ -30,9 +30,12 @@ private fun SøkereKafkaDto.Sak.toFrontendView(innloggetBruker: InnloggetBruker)
         ?.toFrontendParagraf11_6(innloggetBruker),
     paragraf_11_12 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_12.name)
         ?.toFrontendParagraf11_12(innloggetBruker),
+    paragraf_11_19 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_19.name)
+        ?.toFrontendParagraf11_19(innloggetBruker),
+    beregningsdato = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_19.name)
+        ?.vurderingAvBeregningsdatoToFrontendView(innloggetBruker),
     paragraf_11_29 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_29.name)
         ?.toFrontendParagraf11_29(innloggetBruker),
-    beregningsdato = vurderingAvBeregningsdato.toFrontendView(innloggetBruker)
 )
 
 private fun Iterable<SøkereKafkaDto.Sakstype>.finnVilkårsvurdering(paragrafnavn: String) =
@@ -127,8 +130,17 @@ private fun SøkereKafkaDto.Inntekt.toFrontendView() = FrontendInntekt(
     beløp = beløp
 )
 
-private fun SøkereKafkaDto.VurderingAvBeregningsdato.toFrontendView(innloggetBruker: InnloggetBruker) =
+private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_19(innloggetBruker: InnloggetBruker) =
+    FrontendParagraf_11_19(
+        vilkårsvurderingsid = vilkårsvurderingsid,
+        utfall = utfall.name,
+        autorisasjon = innloggetBruker.hentAutorisasjonForNAY(this),
+        beregningsdato = løsning_11_19_manuell?.lastOrNull()?.beregningsdato,
+    )
+
+@Deprecated("Erstattes av toFrontendParagraf11_19()", replaceWith = ReplaceWith("toFrontendParagraf11_19()"))
+private fun SøkereKafkaDto.Vilkårsvurdering.vurderingAvBeregningsdatoToFrontendView(innloggetBruker: InnloggetBruker) =
     FrontendBeregningsdato(
-        beregningsdato = løsningVurderingAvBeregningsdato?.lastOrNull()?.beregningsdato,
+        beregningsdato = løsning_11_19_manuell?.lastOrNull()?.beregningsdato,
         autorisasjon = innloggetBruker.hentAutorisasjonForNAY(this)
     )

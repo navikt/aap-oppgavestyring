@@ -84,6 +84,15 @@ class KafkaToFrontendViewTest {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -93,10 +102,6 @@ class KafkaToFrontendViewTest {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -129,6 +134,9 @@ class KafkaToFrontendViewTest {
 
         val p11_12 = requireNotNull(frontendView.sak.paragraf_11_12) { "Paragraf 11-12 skal ikke være null her" }
         assertEquals(Autorisasjon.ENDRE, p11_12.autorisasjon)
+
+        val p11_19 = requireNotNull(frontendView.sak.paragraf_11_19) { "Paragraf 11-19 skal ikke være null her" }
+        assertEquals(Autorisasjon.ENDRE, p11_19.autorisasjon)
 
         val p11_29 = requireNotNull(frontendView.sak.paragraf_11_29) { "Paragraf 11-29 skal ikke være null her" }
         assertEquals(Autorisasjon.ENDRE, p11_29.autorisasjon)
@@ -206,6 +214,15 @@ class KafkaToFrontendViewTest {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -215,10 +232,6 @@ class KafkaToFrontendViewTest {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -252,8 +265,10 @@ class KafkaToFrontendViewTest {
         val p11_12 = requireNotNull(frontendView.sak.paragraf_11_12) { "Paragraf 11-12 skal ikke være null her" }
         assertEquals(Autorisasjon.LESE, p11_12.autorisasjon)
 
+        val p11_19 = requireNotNull(frontendView.sak.paragraf_11_19) { "Paragraf 11-19 skal ikke være null her" }
+        assertEquals(Autorisasjon.LESE, p11_19.autorisasjon)
+
         val p11_29 = requireNotNull(frontendView.sak.paragraf_11_29) { "Paragraf 11-29 skal ikke være null her" }
         assertEquals(Autorisasjon.LESE, p11_29.autorisasjon)
     }
-
 }

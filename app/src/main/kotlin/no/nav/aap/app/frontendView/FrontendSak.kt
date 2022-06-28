@@ -15,7 +15,9 @@ data class FrontendSak(
     val paragraf_11_5: FrontendParagraf_11_5?,
     val paragraf_11_6: FrontendParagraf_11_6?,
     val paragraf_11_12: FrontendParagraf_11_12?,
+    val paragraf_11_19: FrontendParagraf_11_19?,
     val paragraf_11_29: FrontendParagraf_11_29?,
+    @Deprecated("Erstattes av paragraf_11_19")
     val beregningsdato: FrontendBeregningsdato?
 )
 
@@ -70,6 +72,13 @@ data class FrontendParagraf_11_12(
     val unntak: String?,
     val unntaksbegrunnelse: String?,
     val manueltSattVirkningsdato: LocalDate?
+)
+
+data class FrontendParagraf_11_19(
+    val vilkårsvurderingsid: UUID,
+    val utfall: String,
+    val autorisasjon: Autorisasjon,
+    val beregningsdato: LocalDate?,
 )
 
 data class FrontendParagraf_11_29(

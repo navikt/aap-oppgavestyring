@@ -11,6 +11,7 @@ internal enum class Paragraf(internal val skalLøsesAv: Enhet) {
     PARAGRAF_11_11(Enhet.KONTOR),
     PARAGRAF_11_12(Enhet.NAY),
     PARAGRAF_11_14(Enhet.NAY),
+    PARAGRAF_11_19(Enhet.NAY),
     PARAGRAF_11_29(Enhet.NAY)
 }
 

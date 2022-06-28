@@ -32,10 +32,6 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                             tilstand = "",
                             sakstyper = listOf(),
                             vurderingsdato = LocalDate.now(),
-                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                                tilstand = "",
-                                løsningVurderingAvBeregningsdato = null
-                            ),
                             søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                             vedtak = null
                         )
@@ -79,10 +75,6 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                             tilstand = "",
                             sakstyper = listOf(),
                             vurderingsdato = LocalDate.now(),
-                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                                tilstand = "",
-                                løsningVurderingAvBeregningsdato = null
-                            ),
                             søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                             vedtak = null
                         )
@@ -126,10 +118,6 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                             tilstand = "",
                             sakstyper = listOf(),
                             vurderingsdato = LocalDate.now(),
-                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                                tilstand = "",
-                                løsningVurderingAvBeregningsdato = null
-                            ),
                             søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                             vedtak = null
                         )
@@ -152,10 +140,6 @@ internal class PersonopplysningerDaoTest : DatabaseTestBase() {
                             tilstand = "",
                             sakstyper = listOf(),
                             vurderingsdato = LocalDate.now(),
-                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                                tilstand = "",
-                                løsningVurderingAvBeregningsdato = null
-                            ),
                             søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                             vedtak = null
                         )

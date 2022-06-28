@@ -295,6 +295,15 @@ internal class AppTest {
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
                                         vurdertAv = null,
                                         godkjentAv = null,
+                                        paragraf = "PARAGRAF_11_19",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        utfall = Utfall.IKKE_VURDERT
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417309",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_29",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -304,7 +313,6 @@ internal class AppTest {
                             )
                         ),
                         vurderingsdato = LocalDate.of(2022, 1, 1),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
@@ -377,8 +385,14 @@ internal class AppTest {
                         unntaksbegrunnelse = null,
                         manueltSattVirkningsdato = null
                     ),
-                    paragraf_11_29 = FrontendParagraf_11_29(
+                    paragraf_11_19 = FrontendParagraf_11_19(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
+                        beregningsdato = null,
+                    ),
+                    paragraf_11_29 = FrontendParagraf_11_29(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417309"),
                         utfall = "IKKE_VURDERT",
                         autorisasjon = Autorisasjon.ENDRE,
                     ),
@@ -495,6 +509,15 @@ internal class AppTest {
                                         vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417308",
                                         vurdertAv = null,
                                         godkjentAv = null,
+                                        paragraf = "PARAGRAF_11_19",
+                                        ledd = listOf("LEDD_1"),
+                                        tilstand = "SØKNAD_MOTTATT",
+                                        utfall = Utfall.IKKE_VURDERT
+                                    ),
+                                    vilkarsvurdering(
+                                        vilkårsvurderingsid = "f422222c-8606-4426-b929-c2b8b4417309",
+                                        vurdertAv = null,
+                                        godkjentAv = null,
                                         paragraf = "PARAGRAF_11_29",
                                         ledd = listOf("LEDD_1"),
                                         tilstand = "SØKNAD_MOTTATT",
@@ -504,7 +527,6 @@ internal class AppTest {
                             )
                         ),
                         vurderingsdato = LocalDate.of(2022, 1, 1),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         tilstand = "SØKNAD_MOTTATT",
                         vedtak = null
@@ -576,8 +598,14 @@ internal class AppTest {
                         unntaksbegrunnelse = null,
                         manueltSattVirkningsdato = null
                     ),
-                    paragraf_11_29 = FrontendParagraf_11_29(
+                    paragraf_11_19 = FrontendParagraf_11_19(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417308"),
+                        utfall = "IKKE_VURDERT",
+                        autorisasjon = Autorisasjon.ENDRE,
+                        beregningsdato = null,
+                    ),
+                    paragraf_11_29 = FrontendParagraf_11_29(
+                        vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417309"),
                         utfall = "IKKE_VURDERT",
                         autorisasjon = Autorisasjon.ENDRE,
                     ),
@@ -743,7 +771,6 @@ internal class AppTest {
                             )
                         ),
                         vurderingsdato = LocalDate.of(2022, 1, 1),
-                        vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato("SØKNAD_MOTTATT", null),
                         søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                         tilstand = "SØKNAD_MOTTATT",
                         vedtak = null

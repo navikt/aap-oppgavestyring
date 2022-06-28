@@ -20,7 +20,7 @@ internal class SøkerDaoTest : DatabaseTestBase() {
     private val personopplysningerDao = PersonopplysningerDao(dataSource)
 
     @Test
-    fun `Lagrer liste med frontendsak i database`() {
+    fun `Lagrer søker i database`() {
         val søkereKafkaDto = SøkereKafkaDto(
             personident = "12345678910",
             fødselsdato = LocalDate.of(1990, 1, 1),
@@ -91,6 +91,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -100,10 +109,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -161,10 +166,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                             tilstand = "",
                             sakstyper = listOf(),
                             vurderingsdato = LocalDate.now(),
-                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                                tilstand = "",
-                                løsningVurderingAvBeregningsdato = null
-                            ),
                             søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                             vedtak = null
                         )
@@ -197,10 +198,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                             tilstand = "",
                             sakstyper = listOf(),
                             vurderingsdato = LocalDate.now(),
-                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                                tilstand = "",
-                                løsningVurderingAvBeregningsdato = null
-                            ),
                             søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                             vedtak = null
                         )
@@ -226,10 +223,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                             tilstand = "",
                             sakstyper = listOf(),
                             vurderingsdato = LocalDate.now(),
-                            vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                                tilstand = "",
-                                løsningVurderingAvBeregningsdato = null
-                            ),
                             søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                             vedtak = null
                         )
@@ -318,6 +311,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -327,10 +329,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -442,6 +440,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -451,10 +458,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -566,6 +569,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -575,10 +587,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -690,6 +698,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -699,10 +716,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -815,6 +828,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -824,10 +846,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -940,6 +958,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -949,10 +976,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -1065,6 +1088,15 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417366"),
                                     vurdertAv = null,
                                     godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
                                     paragraf = "PARAGRAF_11_29",
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
@@ -1074,10 +1106,6 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
@@ -1194,15 +1222,20 @@ internal class SøkerDaoTest : DatabaseTestBase() {
                                     ledd = listOf("LEDD_1"),
                                     tilstand = "",
                                     utfall = Utfall.IKKE_VURDERT
+                                ),
+                                SøkereKafkaDto.Vilkårsvurdering(
+                                    vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
+                                    vurdertAv = null,
+                                    godkjentAv = null,
+                                    paragraf = "PARAGRAF_11_19",
+                                    ledd = listOf("LEDD_1"),
+                                    tilstand = "",
+                                    utfall = Utfall.IKKE_VURDERT
                                 )
                             )
                         )
                     ),
                     vurderingsdato = LocalDate.now(),
-                    vurderingAvBeregningsdato = SøkereKafkaDto.VurderingAvBeregningsdato(
-                        tilstand = "",
-                        løsningVurderingAvBeregningsdato = null
-                    ),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     vedtak = null
                 )
