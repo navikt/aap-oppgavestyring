@@ -103,12 +103,12 @@ internal class AppTest {
     }
 
     @Test
-    fun `Authentisering av endepunkt for 11-3 for sending av løsning som saksbehandler er ok`() {
+    fun `Authentisering av endepunkt for 11-29 for sending av løsning som saksbehandler er ok`() {
         testApplication {
             environment { config = mocks.applicationConfig() }
             application { server(mocks.kafka) }
 
-            val response = client.post("/api/sak/123/losning/paragraf_11_3") {
+            val response = client.post("/api/sak/123/losning/paragraf_11_29") {
                 bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
                 contentType(ContentType.Application.Json)
                 setBody("""{"erOppfylt":true}""")
@@ -118,12 +118,12 @@ internal class AppTest {
     }
 
     @Test
-    fun `Authentisering av endepunkt for 11-3 for sending av løsning som veileder er ikke ok`() {
+    fun `Authentisering av endepunkt for 11-29 for sending av løsning som veileder er ikke ok`() {
         testApplication {
             environment { config = mocks.applicationConfig() }
             application { server(mocks.kafka) }
 
-            val response = client.post("/api/sak/123/losning/paragraf_11_3") {
+            val response = client.post("/api/sak/123/losning/paragraf_11_29") {
                 bearerAuth(JwtGenerator.generateVeilederToken().serialize())
                 contentType(ContentType.Application.Json)
                 setBody("""{"erOppfylt":true}""")
@@ -181,14 +181,14 @@ internal class AppTest {
         }
         runBlocking { client.get("/actuator/live") }
         runBlocking {
-            client.post("/api/sak/123/losning/paragraf_11_3") {
+            client.post("/api/sak/123/losning/paragraf_11_29") {
                 bearerAuth(JwtGenerator.generateSaksbehandlerToken().serialize())
                 contentType(ContentType.Application.Json)
-                setBody(DtoLøsningParagraf_11_3(erOppfylt = true))
+                setBody(DtoLøsningParagraf_11_29(erOppfylt = true))
             }
         }
 
-        val producer = mocks.kafka.getProducer(Topics.manuell_11_3)
+        val producer = mocks.kafka.getProducer(Topics.manuell_11_29)
         assertEquals("test.test@test.com", producer.history().single().value().vurdertAv)
     }
 

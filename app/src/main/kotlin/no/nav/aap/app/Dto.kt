@@ -4,6 +4,12 @@ import no.nav.aap.app.kafka.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+data class DtoLøsningInngangsvilkår(
+    val løsning_11_2: DtoLøsningParagraf_11_2?,
+    val løsning_11_3: DtoLøsningParagraf_11_3,
+    val løsning_11_4: DtoLøsningParagraf_11_4_ledd2_ledd3?,
+)
+
 data class DtoLøsningParagraf_11_2(
     val erMedlem: String
 ) {

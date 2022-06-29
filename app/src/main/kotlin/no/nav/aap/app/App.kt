@@ -213,27 +213,33 @@ private fun Routing.api(
         }
 
         authenticate("løsningNAY") {
-            postLøsning(
-                innloggetBrukerProvider,
-                "/sak/{personident}/losning/paragraf_11_2",
-                Topics.manuell_11_2,
-                manuell_11_2Producer,
-                DtoLøsningParagraf_11_2::toKafkaDto
-            )
-            postLøsning(
-                innloggetBrukerProvider,
-                "/sak/{personident}/losning/paragraf_11_3",
-                Topics.manuell_11_3,
-                manuell_11_3Producer,
-                DtoLøsningParagraf_11_3::toKafkaDto
-            )
-            postLøsning(
-                innloggetBrukerProvider,
-                "/sak/{personident}/losning/paragraf_11_4",
-                Topics.manuell_11_4,
-                manuell_11_4Producer,
-                DtoLøsningParagraf_11_4_ledd2_ledd3::toKafkaDto
-            )
+            post("/sak/{personident}/losning/inngangsvilkar") {
+                val personident = call.parameters.getOrFail("personident")
+                secureLog.info("Skal løse oppgave for $personident")
+
+                val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
+                val manuell = call.receive<DtoLøsningInngangsvilkår>()
+                val løsning_11_2_manuell = manuell.løsning_11_2?.toKafkaDto(innloggetBruker.brukernavn)
+                val løsning_11_3_manuell = manuell.løsning_11_3.toKafkaDto(innloggetBruker.brukernavn)
+                val løsning_11_4_manuell = manuell.løsning_11_4?.toKafkaDto(innloggetBruker.brukernavn)
+
+                withContext(Dispatchers.IO) {
+                    val send1 = løsning_11_2_manuell?.let { løsning ->
+                        manuell_11_2Producer.send(ProducerRecord(Topics.manuell_11_2.name, personident, løsning))
+                    }
+                    val send2 = manuell_11_3Producer.send(
+                        ProducerRecord(Topics.manuell_11_3.name, personident, løsning_11_3_manuell)
+                    )
+                    val send3 = løsning_11_4_manuell?.let { løsning ->
+                        manuell_11_4Producer.send(ProducerRecord(Topics.manuell_11_4.name, personident, løsning))
+                    }
+                    send1?.get()
+                    send2.get()
+                    send3?.get()
+                }
+
+                call.respond(HttpStatusCode.OK, "OK")
+            }
             postLøsning(
                 innloggetBrukerProvider,
                 "/sak/{personident}/losning/paragraf_11_6",
