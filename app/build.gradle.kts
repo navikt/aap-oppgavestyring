@@ -17,7 +17,7 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:2.0.2")
     implementation("io.ktor:ktor-client-core:2.0.2")
 
-    implementation("io.ktor:ktor-serialization-jackson:2.0.2")
+    implementation("io.ktor:ktor-serialization-jackson:2.0.3")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
     implementation("com.github.navikt.aap-libs:ktor-client-auth:2.1.3")
