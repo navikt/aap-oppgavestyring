@@ -9,7 +9,7 @@ application {
 
 dependencies {
     implementation("io.ktor:ktor-server-auth:2.0.2")
-    implementation("io.ktor:ktor-server-auth-jwt:2.0.2")
+    implementation("io.ktor:ktor-server-auth-jwt:2.0.3")
     implementation("io.ktor:ktor-server-content-negotiation:2.0.2")
     implementation("io.ktor:ktor-server-metrics-micrometer:2.0.2")
     implementation("io.ktor:ktor-server-netty:2.0.2")
