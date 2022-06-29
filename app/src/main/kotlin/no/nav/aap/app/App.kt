@@ -31,8 +31,14 @@ import no.nav.aap.app.frontendView.toFrontendView
 import no.nav.aap.app.kafka.Løsning_11_2_manuell
 import no.nav.aap.app.kafka.PersonopplysningerKafkaDto
 import no.nav.aap.app.kafka.Topics
-import no.nav.aap.kafka.KafkaConfig
-import no.nav.aap.kafka.streams.*
+import no.nav.aap.kafka.streams.KStreams
+import no.nav.aap.kafka.streams.KafkaStreams
+import no.nav.aap.kafka.streams.Topic
+import no.nav.aap.kafka.streams.extension.consume
+import no.nav.aap.kafka.streams.extension.filterNotNull
+import no.nav.aap.kafka.streams.extension.mapValues
+import no.nav.aap.kafka.streams.extension.produce
+import no.nav.aap.kafka.vanilla.KafkaConfig
 import no.nav.aap.ktor.config.loadConfig
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -100,7 +106,7 @@ internal fun Application.server(kafka: KStreams = KafkaStreams) {
 
     routing {
         actuator(prometheus, kafka)
-        api(innloggetBrukerProvider, repo, config.kafka, kafka)
+        api(innloggetBrukerProvider, repo, KafkaConfig.copyFrom(config.kafka), kafka)
     }
 }
 
