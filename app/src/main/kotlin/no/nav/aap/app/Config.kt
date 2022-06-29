@@ -2,14 +2,14 @@ package no.nav.aap.app
 
 import no.nav.aap.app.axsys.AxsysConfig
 import no.nav.aap.app.db.DbConfig
-import no.nav.aap.kafka.streams.KStreamsConfig
+import no.nav.aap.kafka.KafkaConfig
 import no.nav.aap.ktor.client.AzureConfig
 import java.net.URL
 import java.util.*
 
 data class Config(
     val oauth: OAuthConfig,
-    val kafka: KStreamsConfig,
+    val kafka: KafkaConfig,
     val database: DbConfig,
     val azure: AzureConfig,
     val axsys: AxsysConfig,
