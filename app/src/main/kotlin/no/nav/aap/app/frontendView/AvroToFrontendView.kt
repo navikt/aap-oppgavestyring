@@ -18,6 +18,19 @@ private fun SøkereKafkaDto.Sak.toFrontendView(innloggetBruker: InnloggetBruker)
     søknadstidspunkt = søknadstidspunkt,
     type = sakstyper.first { it.aktiv }.type,
     vedtak = vedtak?.toFrontendView(),
+    inngangsvilkår = Inngangsvilkår(
+        autorisasjon = sakstyper.finnVilkårsvurderinger(
+            Paragraf.PARAGRAF_11_2.name,
+            Paragraf.PARAGRAF_11_3.name,
+            Paragraf.PARAGRAF_11_4.name
+        ).hentAutorisasjonForNAY(innloggetBruker),
+        paragraf_11_2 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_2.name)
+            ?.toFrontendParagraf11_2(innloggetBruker),
+        paragraf_11_3 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_3.name)
+            ?.toFrontendParagraf11_3(innloggetBruker),
+        paragraf_11_4 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_4.name)
+            ?.toFrontendParagraf11_4(innloggetBruker),
+    ),
     paragraf_11_2 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_2.name)
         ?.toFrontendParagraf11_2(innloggetBruker),
     paragraf_11_3 = sakstyper.finnVilkårsvurdering(Paragraf.PARAGRAF_11_3.name)
@@ -38,8 +51,14 @@ private fun SøkereKafkaDto.Sak.toFrontendView(innloggetBruker: InnloggetBruker)
         ?.toFrontendParagraf11_29(innloggetBruker),
 )
 
+private fun Iterable<SøkereKafkaDto.Vilkårsvurdering>.hentAutorisasjonForNAY(innloggetBruker: InnloggetBruker) =
+    innloggetBruker.hentAutorisasjonForNAY(toList())
+
 private fun Iterable<SøkereKafkaDto.Sakstype>.finnVilkårsvurdering(paragrafnavn: String) =
-    this.first { it.aktiv }.vilkårsvurderinger.firstOrNull { it.paragraf == paragrafnavn }
+    this.single { it.aktiv }.vilkårsvurderinger.firstOrNull { it.paragraf == paragrafnavn }
+
+private fun Iterable<SøkereKafkaDto.Sakstype>.finnVilkårsvurderinger(vararg paragrafnavn: String) =
+    this.single { it.aktiv }.vilkårsvurderinger.filter { it.paragraf in paragrafnavn }
 
 private fun SøkereKafkaDto.Vilkårsvurdering.toFrontendParagraf11_2(innloggetBruker: InnloggetBruker) =
     FrontendParagraf_11_2(

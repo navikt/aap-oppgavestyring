@@ -33,7 +33,7 @@ internal class InnloggetBrukerTest {
     }
 
     @Test
-    fun `Innlogget bruker tilknyttet NAY med SAKSBEEHANDLER rolle får endre`() {
+    fun `Innlogget bruker tilknyttet NAY med SAKSBEHANDLER rolle får endre`() {
         val innloggetBruker = InnloggetBruker(
             brukernavn = "test@test.com",
             roller = listOf(RoleName.SAKSBEHANDLER),
@@ -140,6 +140,171 @@ internal class InnloggetBrukerTest {
 
         val aut = innloggetBruker.hentAutorisasjonForNAY(vilkårsvurdering)
         assertEquals(Autorisasjon.GODKJENNE, aut)
+    }
+
+    @Test
+    fun `Innlogget bruker ikke tilknyttet NAY får bare lese inngangsvilkår`() {
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.VEILEDER),
+            tilknyttedeEnheter = listOf()
+        )
+
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
+            vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
+            paragraf = "PARAGRAF_11_2",
+            ledd = listOf("LEDD_1"),
+            tilstand = "SOKNAD_MOTTATT",
+            utfall = Utfall.IKKE_VURDERT
+        )
+
+        val aut = innloggetBruker.hentAutorisasjonForNAY(listOf(vilkårsvurdering))
+        assertEquals(Autorisasjon.LESE, aut)
+    }
+
+    @Test
+    fun `Innlogget bruker tilknyttet NAY med SAKSBEHANDLER rolle får endre inngangsvilkår`() {
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.SAKSBEHANDLER),
+            tilknyttedeEnheter = listOf()
+        )
+
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
+            vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
+            paragraf = "PARAGRAF_11_2",
+            ledd = listOf("LEDD_1"),
+            tilstand = "SOKNAD_MOTTATT",
+            utfall = Utfall.IKKE_VURDERT
+        )
+
+        val aut = innloggetBruker.hentAutorisasjonForNAY(listOf(vilkårsvurdering))
+        assertEquals(Autorisasjon.ENDRE, aut)
+    }
+
+    @Test
+    fun `Innlogget bruker tilknyttet NAY med BESLUTTER rolle får godkjenne inngangsvilkår`() {
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.BESLUTTER),
+            tilknyttedeEnheter = listOf()
+        )
+
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
+            vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
+            paragraf = "PARAGRAF_11_2",
+            ledd = listOf("LEDD_1"),
+            tilstand = "SOKNAD_MOTTATT",
+            utfall = Utfall.OPPFYLT
+        )
+
+        val aut = innloggetBruker.hentAutorisasjonForNAY(listOf(vilkårsvurdering))
+        assertEquals(Autorisasjon.GODKJENNE, aut)
+    }
+
+    @Test
+    fun `Innlogget bruker tilknyttet NAY med BESLUTTER rolle får endre inngangsvilkår såfremt ingen av vilkårene er vurdert`() {
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.BESLUTTER),
+            tilknyttedeEnheter = listOf()
+        )
+
+        val vilkårsvurdering = SøkereKafkaDto.Vilkårsvurdering(
+            vilkårsvurderingsid = UUID.randomUUID(),
+            vurdertAv = null,
+            godkjentAv = null,
+            paragraf = "PARAGRAF_11_2",
+            ledd = listOf("LEDD_1"),
+            tilstand = "SOKNAD_MOTTATT",
+            utfall = Utfall.IKKE_VURDERT
+        )
+
+        val aut = innloggetBruker.hentAutorisasjonForNAY(listOf(vilkårsvurdering))
+        assertEquals(Autorisasjon.ENDRE, aut)
+    }
+
+    @Test
+    fun `Innlogget bruker tilknyttet NAY med BESLUTTER rolle får endre inngangsvilkår såfremt ett av vilkårene er vurdert og endret av samme bruker, men får ikke godkjenne`() {
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.BESLUTTER),
+            tilknyttedeEnheter = listOf()
+        )
+
+        val vilkårsvurderinger = listOf(
+            SøkereKafkaDto.Vilkårsvurdering(
+                vilkårsvurderingsid = UUID.randomUUID(),
+                vurdertAv = "test@test.com",
+                godkjentAv = null,
+                paragraf = "PARAGRAF_11_2",
+                ledd = listOf("LEDD_1"),
+                tilstand = "SOKNAD_MOTTATT",
+                utfall = Utfall.OPPFYLT
+            ),
+            SøkereKafkaDto.Vilkårsvurdering(
+                vilkårsvurderingsid = UUID.randomUUID(),
+                vurdertAv = "test2@test.com",
+                godkjentAv = null,
+                paragraf = "PARAGRAF_11_3",
+                ledd = listOf("LEDD_1"),
+                tilstand = "SOKNAD_MOTTATT",
+                utfall = Utfall.OPPFYLT
+            )
+        )
+
+        val aut = innloggetBruker.hentAutorisasjonForNAY(vilkårsvurderinger)
+        assertEquals(Autorisasjon.ENDRE, aut)
+    }
+
+    @Test
+    fun `Innlogget bruker tilknyttet NAY med BESLUTTER rolle får godkjenne inngangsvilkår såfremt vilkårene er vurdert og endret av annen bruker`() {
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.BESLUTTER),
+            tilknyttedeEnheter = listOf()
+        )
+
+        val vilkårsvurderinger = listOf(
+            SøkereKafkaDto.Vilkårsvurdering(
+                vilkårsvurderingsid = UUID.randomUUID(),
+                vurdertAv = "test2@test.com",
+                godkjentAv = null,
+                paragraf = "PARAGRAF_11_2",
+                ledd = listOf("LEDD_1"),
+                tilstand = "SOKNAD_MOTTATT",
+                utfall = Utfall.OPPFYLT
+            ),
+            SøkereKafkaDto.Vilkårsvurdering(
+                vilkårsvurderingsid = UUID.randomUUID(),
+                vurdertAv = "test2@test.com",
+                godkjentAv = null,
+                paragraf = "PARAGRAF_11_3",
+                ledd = listOf("LEDD_1"),
+                tilstand = "SOKNAD_MOTTATT",
+                utfall = Utfall.OPPFYLT
+            )
+        )
+        val aut = innloggetBruker.hentAutorisasjonForNAY(vilkårsvurderinger)
+        assertEquals(Autorisasjon.GODKJENNE, aut)
+    }
+
+    @Test
+    fun `Innlogget bruker kan lese inngangsvilkår hvis det ikke finnes noen`() {
+        val innloggetBruker = InnloggetBruker(
+            brukernavn = "test@test.com",
+            roller = listOf(RoleName.BESLUTTER),
+            tilknyttedeEnheter = listOf()
+        )
+
+        val aut = innloggetBruker.hentAutorisasjonForNAY(emptyList())
+        assertEquals(Autorisasjon.LESE, aut)
     }
 
     @Test

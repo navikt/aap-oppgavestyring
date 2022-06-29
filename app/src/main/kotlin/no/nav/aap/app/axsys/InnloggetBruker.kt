@@ -24,11 +24,17 @@ data class InnloggetBruker(
     fun erTilknyttetLokalkontor() = roller.any { it in listOf(RoleName.VEILEDER, RoleName.FATTER) }
     fun tilknyttedeEnheter() = tilknyttedeEnheter
 
-    internal fun hentAutorisasjonForNAY(vilkårsvurdering: SøkereKafkaDto.Vilkårsvurdering): Autorisasjon {
+    internal fun hentAutorisasjonForNAY(vilkårsvurdering: SøkereKafkaDto.Vilkårsvurdering) =
+        hentAutorisasjonForNAY(listOf(vilkårsvurdering))
+
+    internal fun hentAutorisasjonForNAY(vilkårsvurderinger: List<SøkereKafkaDto.Vilkårsvurdering>): Autorisasjon {
+        if (vilkårsvurderinger.none()) return Autorisasjon.LESE
         if (!erTilknyttetNAY()) return Autorisasjon.LESE
         if (roller.none { it == RoleName.BESLUTTER }) return Autorisasjon.ENDRE
 
-        return vilkårsvurdering.hentAutorisasjon(brukernavn)
+        val autorisasjoner = vilkårsvurderinger.map { it.hentAutorisasjon(brukernavn) }
+        if (Autorisasjon.ENDRE in autorisasjoner) return Autorisasjon.ENDRE
+        return Autorisasjon.GODKJENNE
     }
 
     internal fun hentAutorisasjonForLokalkontor(vilkårsvurdering: SøkereKafkaDto.Vilkårsvurdering): Autorisasjon {

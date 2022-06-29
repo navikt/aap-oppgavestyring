@@ -25,7 +25,7 @@ data class AxsysConfig(
 private val log = LoggerFactory.getLogger(AxsysClient::class.java)
 private val secureLog = LoggerFactory.getLogger("secureLog")
 
-class AxsysClient(private val axsysConfig: AxsysConfig, private val azureConfig: AzureConfig) {
+class AxsysClient(private val axsysConfig: AxsysConfig, azureConfig: AzureConfig) {
     private val tokenProvider = HttpClientAzureAdTokenProvider(azureConfig, axsysConfig.scope)
     private val cache = mutableMapOf<String, List<String>>()
 

@@ -345,6 +345,24 @@ internal class AppTest {
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     type = "STANDARD",
+                    inngangsvilkår = Inngangsvilkår(
+                        autorisasjon = Autorisasjon.ENDRE,
+                        paragraf_11_2 = FrontendParagraf_11_2(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
+                            utfall = "IKKE_VURDERT",
+                            autorisasjon = Autorisasjon.ENDRE
+                        ),
+                        paragraf_11_3 = FrontendParagraf_11_3(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
+                            utfall = "IKKE_VURDERT",
+                            autorisasjon = Autorisasjon.ENDRE,
+                        ),
+                        paragraf_11_4 = FrontendParagraf_11_4(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
+                            utfall = "OPPFYLT",
+                            autorisasjon = Autorisasjon.ENDRE
+                        ),
+                    ),
                     paragraf_11_2 = FrontendParagraf_11_2(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
                         utfall = "IKKE_VURDERT",
@@ -558,6 +576,24 @@ internal class AppTest {
                     saksid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417367"),
                     søknadstidspunkt = LocalDate.of(2022, 1, 1).atStartOfDay(),
                     type = "STANDARD",
+                    inngangsvilkår = Inngangsvilkår(
+                        autorisasjon = Autorisasjon.ENDRE,
+                        paragraf_11_2 = FrontendParagraf_11_2(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
+                            utfall = "IKKE_VURDERT",
+                            autorisasjon = Autorisasjon.ENDRE
+                        ),
+                        paragraf_11_3 = FrontendParagraf_11_3(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417302"),
+                            utfall = "IKKE_VURDERT",
+                            autorisasjon = Autorisasjon.ENDRE,
+                        ),
+                        paragraf_11_4 = FrontendParagraf_11_4(
+                            vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417303"),
+                            utfall = "OPPFYLT",
+                            autorisasjon = Autorisasjon.ENDRE
+                        ),
+                    ),
                     paragraf_11_2 = FrontendParagraf_11_2(
                         vilkårsvurderingsid = UUID.fromString("f422222c-8606-4426-b929-c2b8b4417301"),
                         utfall = "IKKE_VURDERT",

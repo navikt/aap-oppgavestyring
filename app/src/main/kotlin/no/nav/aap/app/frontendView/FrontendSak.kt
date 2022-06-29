@@ -9,8 +9,12 @@ data class FrontendSak(
     val søknadstidspunkt: LocalDateTime,
     val type: String,
     val vedtak: FrontendVedtak?,
+    val inngangsvilkår: Inngangsvilkår?,
+    @Deprecated("Flyttes til inngangsvilkår")
     val paragraf_11_2: FrontendParagraf_11_2?,
+    @Deprecated("Flyttes til inngangsvilkår")
     val paragraf_11_3: FrontendParagraf_11_3?,
+    @Deprecated("Flyttes til inngangsvilkår")
     val paragraf_11_4: FrontendParagraf_11_4?,
     val paragraf_11_5: FrontendParagraf_11_5?,
     val paragraf_11_6: FrontendParagraf_11_6?,
@@ -29,21 +33,31 @@ enum class Utfall {
     OPPFYLT, IKKE_OPPFYLT, IKKE_VURDERT, IKKE_RELEVANT
 }
 
+data class Inngangsvilkår(
+    val autorisasjon: Autorisasjon,
+    val paragraf_11_2: FrontendParagraf_11_2?,
+    val paragraf_11_3: FrontendParagraf_11_3?,
+    val paragraf_11_4: FrontendParagraf_11_4?,
+)
+
 data class FrontendParagraf_11_2(
     val vilkårsvurderingsid: UUID,
     val utfall: String,
+    @Deprecated("Erstattes av autorisasjon i inngangsvilkår")
     val autorisasjon: Autorisasjon
 )
 
 data class FrontendParagraf_11_3(
     val vilkårsvurderingsid: UUID,
     val utfall: String,
+    @Deprecated("Erstattes av autorisasjon i inngangsvilkår")
     val autorisasjon: Autorisasjon
 )
 
 data class FrontendParagraf_11_4(
     val vilkårsvurderingsid: UUID,
     val utfall: String,
+    @Deprecated("Erstattes av autorisasjon i inngangsvilkår")
     val autorisasjon: Autorisasjon
 )
 
