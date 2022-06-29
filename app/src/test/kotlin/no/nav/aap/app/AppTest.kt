@@ -18,7 +18,6 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.aap.app.frontendView.*
 import no.nav.aap.app.kafka.*
-import no.nav.aap.app.kafka.DtoVedtak
 import no.nav.aap.app.security.JwtGenerator
 import no.nav.aap.kafka.serde.json.JsonSerde
 import no.nav.aap.kafka.streams.Topic
@@ -801,9 +800,6 @@ internal class AppTest {
         assertEquals(0, rowCount(mocks, "soker"))
         assertEquals(0, rowCount(mocks, "personopplysninger"))
         assertEquals(0, rowCount(mocks, "mottaker"))
-        assertEquals(0, rowCount(mocks, "sak"))
-        assertEquals(0, rowCount(mocks, "oppgave"))
-        assertEquals(0, rowCount(mocks, "rolle"))
         app.stop()
     }
 

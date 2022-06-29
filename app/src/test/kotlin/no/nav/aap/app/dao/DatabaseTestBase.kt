@@ -33,12 +33,12 @@ internal object InitTestDatabase {
     }
 }
 
-internal abstract class DatabaseTestBase() {
+internal abstract class DatabaseTestBase {
     @BeforeEach
     fun clearTables() {
-        return sessionOf(InitTestDatabase.dataSource).use { session ->
+        sessionOf(InitTestDatabase.dataSource).use { session ->
             session.execute(
-                queryOf(" TRUNCATE soker, sak, oppgave, rolle, tildeling, personopplysninger, mottaker")
+                queryOf(" TRUNCATE soker, personopplysninger, mottaker")
             )
         }
     }

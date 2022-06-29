@@ -9,41 +9,6 @@ CREATE TABLE soker
     CONSTRAINT unique_personident UNIQUE (personident)
 );
 
-CREATE TABLE sak
-(
-    personident              TEXT,
-    saksid                   UUID UNIQUE,
-    diskresjonskode          TEXT,
-    skjermet                 BOOL,
-    lokalkontor_enhetsnummer TEXT
-);
-
-CREATE TABLE oppgave
-(
-    saksid           UUID,
-    oppgaveid        UUID UNIQUE,
-    nay_eller_kontor TEXT,
-    status           TEXT,
-    CONSTRAINT fk_sak FOREIGN KEY (saksid) REFERENCES Sak (saksid)
-);
-
-CREATE TABLE rolle
-(
-    oppgaveid UUID,
-    rolle     TEXT,
-    CONSTRAINT fk_oppgave FOREIGN KEY (oppgaveid) REFERENCES Oppgave (oppgaveid),
-    CONSTRAINT unique_rolle UNIQUE (oppgaveid, rolle)
-);
-
-CREATE TABLE tildeling
-(
-    saksid    UUID,
-    ident     TEXT,
-    rolle     TEXT,
-    opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_tildeling UNIQUE (saksid, ident, rolle)
-);
-
 CREATE TABLE personopplysninger
 (
     personident            TEXT,

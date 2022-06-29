@@ -1,15 +1,14 @@
 package no.nav.aap.app
 
 import no.nav.aap.app.axsys.InnloggetBruker
-import no.nav.aap.app.dao.*
-import no.nav.aap.app.db.DBTildeling
+import no.nav.aap.app.dao.MottakerDao
+import no.nav.aap.app.dao.PersonopplysningerDao
+import no.nav.aap.app.dao.SøkerDao
 import no.nav.aap.app.frontendView.FrontendMottaker
 import no.nav.aap.app.frontendView.FrontendPersonopplysninger
 import no.nav.aap.app.frontendView.FrontendSøker
 import no.nav.aap.app.frontendView.toFrontendView
-import no.nav.aap.app.modell.Rolle
 import org.slf4j.LoggerFactory
-import java.util.*
 import javax.sql.DataSource
 
 interface Repository {
@@ -20,9 +19,6 @@ interface Repository {
     fun lagrePersonopplysninger(fp: FrontendPersonopplysninger)
     fun hentPersonopplysninger(personident: String): FrontendPersonopplysninger?
     fun lagreMottaker(frontendMottaker: FrontendMottaker)
-    fun tildelSak(saksid: UUID, ident: String, rolle: Rolle)
-    fun endreTildeling(saksid: UUID, ident: String, nyIdent: String, nyRolle: Rolle)
-    fun fjernTildeling(saksid: UUID, ident: String)
 }
 
 internal class Repo(dataSource: DataSource) : Repository {
@@ -30,13 +26,12 @@ internal class Repo(dataSource: DataSource) : Repository {
     private val søkerDao = SøkerDao(dataSource)
     private val personopplysningerDao = PersonopplysningerDao(dataSource)
     private val mottakerDao = MottakerDao(dataSource)
-    private val sakDao = SakDao(dataSource)
-    private val tildelingDao = TildelingDao(dataSource)
 
     override fun hentSøker(personident: String, innloggetBruker: InnloggetBruker) =
         søkerDao.select(listOf(personident), innloggetBruker).map { it.toFrontendView(innloggetBruker) }
 
-    override fun lagreSøker(personident: String, version: Int, søker: ByteArray) = søkerDao.insert(personident, version, søker)
+    override fun lagreSøker(personident: String, version: Int, søker: ByteArray) =
+        søkerDao.insert(personident, version, søker)
 
     override fun hentSøkere(innloggetBruker: InnloggetBruker) =
         søkerDao.select(innloggetBruker).map { it.toFrontendView(innloggetBruker) }
@@ -45,35 +40,15 @@ internal class Repo(dataSource: DataSource) : Repository {
         personopplysningerDao.delete(personident)
         søkerDao.delete(personident)
         mottakerDao.delete(personident)
-        sakDao.delete(personident)
-        tildelingDao.delete(personident)
     }
 
     private val secureLog = LoggerFactory.getLogger("secureLog")
 
     override fun lagrePersonopplysninger(fp: FrontendPersonopplysninger) = personopplysningerDao.insert(fp)
-    override fun hentPersonopplysninger(personident: String): FrontendPersonopplysninger? = personopplysningerDao.select(personident).also {
-        secureLog.info("hent personopplysninger for $personident fra db: $it")
-    }
+    override fun hentPersonopplysninger(personident: String): FrontendPersonopplysninger? =
+        personopplysningerDao.select(personident).also {
+            secureLog.info("hent personopplysninger for $personident fra db: $it")
+        }
 
     override fun lagreMottaker(frontendMottaker: FrontendMottaker) = mottakerDao.insert(frontendMottaker)
-
-    override fun tildelSak(saksid: UUID, ident: String, rolle: Rolle) {
-        tildelingDao.insert(
-            DBTildeling(
-                saksid = saksid,
-                ident = ident,
-                rolle = rolle.name
-            )
-        )
-    }
-
-    override fun endreTildeling(saksid: UUID, ident: String, nyIdent: String, nyRolle: Rolle) {
-        fjernTildeling(saksid, ident)
-        tildelSak(saksid, nyIdent, nyRolle)
-    }
-
-    override fun fjernTildeling(saksid: UUID, ident: String) {
-        tildelingDao.delete(saksid, ident)
-    }
 }
