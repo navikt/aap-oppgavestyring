@@ -6,14 +6,13 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
-import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import no.nav.aap.ktor.client.AzureConfig
-import no.nav.aap.ktor.client.HttpClientAzureAdInterceptor.Companion.azureAD
+import no.nav.aap.ktor.client.HttpClientAzureAdTokenProvider
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
@@ -27,12 +26,12 @@ private val log = LoggerFactory.getLogger(AxsysClient::class.java)
 private val secureLog = LoggerFactory.getLogger("secureLog")
 
 class AxsysClient(private val axsysConfig: AxsysConfig, private val azureConfig: AzureConfig) {
+    private val tokenProvider = HttpClientAzureAdTokenProvider(azureConfig, axsysConfig.scope)
     private val cache = mutableMapOf<String, List<String>>()
 
     private val httpClient = HttpClient(CIO) {
         install(HttpTimeout)
         install(HttpRequestRetry)
-        install(Auth) { azureAD(azureConfig, axsysConfig.scope) }
         install(Logging) {
             level = LogLevel.BODY
             logger = object : Logger {
@@ -51,14 +50,18 @@ class AxsysClient(private val axsysConfig: AxsysConfig, private val azureConfig:
         cache[ident] = bruker
     }
 
-    private suspend fun slåOppEnheter(ident: String): List<String> = httpClient.get(axsysConfig.url.toURL()) {
-        url {
-            appendPathSegments("tilgang", ident)
-        }
-        accept(ContentType.Application.Json)
-        header("Nav-Call-Id", callId)
-        header("Nav-Consumer-Id", "aap_oppgavestyring")
-    }.body<Tilganger>().enheter.map { it.enhetId }
+    private suspend fun slåOppEnheter(ident: String): List<String> {
+        val token = tokenProvider.getToken()
+        return httpClient.get(axsysConfig.url.toURL()) {
+            url {
+                appendPathSegments("tilgang", ident)
+            }
+            accept(ContentType.Application.Json)
+            header("Nav-Call-Id", callId)
+            header("Nav-Consumer-Id", "aap_oppgavestyring")
+            bearerAuth(token)
+        }.body<Tilganger>().enheter.map { it.enhetId }
+    }
 
 
     private val callId: String get() = UUID.randomUUID().toString().also { log.info("calling pdl with call-id $it") }
