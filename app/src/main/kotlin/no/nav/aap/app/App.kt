@@ -25,6 +25,7 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.aap.app.axsys.AxsysClient
 import no.nav.aap.app.db.DbConfig
 import no.nav.aap.app.frontendView.toFrontendView
@@ -224,18 +225,15 @@ private fun Routing.api(
                 val løsning_11_4_manuell = manuell.løsning_11_4?.toKafkaDto(innloggetBruker.brukernavn)
 
                 withContext(Dispatchers.IO) {
-                    val send1 = løsning_11_2_manuell?.let { løsning ->
-                        manuell_11_2Producer.send(ProducerRecord(Topics.manuell_11_2.name, personident, løsning))
+                    løsning_11_2_manuell?.let { løsning ->
+                        manuell_11_2Producer.send(Topics.manuell_11_2, personident, løsning)
                     }
-                    val send2 = manuell_11_3Producer.send(
-                        ProducerRecord(Topics.manuell_11_3.name, personident, løsning_11_3_manuell)
-                    )
-                    val send3 = løsning_11_4_manuell?.let { løsning ->
-                        manuell_11_4Producer.send(ProducerRecord(Topics.manuell_11_4.name, personident, løsning))
+
+                    manuell_11_3Producer.send(Topics.manuell_11_3, personident, løsning_11_3_manuell)
+
+                    løsning_11_4_manuell?.let { løsning ->
+                        manuell_11_4Producer.send(Topics.manuell_11_4, personident, løsning)
                     }
-                    send1?.get()
-                    send2.get()
-                    send3?.get()
                 }
 
                 call.respond(HttpStatusCode.OK, "OK")
@@ -302,9 +300,28 @@ private inline fun <reified DTO : Any, KAFKA_DTO> Route.postLøsning(
     val innloggetBruker = innloggetBrukerProvider.hentInnloggetBruker(call.principal()!!)
     val manuell = call.receive<DTO>().block(innloggetBruker.brukernavn)
 
-    withContext(Dispatchers.IO) { producer.send(ProducerRecord(topic.name, personident, manuell)).get() }
+    withContext(Dispatchers.IO) { producer.send(topic, personident, manuell) }
 
     call.respond(HttpStatusCode.OK, "OK")
+}
+
+private fun <V> Producer<String, V>.send(topic: Topic<V>, personident: String, value: V) {
+    val partition = personident.toLong().mod(12)
+    val record = ProducerRecord(topic.name, partition, personident, value)
+
+    send(record) { meta, error ->
+        if (error != null) {
+            secureLog.error("Produserer til Topic feilet", error)
+        } else {
+            secureLog.trace(
+                "Produserer til Topic",
+                kv("key", personident),
+                kv("topic", topic.name),
+                kv("partition", meta.partition()),
+                kv("offset", meta.offset()),
+            )
+        }
+    }
 }
 
 private fun initDatasource(dbConfig: DbConfig) = HikariDataSource(HikariConfig().apply {
