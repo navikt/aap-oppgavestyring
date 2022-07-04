@@ -37,7 +37,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("com.github.navikt.aap-libs:kafka-test:2.1.3")
     testImplementation("io.ktor:ktor-server-test-host:2.0.2")
-    testImplementation("io.ktor:ktor-client-content-negotiation:2.0.2")
+    testImplementation("io.ktor:ktor-client-content-negotiation:2.0.3")
     testImplementation("com.nimbusds:nimbus-jose-jwt:9.23")
     testImplementation("org.testcontainers:postgresql:1.17.2")
 }
