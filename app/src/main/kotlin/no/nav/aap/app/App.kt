@@ -306,8 +306,7 @@ private inline fun <reified DTO : Any, KAFKA_DTO> Route.postLøsning(
 }
 
 private fun <V> Producer<String, V>.send(topic: Topic<V>, personident: String, value: V) {
-    val partition = personident.toLong().mod(12)
-    val record = ProducerRecord(topic.name, partition, personident, value)
+    val record = ProducerRecord(topic.name, personident, value)
 
     send(record) { meta, error ->
         if (error != null) {
