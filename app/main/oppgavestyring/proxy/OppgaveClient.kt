@@ -18,11 +18,15 @@ import no.nav.aap.ktor.client.auth.azure.AzureAdTokenProvider
 import oppgavestyring.Config
 import oppgavestyring.SECURE_LOG
 
-class OppgaveClient(private val config: Config) {
-    private val client = HttpClientFactory.default()
+interface Oppgave {
+    suspend fun opprett(token: String, request: OpprettRequest): Result<String>
+}
 
+class OppgaveClient(private val config: Config) : Oppgave {
+    private val client = HttpClientFactory.default()
     private val azure = AzureAdTokenProvider(config.azure)
-    suspend fun opprett(
+
+    override suspend fun opprett(
         token: String,
         request: OpprettRequest,
     ): Result<String> {

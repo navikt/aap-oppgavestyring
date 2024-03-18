@@ -3,7 +3,7 @@ package oppgavestyring
 import no.nav.aap.ktor.client.auth.azure.AzureConfig
 import java.net.URI
 
-class Config(
+open class Config(
     val azure: AzureConfig = AzureConfig(),
     val oppgave: OppgaveConfig = OppgaveConfig(),
 )

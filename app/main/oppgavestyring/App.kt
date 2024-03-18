@@ -51,11 +51,11 @@ fun Application.server(
 
     routing {
         actuators(prometheus)
-        server(client)
+        proxy(client)
     }
 }
 
-private fun Route.server(oppgaveClient: OppgaveClient) {
+private fun Route.proxy(oppgaveClient: OppgaveClient) {
     route("/proxy/opprett") {
         post {
             val token = call.authToken()
