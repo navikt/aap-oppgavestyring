@@ -11,8 +11,9 @@ spec:
     inbound:
       rules:
         - application: mottak
-    external:
-      - host: oppgave.dev-fss-pub.nais.io
+    outbound:
+      external:
+        - host: oppgave.dev-fss-pub.nais.io
   replicas:
     max: 1
     min: 1
