@@ -1,6 +1,5 @@
-package oppgave
+package oppgavestyring.proxy
 
-import SECURE_LOG
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -16,6 +15,8 @@ import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import kotlinx.coroutines.runBlocking
 import no.nav.aap.ktor.client.auth.azure.AzureAdTokenProvider
+import oppgavestyring.Config
+import oppgavestyring.SECURE_LOG
 
 class OppgaveClient(private val config: Config) {
     private val client = HttpClientFactory.default()

@@ -1,4 +1,4 @@
-package oppgave
+package oppgavestyring
 
 import no.nav.aap.ktor.client.auth.azure.AzureConfig
 import java.net.URI

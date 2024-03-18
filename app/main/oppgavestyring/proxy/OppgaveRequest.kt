@@ -1,4 +1,4 @@
-package oppgave
+package oppgavestyring.proxy
 
 data class OpprettRequest(
     val fnr: Personident,

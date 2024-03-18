@@ -1,3 +1,5 @@
+package oppgavestyring
+
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -15,8 +17,7 @@ import io.ktor.server.routing.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import oppgave.Config
-import oppgave.OppgaveClient
+import oppgavestyring.proxy.OppgaveClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -24,10 +25,10 @@ val SECURE_LOG: Logger = LoggerFactory.getLogger("secureLog")
 
 fun main() {
     Thread.currentThread().setUncaughtExceptionHandler { _, e -> SECURE_LOG.error("Uhåndtert feil", e) }
-    embeddedServer(Netty, port = 8080, module = Application::oppgaveProxy).start(wait = true)
+    embeddedServer(Netty, port = 8080, module = Application::proxy).start(wait = true)
 }
 
-fun Application.oppgaveProxy(
+fun Application.proxy(
     config: Config = Config(),
 ) {
     val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
@@ -50,17 +51,17 @@ fun Application.oppgaveProxy(
 
     routing {
         actuators(prometheus)
-        oppgave(client)
+        proxy(client)
     }
 }
 
-private fun Route.oppgave(client: OppgaveClient) {
+private fun Route.proxy(oppgaveClient: OppgaveClient) {
     route("/proxy/opprett") {
         post {
             val token = call.authToken()
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 
-            client.opprett(
+            oppgaveClient.opprett(
                 token = token,
                 request = call.receive()
             )
