@@ -1,2 +1,3 @@
 rootProject.name = "aap-oppgavestyring"
-include("app")
+include("proxy")
+include("oppgavestyring")
