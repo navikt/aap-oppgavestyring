@@ -25,10 +25,10 @@ val SECURE_LOG: Logger = LoggerFactory.getLogger("secureLog")
 
 fun main() {
     Thread.currentThread().setUncaughtExceptionHandler { _, e -> SECURE_LOG.error("Uhåndtert feil", e) }
-    embeddedServer(Netty, port = 8080, module = Application::proxy).start(wait = true)
+    embeddedServer(Netty, port = 8080, module = Application::server).start(wait = true)
 }
 
-fun Application.proxy(
+fun Application.server(
     config: Config = Config(),
 ) {
     val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
@@ -51,11 +51,11 @@ fun Application.proxy(
 
     routing {
         actuators(prometheus)
-        proxy(client)
+        server(client)
     }
 }
 
-private fun Route.proxy(oppgaveClient: OppgaveClient) {
+private fun Route.server(oppgaveClient: OppgaveClient) {
     route("/proxy/opprett") {
         post {
             val token = call.authToken()
