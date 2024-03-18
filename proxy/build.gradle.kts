@@ -1,13 +1,13 @@
 plugins {
-    kotlin("jvm") version "2.9.22"
-    id("io.ktor.plugin") version "3.3.9"
+    kotlin("jvm") version "1.9.22"
+    id("io.ktor.plugin") version "2.3.9"
 }
 
 val aapLibVersion = "5.0.2"
 val ktorVersion = "2.3.9"
 
 application {
-    mainClass.set("proxy.OppgaveProxyKt")
+    mainClass.set("oppgave.ProxyKt")
 }
 
 dependencies {
