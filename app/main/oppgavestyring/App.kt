@@ -11,12 +11,12 @@ import io.ktor.server.engine.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
+import oppgavestyring.api.proxy
 import oppgavestyring.proxy.OppgaveClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -52,20 +52,6 @@ fun Application.server(
     routing {
         actuators(prometheus)
         proxy(client)
-    }
-}
-
-private fun Route.proxy(oppgaveClient: OppgaveClient) {
-    route("/oppgave") {
-        post("/opprett") {
-            val token = call.authToken()
-                ?: return@post call.respond(HttpStatusCode.Unauthorized)
-
-            oppgaveClient.opprett(
-                token = token,
-                request = call.receive()
-            )
-        }
     }
 }
 
