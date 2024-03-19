@@ -1,7 +1,6 @@
 package oppgavestyring
 
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -10,9 +9,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import oppgavestyring.proxy.OpprettRequest
-import oppgavestyring.proxy.Personident
-import org.junit.jupiter.api.Assertions.assertEquals
+import oppgavestyring.proxy.Prioritet
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class ProxyTest {
@@ -59,10 +58,21 @@ class ProxyTest {
                 bearerAuth("token")
                 setBody(
                     OpprettRequest(
-                        fnr = Personident("123"),
-                        enhet = "1234",
-                        tittel = "Søknad",
-                        titler = emptyList(),
+                        personident = null,
+                        orgnr = null,
+                        tildeltEnhetsnr = null,
+                        opprettetAvEnhetsnr = null,
+                        journalpostId = null,
+                        behandlesAvApplikasjon = null,
+                        tilordnetRessurs = null,
+                        beskrivelse = null,
+                        tema = "AAP",
+                        behandlingstema = null,
+                        oppgavetype = "JFR",
+                        behandlingstype = null,
+                        aktivDato = "${LocalDate.now()}",
+                        fristFerdigstillelse = null,
+                        prioritet = Prioritet.NORM,
                     )
                 )
             }

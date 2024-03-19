@@ -56,8 +56,8 @@ fun Application.server(
 }
 
 private fun Route.proxy(oppgaveClient: OppgaveClient) {
-    route("/proxy/opprett") {
-        post {
+    route("/oppgave") {
+        post("/opprett") {
             val token = call.authToken()
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 

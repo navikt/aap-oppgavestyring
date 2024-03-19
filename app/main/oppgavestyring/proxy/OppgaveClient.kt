@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.aap.ktor.client.auth.azure.AzureAdTokenProvider
 import oppgavestyring.Config
 import oppgavestyring.SECURE_LOG
+import java.util.*
 
 interface Oppgave {
     suspend fun opprett(token: String, request: OpprettRequest): Result<String>
@@ -34,7 +35,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
 
         val response = client.post("${config.oppgave.host}/opprettoppgave") {
             accept(ContentType.Application.Json)
-            header("personident", request.fnr.fnr)
+            header("X-Correlation-ID", UUID.randomUUID().toString()) // TODO: hent fra caller
             bearerAuth(obo)
             setBody(request)
         }
@@ -52,7 +53,7 @@ private suspend fun HttpResponse.tryInto(default: () -> String): Result<String> 
     }
 }
 
-fun HttpResponse.logWithError(msg: String): IllegalStateException {
+private fun HttpResponse.logWithError(msg: String): IllegalStateException {
     SECURE_LOG.error(
         """
             $msg
