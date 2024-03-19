@@ -3,13 +3,13 @@ package oppgavestyring
 import no.nav.aap.ktor.client.auth.azure.AzureConfig
 import java.net.URI
 
-class TestConfig : Config(
+class TestConfig(oppgavePort: Int, azurePort: Int) : Config(
     oppgave = OppgaveConfig(
-        host = "http://oppgave".let(::URI),
-        scope = "scope,"
+        host = "http://localhost:$oppgavePort".let(::URI),
+        scope = "",
     ),
     azure = AzureConfig(
-        tokenEndpoint = "http://azure",
+        tokenEndpoint = "http://localhost:$azurePort/token",
         clientId = "",
         clientSecret = "",
         jwksUri = "",

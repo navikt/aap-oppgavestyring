@@ -33,7 +33,8 @@ class OppgaveClient(private val config: Config) : Oppgave {
     ): Result<String> {
         val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
 
-        val response = client.post("${config.oppgave.host}/opprettoppgave") {
+        val response = client.post("${config.oppgave.host}/api/v1/oppgaver") {
+            contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             header("X-Correlation-ID", UUID.randomUUID().toString()) // TODO: hent fra caller
             bearerAuth(obo)

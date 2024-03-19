@@ -2,60 +2,21 @@ package oppgavestyring
 
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.jackson.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.testing.*
 import oppgavestyring.proxy.OpprettRequest
 import oppgavestyring.proxy.Prioritet
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class ProxyTest {
 
     @Test
-    fun test() {
-        val config = TestConfig()
-        testApplication {
-            application {
-                server(config)
-            }
-            externalServices {
-                hosts(config.oppgave.host.host) {
-                    install(ContentNegotiation) {
-                        jackson {}
-                    }
-                    routing {
-                        post("/opprettoppgave") {
-                            call.respondText("OK")
-                        }
-                    }
-                }
-                hosts(config.azure.tokenEndpoint) {
-                    install(ContentNegotiation) {
-                        jackson {}
-                    }
-                    routing {
-                        post("/token") {
-                            call.respond(TestToken())
-                        }
-                    }
-                }
-            }
-
-            val client = createClient {
-                install(ClientContentNegotiation) {
-                    jackson {}
-                }
-            }
-
-
-            val actual = client.post("proxy/opprett") {
+    fun `create oppgave`() {
+        oppgavestyringWithFakes { client ->
+            val actual = client.post("/oppgave/opprett") {
                 contentType(ContentType.Application.Json)
                 bearerAuth("token")
+                accept(ContentType.Application.Json)
                 setBody(
                     OpprettRequest(
                         personident = null,
@@ -67,9 +28,9 @@ class ProxyTest {
                         tilordnetRessurs = null,
                         beskrivelse = null,
                         tema = "AAP",
-                        behandlingstema = null,
+                        behandlingstema = null, // kommer fra jp som noen har satt for å få den tilbake
                         oppgavetype = "JFR",
-                        behandlingstype = null,
+                        behandlingstype = null, // kommer fra jp som noen har satt for å få den tilbake
                         aktivDato = "${LocalDate.now()}",
                         fristFerdigstillelse = null,
                         prioritet = Prioritet.NORM,
@@ -77,13 +38,7 @@ class ProxyTest {
                 )
             }
 
-//            assertEquals(HttpStatusCode.OK, actual.status)
-//            assertEquals("Oppgave opprettet", actual.bodyAsText())
+            assertEquals(HttpStatusCode.Created, actual.status)
         }
     }
 }
-
-data class TestToken(
-    val exprires_in: Int = 3599,
-    val access_token: String = "very.secure.token"
-)
