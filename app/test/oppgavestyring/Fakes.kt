@@ -11,6 +11,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.runBlocking
+import oppgavestyring.proxy.OpprettResponse
+import oppgavestyring.proxy.Prioritet
+import oppgavestyring.proxy.Status
+import java.time.LocalDate
 
 class Fakes : AutoCloseable {
     val azure = embeddedServer(Netty, port = 0, module = Application::azure).apply { start() }
@@ -32,7 +36,19 @@ private fun Application.oppgave() {
 
     routing {
         post("/api/v1/oppgaver") {
-            call.respond(HttpStatusCode.Created)
+            call.respond(
+                HttpStatusCode.Created,
+                OpprettResponse(
+                    id = 123L,
+                    tildeltEnhetsnr = "1234",
+                    tema = "AAP",
+                    oppgavetype = "BEH_SAK",
+                    versjon = 1,
+                    prioritet = Prioritet.NORM,
+                    status = Status.OPPRETTET,
+                    aktivDato = "${LocalDate.now()}",
+                )
+            )
         }
     }
 }

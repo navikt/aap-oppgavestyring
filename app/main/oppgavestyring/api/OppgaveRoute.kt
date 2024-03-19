@@ -18,7 +18,7 @@ fun Route.proxy(oppgaveClient: OppgaveClient) {
                 token = token,
                 request = call.receive()
             ).onSuccess {
-                call.respond(HttpStatusCode.Created)
+                call.respond(HttpStatusCode.Created, it)
             }.onFailure {
                 call.respond(HttpStatusCode.InternalServerError)
             }

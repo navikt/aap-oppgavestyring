@@ -19,20 +19,11 @@ class ProxyTest {
                 accept(ContentType.Application.Json)
                 setBody(
                     OpprettRequest(
-                        personident = null,
-                        orgnr = null,
-                        tildeltEnhetsnr = null,
-                        opprettetAvEnhetsnr = null,
-                        journalpostId = null,
-                        behandlesAvApplikasjon = null,
-                        tilordnetRessurs = null,
-                        beskrivelse = null,
                         tema = "AAP",
-                        behandlingstema = null, // kommer fra jp som noen har satt for å få den tilbake
                         oppgavetype = "JFR",
+                        behandlingstema = null, // kommer fra jp som noen har satt for å få den tilbake
                         behandlingstype = null, // kommer fra jp som noen har satt for å få den tilbake
                         aktivDato = "${LocalDate.now()}",
-                        fristFerdigstillelse = null,
                         prioritet = Prioritet.NORM,
                     )
                 )

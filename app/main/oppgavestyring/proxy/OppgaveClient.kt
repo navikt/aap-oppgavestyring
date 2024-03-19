@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -16,11 +17,12 @@ import io.ktor.serialization.jackson.*
 import kotlinx.coroutines.runBlocking
 import no.nav.aap.ktor.client.auth.azure.AzureAdTokenProvider
 import oppgavestyring.Config
+import oppgavestyring.LOG
 import oppgavestyring.SECURE_LOG
 import java.util.*
 
 interface Oppgave {
-    suspend fun opprett(token: String, request: OpprettRequest): Result<String>
+    suspend fun opprett(token: String, request: OpprettRequest): Result<OpprettResponse>
 }
 
 class OppgaveClient(private val config: Config) : Oppgave {
@@ -30,7 +32,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
     override suspend fun opprett(
         token: String,
         request: OpprettRequest,
-    ): Result<String> {
+    ): Result<OpprettResponse> {
         val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
 
         val response = client.post("${config.oppgave.host}/api/v1/oppgaver") {
@@ -41,16 +43,18 @@ class OppgaveClient(private val config: Config) : Oppgave {
             setBody(request)
         }
 
-        return response.tryInto { "Oppgave opprettet" }
+        return response.tryInto()
     }
 }
 
-private suspend fun HttpResponse.tryInto(default: () -> String): Result<String> {
+internal suspend inline fun <reified R : Any> HttpResponse.tryInto(): Result<R> {
+
     return when (status.value) {
-        in 200..299 -> Result.success(default())
-        in 400..499 -> Result.failure(logWithError("Client error: ${bodyAsText()}"))
-        in 500..599 -> Result.failure(logWithError("Server error: ${bodyAsText()}"))
-        else -> Result.failure(logWithError("Unknown error"))
+        201 -> Result.success(body<R>()).also { LOG.info("Oppgave opprettet: ${headers[HttpHeaders.Location]}") }
+        400 -> Result.failure(logWithError("Ugyldig request (oppgave): ${bodyAsText()}"))
+        401 -> Result.failure(logWithError("Ugyldig token (oppgave): ${bodyAsText()}"))
+        403 -> Result.failure(logWithError("Ugyldig tilgang (oppgave): ${bodyAsText()}"))
+        else -> Result.failure(logWithError("Ukjent feil (oppgave): ${bodyAsText()}"))
     }
 }
 
