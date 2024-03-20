@@ -16,7 +16,8 @@ fun Route.proxy(oppgaveClient: OppgaveClient) {
                 ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
             oppgaveClient.hent(
-                token = token
+                token = token,
+                123,
             ).onSuccess {
                 call.respond(HttpStatusCode.OK, it)
             }.onFailure {

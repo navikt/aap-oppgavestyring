@@ -23,12 +23,14 @@ import java.util.*
 
 interface Oppgave {
     suspend fun opprett(token: String, request: OpprettRequest): Result<OpprettResponse>
-    suspend fun hent(token: String): Any
+    suspend fun hent(token: String, oppgaveId: Long): Result<OpprettResponse>
+    suspend fun søk(token: String, params: SøkQueryParams): Result<List<OpprettResponse>>
 }
 
 class OppgaveClient(private val config: Config) : Oppgave {
     private val client = HttpClientFactory.default()
     private val azure = AzureAdTokenProvider(config.azure)
+    private val host = config.oppgave.host
 
     override suspend fun opprett(
         token: String,
@@ -36,10 +38,10 @@ class OppgaveClient(private val config: Config) : Oppgave {
     ): Result<OpprettResponse> {
         val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
 
-        val response = client.post("${config.oppgave.host}/api/v1/oppgaver") {
+        val response = client.post("$host/api/v1/oppgaver") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
-            header("X-Correlation-ID", UUID.randomUUID().toString()) // TODO: hent fra caller
+            header("X-Correlation-ID", UUID.randomUUID().toString())
             bearerAuth(obo)
             setBody(request)
         }
@@ -47,8 +49,38 @@ class OppgaveClient(private val config: Config) : Oppgave {
         return response.tryInto()
     }
 
-    override suspend fun hent(token: String): Result<List<OpprettResponse>> {
-        TODO("Not yet implemented")
+    override suspend fun hent(
+        token: String,
+        oppgaveId: Long,
+    ): Result<OpprettResponse> {
+        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
+
+        val response = client.get("$host/api/v1/oppgaver/$oppgaveId") {
+            accept(ContentType.Application.Json)
+            header("X-Correlation-ID", UUID.randomUUID().toString())
+            bearerAuth(obo)
+        }
+
+        return response.tryInto()
+    }
+
+    override suspend fun søk(
+        token: String,
+        params: SøkQueryParams,
+    ): Result<List<OpprettResponse>> {
+        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
+
+        val response = client.get {
+            url {
+                takeFrom("$host/api/v1/oppgaver")
+                parameters.appendAll(params.stringValues())
+            }
+            accept(ContentType.Application.Json)
+            header("X-Correlation-ID", UUID.randomUUID().toString())
+            bearerAuth(obo)
+        }
+
+        return response.tryInto()
     }
 }
 
