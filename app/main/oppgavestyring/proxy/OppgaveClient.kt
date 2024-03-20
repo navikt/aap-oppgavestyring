@@ -46,7 +46,9 @@ class OppgaveClient(private val config: Config) : Oppgave {
             setBody(request)
         }
 
-        return response.tryInto()
+        return response.tryInto<OpprettResponse>().also {
+            LOG.info("Oppgave opprettet: ${response.headers[HttpHeaders.Location]}")
+        }
     }
 
     override suspend fun hent(
@@ -87,11 +89,11 @@ class OppgaveClient(private val config: Config) : Oppgave {
 internal suspend inline fun <reified R : Any> HttpResponse.tryInto(): Result<R> {
 
     return when (status.value) {
-        201 -> Result.success(body<R>()).also { LOG.info("Oppgave opprettet: ${headers[HttpHeaders.Location]}") }
-        400 -> Result.failure(logWithError("Ugyldig request (oppgave): ${bodyAsText()}"))
-        401 -> Result.failure(logWithError("Ugyldig token (oppgave): ${bodyAsText()}"))
-        403 -> Result.failure(logWithError("Ugyldig tilgang (oppgave): ${bodyAsText()}"))
-        else -> Result.failure(logWithError("Ukjent feil (oppgave): ${bodyAsText()}"))
+        201 -> Result.success(body<R>())
+        400 -> Result.failure(logWithError("Ugyldig request (oppgave)"))
+        401 -> Result.failure(logWithError("Ugyldig token (oppgave)"))
+        403 -> Result.failure(logWithError("Ugyldig tilgang (oppgave)"))
+        else -> Result.failure(logWithError("Ukjent feil (oppgave)"))
     }
 }
 
@@ -108,12 +110,13 @@ private fun HttpResponse.logWithError(msg: String): IllegalStateException {
 
     return IllegalStateException(
         """
-        $msg
-        Request: ${request.method.value} ${request.url}
-        Response: $status
-        Headers: $headers
-    """.trimIndent()
-    )
+            $msg
+            Request: ${request.method.value} ${request.url}
+            Response: $status
+        """.trimIndent()
+    ).also {
+        LOG.error(msg, it)
+    }
 }
 
 private object HttpClientFactory {

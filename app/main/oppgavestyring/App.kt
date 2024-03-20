@@ -22,7 +22,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 val SECURE_LOG: Logger = LoggerFactory.getLogger("secureLog")
-val LOG: Logger = LoggerFactory.getLogger("secureLog")
+val LOG: Logger = LoggerFactory.getLogger("oppgavestyring")
 
 fun main() {
     Thread.currentThread().setUncaughtExceptionHandler { _, e -> SECURE_LOG.error("Uhåndtert feil", e) }
