@@ -25,7 +25,7 @@ class OppgaveFake : AutoCloseable {
     override fun close() = server.stop(0, 0)
 }
 
-private fun Application.oppgave(nextId: () -> Long) {
+private fun Application.oppgave(nextSequence: () -> Long) {
     val oppgaver = mutableMapOf<Long, OpprettRequest>()
 
     install(ContentNegotiation) {
@@ -51,8 +51,10 @@ private fun Application.oppgave(nextId: () -> Long) {
                 ?: return@post call.respond(HttpStatusCode.BadRequest)
 
             val oppgave: OpprettRequest = call.receive()
-            val id = nextId()
+            val id = nextSequence()
             oppgaver[id] = oppgave
+
+            call.response.header(HttpHeaders.Location, "/api/v1/oppgaver/$id")
 
             call.respond(
                 HttpStatusCode.Created,
