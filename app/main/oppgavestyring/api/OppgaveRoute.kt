@@ -11,13 +11,16 @@ import oppgavestyring.proxy.OppgaveClient
 fun Route.proxy(oppgaveClient: OppgaveClient) {
     route("/oppgave") {
 
-        get {
+        get("/{id}") {
             val token = call.authToken()
                 ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
+            val id = call.parameters["id"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
+
             oppgaveClient.hent(
                 token = token,
-                123,
+                oppgaveId = id,
             ).onSuccess {
                 call.respond(HttpStatusCode.OK, it)
             }.onFailure {

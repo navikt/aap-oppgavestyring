@@ -89,7 +89,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
 internal suspend inline fun <reified R : Any> HttpResponse.tryInto(): Result<R> {
 
     return when (status.value) {
-        201 -> Result.success(body<R>())
+        in 200..202 -> Result.success(body<R>())
         400 -> Result.failure(logWithError("Ugyldig request (oppgave)"))
         401 -> Result.failure(logWithError("Ugyldig token (oppgave)"))
         403 -> Result.failure(logWithError("Ugyldig tilgang (oppgave)"))
