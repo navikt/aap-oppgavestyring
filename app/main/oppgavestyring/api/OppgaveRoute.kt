@@ -10,6 +10,20 @@ import oppgavestyring.proxy.OppgaveClient
 
 fun Route.proxy(oppgaveClient: OppgaveClient) {
     route("/oppgave") {
+
+        get {
+            val token = call.authToken()
+                ?: return@get call.respond(HttpStatusCode.Unauthorized)
+
+            oppgaveClient.hent(
+                token = token
+            ).onSuccess {
+                call.respond(HttpStatusCode.OK, it)
+            }.onFailure {
+                call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
+
         post("/opprett") {
             val token = call.authToken()
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)

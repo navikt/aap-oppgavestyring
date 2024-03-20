@@ -23,6 +23,7 @@ import java.util.*
 
 interface Oppgave {
     suspend fun opprett(token: String, request: OpprettRequest): Result<OpprettResponse>
+    suspend fun hent(token: String): Any
 }
 
 class OppgaveClient(private val config: Config) : Oppgave {
@@ -44,6 +45,10 @@ class OppgaveClient(private val config: Config) : Oppgave {
         }
 
         return response.tryInto()
+    }
+
+    override suspend fun hent(token: String): Result<List<OpprettResponse>> {
+        TODO("Not yet implemented")
     }
 }
 
