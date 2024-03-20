@@ -1,7 +1,5 @@
 package oppgavestyring.api
 
-import java.time.LocalDateTime
-
 data class OppgaverResponse(
     val oppgaver: List<Oppgave>,
 )

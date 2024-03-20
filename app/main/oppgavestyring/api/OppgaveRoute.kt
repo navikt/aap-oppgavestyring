@@ -7,9 +7,26 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.authToken
 import oppgavestyring.proxy.OppgaveClient
+import oppgavestyring.proxy.OpprettResponse
+import oppgavestyring.proxy.SøkQueryParams
 
 fun Route.proxy(oppgaveClient: OppgaveClient) {
     route("/oppgave") {
+
+        get {
+            val token = call.authToken()
+                ?: return@get call.respond(HttpStatusCode.Unauthorized)
+
+            oppgaveClient.søk(
+                token = token,
+                params = SøkQueryParams(behandlingstema = "AAP"),
+            ).onSuccess {
+                call.respond(HttpStatusCode.OK, map(it))
+            }.onFailure {
+                call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
+
 
         get("/{id}") {
             val token = call.authToken()
@@ -42,4 +59,15 @@ fun Route.proxy(oppgaveClient: OppgaveClient) {
             }
         }
     }
+}
+
+private fun map(it: List<OpprettResponse>): OppgaverResponse {
+    return OppgaverResponse(
+        it.map { Oppgave(
+            oppgaveId = it.id,
+            oppgavetype = Oppgavetype.AVKLARINGSBEHOV,
+            foedselsnummer = it.aktoerId!!,
+            opprettet = it.opprettetTidspunkt!!
+        ) }
+    )
 }
