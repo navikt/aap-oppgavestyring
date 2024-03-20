@@ -3,10 +3,10 @@ package oppgavestyring
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import oppgavestyring.proxy.OpprettRequest
-import oppgavestyring.proxy.OpprettResponse
-import oppgavestyring.proxy.Prioritet
-import oppgavestyring.proxy.Status
+import oppgavestyring.adapter.OpprettRequest
+import oppgavestyring.adapter.OpprettResponse
+import oppgavestyring.adapter.Prioritet
+import oppgavestyring.adapter.Status
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -16,7 +16,7 @@ class ApiTest {
     @Test
     fun `opprett oppgave`() {
         oppgavestyringWithFakes { _, client ->
-            val actual = client.post("/oppgave/opprett") {
+            val actual = client.post("/oppgaver/opprett") {
                 contentType(ContentType.Application.Json)
                 bearerAuth("token")
                 accept(ContentType.Application.Json)
@@ -41,7 +41,7 @@ class ApiTest {
         oppgavestyringWithFakes { fakes, client ->
             val now = LocalDate.now()
 
-            val oppgaveId = client.post("/oppgave/opprett") {
+            val oppgaveId = client.post("/oppgaver/opprett") {
                 contentType(ContentType.Application.Json)
                 bearerAuth("token")
                 accept(ContentType.Application.Json)
@@ -60,7 +60,7 @@ class ApiTest {
                 fakes.oppgave.oppgaveIdSeq
             }
 
-            val actual = client.get("/oppgave/$oppgaveId") {
+            val actual = client.get("/oppgaver/$oppgaveId") {
                 bearerAuth("token")
                 accept(ContentType.Application.Json)
             }.body<OpprettResponse>()

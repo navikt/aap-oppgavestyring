@@ -6,12 +6,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.authToken
-import oppgavestyring.proxy.OppgaveClient
-import oppgavestyring.proxy.OpprettResponse
-import oppgavestyring.proxy.SøkQueryParams
+import oppgavestyring.adapter.OppgaveClient
+import oppgavestyring.adapter.OpprettResponse
+import oppgavestyring.adapter.SøkQueryParams
 
-fun Route.proxy(oppgaveClient: OppgaveClient) {
-    route("/oppgave") {
+fun Route.oppgaver(oppgaveClient: OppgaveClient) {
+
+    route("/oppgaver") {
 
         get {
             val token = call.authToken()
@@ -26,7 +27,6 @@ fun Route.proxy(oppgaveClient: OppgaveClient) {
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }
-
 
         get("/{id}") {
             val token = call.authToken()

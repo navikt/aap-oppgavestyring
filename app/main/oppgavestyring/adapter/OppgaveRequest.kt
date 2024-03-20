@@ -1,4 +1,4 @@
-package oppgavestyring.proxy
+package oppgavestyring.adapter
 
 import io.ktor.util.*
 

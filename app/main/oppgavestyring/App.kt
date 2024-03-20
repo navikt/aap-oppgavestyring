@@ -16,8 +16,8 @@ import io.ktor.server.routing.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import oppgavestyring.api.proxy
-import oppgavestyring.proxy.OppgaveClient
+import oppgavestyring.api.oppgaver
+import oppgavestyring.adapter.OppgaveClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -52,7 +52,7 @@ fun Application.server(
 
     routing {
         actuators(prometheus)
-        proxy(client)
+        oppgaver(client)
     }
 }
 

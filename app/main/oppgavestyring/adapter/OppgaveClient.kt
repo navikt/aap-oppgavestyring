@@ -1,4 +1,4 @@
-package oppgavestyring.proxy
+package oppgavestyring.adapter
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -137,7 +137,6 @@ private object HttpClientFactory {
             }
         }
     }
-
 
     object SecureLog {
         object INFO : Logger {
