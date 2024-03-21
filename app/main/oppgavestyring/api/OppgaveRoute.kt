@@ -15,11 +15,11 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
     route("/oppgaver") {
 
         get {
-            val token = call.authToken()
-                ?: return@get call.respond(HttpStatusCode.Unauthorized)
+//            val token = call.authToken()
+//                ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
             oppgaveClient.søk(
-                token = token,
+                token = "venter på wonderwall i frontend",
                 params = SøkQueryParams(behandlingstema = "AAP"),
             ).onSuccess {
                 call.respond(HttpStatusCode.OK, map(it))

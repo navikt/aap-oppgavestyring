@@ -70,7 +70,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
         token: String,
         params: SøkQueryParams,
     ): Result<List<OpprettResponse>> {
-        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
+        val clientCredential = azure.getClientCredentialToken(config.oppgave.scope)
 
         val response = client.get {
             url {
@@ -79,7 +79,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
             }
             accept(ContentType.Application.Json)
             header("X-Correlation-ID", UUID.randomUUID().toString())
-            bearerAuth(obo)
+            bearerAuth(clientCredential)
         }
 
         return response.tryInto()
