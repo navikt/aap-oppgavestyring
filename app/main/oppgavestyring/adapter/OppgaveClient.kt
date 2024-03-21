@@ -74,7 +74,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
 
         val response = client.get {
             url {
-                takeFrom("$host/api/v1/oppgaver")
+                takeFrom("${config.oppgave.host}/api/v1/oppgaver")
                 parameters.appendAll(params.stringValues())
             }
             accept(ContentType.Application.Json)
