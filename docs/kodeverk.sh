@@ -11,6 +11,8 @@
 #
 # Example ./kodeverk.sh Tema
 # Example ./kodeverk.sh Oppgavetyper
+# Example ./kodeverk.sh Behandlingstema
+# Example ./kodeverk.sh Behandlingstyper
 
 lookup() {
   curl -X GET \

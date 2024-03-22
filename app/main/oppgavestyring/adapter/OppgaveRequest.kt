@@ -28,6 +28,11 @@ enum class Prioritet {
 
 typealias NavEnhet = String
 
+data class SøkOppgaverResponse(
+    val antallTreffTotalt: Long,
+    val oppgaver: List<OpprettResponse>
+)
+
 data class OpprettResponse(
     val id: Long,
     val tildeltEnhetsnr: NavEnhet,

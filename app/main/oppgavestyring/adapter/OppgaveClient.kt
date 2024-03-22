@@ -24,7 +24,7 @@ import java.util.*
 interface Oppgave {
     suspend fun opprett(token: String, request: OpprettRequest): Result<OpprettResponse>
     suspend fun hent(token: String, oppgaveId: Long): Result<OpprettResponse>
-    suspend fun søk(token: String, params: SøkQueryParams): Result<List<OpprettResponse>>
+    suspend fun søk(token: String, params: SøkQueryParams): Result<SøkOppgaverResponse>
 }
 
 class OppgaveClient(private val config: Config) : Oppgave {
@@ -69,7 +69,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
     override suspend fun søk(
         token: String,
         params: SøkQueryParams,
-    ): Result<List<OpprettResponse>> {
+    ): Result<SøkOppgaverResponse> {
         val clientCredential = azure.getClientCredentialToken(config.oppgave.scope)
 
         val response = client.get {

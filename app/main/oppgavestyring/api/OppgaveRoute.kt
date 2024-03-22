@@ -6,8 +6,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.adapter.OppgaveClient
-import oppgavestyring.adapter.OpprettResponse
 import oppgavestyring.adapter.Statuskategori
+import oppgavestyring.adapter.SøkOppgaverResponse
 import oppgavestyring.adapter.SøkQueryParams
 import oppgavestyring.authToken
 
@@ -65,9 +65,9 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
     }
 }
 
-private fun map(it: List<OpprettResponse>): OppgaverResponse {
+private fun map(it: SøkOppgaverResponse): OppgaverResponse {
     return OppgaverResponse(
-        it.map {
+        it.oppgaver.map {
             Oppgave(
                 oppgaveId = it.id,
                 oppgavetype = Oppgavetype.AVKLARINGSBEHOV,
