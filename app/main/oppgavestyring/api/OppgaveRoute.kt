@@ -5,10 +5,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import oppgavestyring.authToken
 import oppgavestyring.adapter.OppgaveClient
 import oppgavestyring.adapter.OpprettResponse
+import oppgavestyring.adapter.Statuskategori
 import oppgavestyring.adapter.SøkQueryParams
+import oppgavestyring.authToken
 
 fun Route.oppgaver(oppgaveClient: OppgaveClient) {
 
@@ -20,7 +21,10 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
 
             oppgaveClient.søk(
                 token = "venter på wonderwall i frontend",
-                params = SøkQueryParams(behandlingstema = "AAP"),
+                params = SøkQueryParams(
+                    behandlingstema = "AAP",
+                    statuskategori = Statuskategori.AAPEN,
+                ),
             ).onSuccess {
                 call.respond(HttpStatusCode.OK, map(it))
             }.onFailure {
@@ -63,11 +67,13 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
 
 private fun map(it: List<OpprettResponse>): OppgaverResponse {
     return OppgaverResponse(
-        it.map { Oppgave(
-            oppgaveId = it.id,
-            oppgavetype = Oppgavetype.AVKLARINGSBEHOV,
-            foedselsnummer = it.aktoerId!!,
-            opprettet = it.opprettetTidspunkt!!
-        ) }
+        it.map {
+            Oppgave(
+                oppgaveId = it.id,
+                oppgavetype = Oppgavetype.AVKLARINGSBEHOV,
+                foedselsnummer = it.aktoerId!!,
+                opprettet = it.opprettetTidspunkt!!
+            )
+        }
     )
 }
