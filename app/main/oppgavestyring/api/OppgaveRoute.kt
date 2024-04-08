@@ -22,7 +22,7 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
             oppgaveClient.søk(
                 token = "venter på wonderwall i frontend",
                 params = SøkQueryParams(
-                    behandlingstema = "AAP",
+                    tema = listOf("AAP"),
                     statuskategori = Statuskategori.AAPEN,
                 ),
             ).onSuccess {
