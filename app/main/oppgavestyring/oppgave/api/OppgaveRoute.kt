@@ -1,14 +1,14 @@
-package oppgavestyring.api
+package oppgavestyring.oppgave.api
 
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import oppgavestyring.adapter.OppgaveClient
-import oppgavestyring.adapter.Statuskategori
-import oppgavestyring.adapter.SøkOppgaverResponse
-import oppgavestyring.adapter.SøkQueryParams
+import oppgavestyring.oppgave.adapter.OppgaveClient
+import oppgavestyring.oppgave.adapter.Statuskategori
+import oppgavestyring.oppgave.adapter.SøkOppgaverResponse
+import oppgavestyring.oppgave.adapter.SøkQueryParams
 import oppgavestyring.authToken
 
 fun Route.oppgaver(oppgaveClient: OppgaveClient) {

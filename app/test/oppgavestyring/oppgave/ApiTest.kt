@@ -1,12 +1,13 @@
-package oppgavestyring
+package oppgavestyring.oppgave
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import oppgavestyring.adapter.OpprettRequest
-import oppgavestyring.adapter.OpprettResponse
-import oppgavestyring.adapter.Prioritet
-import oppgavestyring.adapter.Status
+import oppgavestyring.oppgave.adapter.OpprettRequest
+import oppgavestyring.oppgave.adapter.OpprettResponse
+import oppgavestyring.oppgave.adapter.Prioritet
+import oppgavestyring.oppgave.adapter.Status
+import oppgavestyring.oppgavestyringWithFakes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

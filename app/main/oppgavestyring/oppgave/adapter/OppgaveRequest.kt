@@ -1,4 +1,4 @@
-package oppgavestyring.adapter
+package oppgavestyring.oppgave.adapter
 
 import io.ktor.util.*
 

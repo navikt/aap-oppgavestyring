@@ -4,20 +4,19 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import oppgavestyring.api.oppgaver
-import oppgavestyring.adapter.OppgaveClient
+import oppgavestyring.actuators.api.actuators
+import oppgavestyring.oppgave.adapter.OppgaveClient
+import oppgavestyring.oppgave.api.oppgaver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -53,20 +52,6 @@ fun Application.server(
     routing {
         actuators(prometheus)
         oppgaver(client)
-    }
-}
-
-private fun Routing.actuators(prometheus: PrometheusMeterRegistry) {
-    route("/actuator") {
-        get("/live") {
-            call.respond(HttpStatusCode.OK, "live")
-        }
-        get("/ready") {
-            call.respond(HttpStatusCode.OK, "live")
-        }
-        get("/metrics") {
-            call.respond(HttpStatusCode.OK, prometheus.scrape())
-        }
     }
 }
 

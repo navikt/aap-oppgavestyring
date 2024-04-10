@@ -1,4 +1,4 @@
-package oppgavestyring.adapter
+package oppgavestyring.oppgave.adapter
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature

@@ -1,4 +1,4 @@
-package oppgavestyring.api
+package oppgavestyring.oppgave.api
 
 data class OppgaverResponse(
     val oppgaver: List<Oppgave>,

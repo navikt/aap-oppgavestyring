@@ -10,9 +10,9 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.port
-import oppgavestyring.adapter.OpprettRequest
-import oppgavestyring.adapter.OpprettResponse
-import oppgavestyring.adapter.Status
+import oppgavestyring.oppgave.adapter.OpprettRequest
+import oppgavestyring.oppgave.adapter.OpprettResponse
+import oppgavestyring.oppgave.adapter.Status
 
 
 class OppgaveFake : AutoCloseable {
