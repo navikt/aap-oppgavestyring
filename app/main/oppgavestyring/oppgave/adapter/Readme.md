@@ -1,0 +1,1 @@
+SwaggerDoc for Oppgave API: https://oppgave.dev.intern.nav.no/ 

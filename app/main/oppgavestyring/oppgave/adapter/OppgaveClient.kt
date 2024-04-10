@@ -23,6 +23,7 @@ import java.util.*
 
 interface Oppgave {
     suspend fun opprett(token: String, request: OpprettRequest): Result<OpprettResponse>
+    suspend fun endre(token: String, request: PatchOppgaveRequest)
     suspend fun hent(token: String, oppgaveId: Long): Result<OpprettResponse>
     suspend fun søk(token: String, params: SøkQueryParams): Result<SøkOppgaverResponse>
 }
@@ -83,6 +84,21 @@ class OppgaveClient(private val config: Config) : Oppgave {
         }
 
         return response.tryInto()
+    }
+
+    override suspend fun endre(
+        token: String,
+        request: PatchOppgaveRequest) {
+
+        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
+
+        client.patch("$host/api/v1/oppgaver") {
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
+            header("X-Correlation-ID", UUID.randomUUID().toString())
+            bearerAuth(obo)
+            setBody(request)
+        }
     }
 }
 
