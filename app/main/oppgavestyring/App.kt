@@ -16,6 +16,7 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
 import oppgavestyring.oppgave.adapter.OppgaveClient
+import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -55,8 +56,9 @@ fun Application.server(
     }
 }
 
-internal fun ApplicationCall.authToken(): String? {
+internal fun ApplicationCall.authToken(): Token? {
     return request.headers["Authorization"]
         ?.split(" ")
         ?.get(1)
+        ?.let { Token(it) }
 }

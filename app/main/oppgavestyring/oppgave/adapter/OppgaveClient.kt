@@ -22,10 +22,14 @@ import oppgavestyring.SECURE_LOG
 import java.util.*
 
 interface Oppgave {
-    suspend fun opprett(token: String, request: OpprettRequest): Result<OpprettResponse>
-    suspend fun endre(token: String, request: PatchOppgaveRequest)
-    suspend fun hent(token: String, oppgaveId: Long): Result<OpprettResponse>
-    suspend fun søk(token: String, params: SøkQueryParams): Result<SøkOppgaverResponse>
+    suspend fun opprett(token: Token, request: OpprettRequest): Result<OpprettResponse>
+    suspend fun endre(token: Token, request: PatchOppgaveRequest)
+    suspend fun hent(token: Token, oppgaveId: Long): Result<OpprettResponse>
+    suspend fun søk(token: Token, params: SøkQueryParams): Result<SøkOppgaverResponse>
+}
+
+data class Token(private val token: String) {
+    fun asString() : String = token
 }
 
 class OppgaveClient(private val config: Config) : Oppgave {
@@ -34,10 +38,10 @@ class OppgaveClient(private val config: Config) : Oppgave {
     private val host = config.oppgave.host
 
     override suspend fun opprett(
-        token: String,
+        token: Token,
         request: OpprettRequest,
     ): Result<OpprettResponse> {
-        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
+        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
 
         val response = client.post("$host/api/v1/oppgaver") {
             contentType(ContentType.Application.Json)
@@ -53,10 +57,10 @@ class OppgaveClient(private val config: Config) : Oppgave {
     }
 
     override suspend fun hent(
-        token: String,
+        token: Token,
         oppgaveId: Long,
     ): Result<OpprettResponse> {
-        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
+        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
 
         val response = client.get("$host/api/v1/oppgaver/$oppgaveId") {
             accept(ContentType.Application.Json)
@@ -68,7 +72,7 @@ class OppgaveClient(private val config: Config) : Oppgave {
     }
 
     override suspend fun søk(
-        token: String,
+        token: Token,
         params: SøkQueryParams,
     ): Result<SøkOppgaverResponse> {
         val clientCredential = azure.getClientCredentialToken(config.oppgave.scope)
@@ -87,10 +91,10 @@ class OppgaveClient(private val config: Config) : Oppgave {
     }
 
     override suspend fun endre(
-        token: String,
+        token: Token,
         request: PatchOppgaveRequest) {
 
-        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token)
+        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
 
         client.patch("$host/api/v1/oppgaver") {
             contentType(ContentType.Application.Json)

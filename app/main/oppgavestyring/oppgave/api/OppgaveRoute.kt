@@ -5,11 +5,8 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import oppgavestyring.oppgave.adapter.OppgaveClient
-import oppgavestyring.oppgave.adapter.Statuskategori
-import oppgavestyring.oppgave.adapter.SøkOppgaverResponse
-import oppgavestyring.oppgave.adapter.SøkQueryParams
 import oppgavestyring.authToken
+import oppgavestyring.oppgave.adapter.*
 
 fun Route.oppgaver(oppgaveClient: OppgaveClient) {
 
@@ -20,7 +17,7 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
 //                ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
             oppgaveClient.søk(
-                token = "venter på wonderwall i frontend",
+                token = Token("venter på wonderwall i frontend"),
                 params = SøkQueryParams(
                     tema = listOf("AAP"),
                     statuskategori = Statuskategori.AAPEN,
