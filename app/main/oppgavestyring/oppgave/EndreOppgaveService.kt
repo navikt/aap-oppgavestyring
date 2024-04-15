@@ -1,13 +1,12 @@
 package oppgavestyring.oppgave
 
-import oppgavestyring.oppgave.adapter.Oppgave
 import oppgavestyring.oppgave.adapter.PatchOppgaveRequest
 import oppgavestyring.oppgave.adapter.Token
 
-class EndreOppgaveService(private val oppgaveClient: Oppgave) {
+class EndreOppgaveService(private val oppgaveGateway: OppgaveGateway) {
 
     suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token) {
-        oppgaveClient.endre(
+        oppgaveGateway.endre(
             token,
             PatchOppgaveRequest(
                 id = id.asLong(),

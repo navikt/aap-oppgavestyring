@@ -19,20 +19,14 @@ import no.nav.aap.ktor.client.auth.azure.AzureAdTokenProvider
 import oppgavestyring.Config
 import oppgavestyring.LOG
 import oppgavestyring.SECURE_LOG
+import oppgavestyring.oppgave.OppgaveGateway
 import java.util.*
-
-interface Oppgave {
-    suspend fun opprett(token: Token, request: OpprettRequest): Result<OpprettResponse>
-    suspend fun endre(token: Token, request: PatchOppgaveRequest)
-    suspend fun hent(token: Token, oppgaveId: Long): Result<OpprettResponse>
-    suspend fun søk(token: Token, params: SøkQueryParams): Result<SøkOppgaverResponse>
-}
 
 data class Token(private val token: String) {
     fun asString() : String = token
 }
 
-class OppgaveClient(private val config: Config) : Oppgave {
+class OppgaveClient(private val config: Config) : OppgaveGateway {
     private val client = HttpClientFactory.default()
     private val azure = AzureAdTokenProvider(config.azure)
     private val host = config.oppgave.host

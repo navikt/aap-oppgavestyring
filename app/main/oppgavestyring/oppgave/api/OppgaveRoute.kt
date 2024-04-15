@@ -6,6 +6,10 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.authToken
+import oppgavestyring.oppgave.EndreOppgaveService
+import oppgavestyring.oppgave.NavIdent
+import oppgavestyring.oppgave.OppgaveId
+import oppgavestyring.oppgave.Versjon
 import oppgavestyring.oppgave.adapter.*
 
 fun Route.oppgaver(oppgaveClient: OppgaveClient) {
@@ -58,6 +62,20 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
             }.onFailure {
                 call.respond(HttpStatusCode.InternalServerError)
             }
+        }
+
+        patch("/tildelRessurs") {
+            val token = call.authToken()
+                ?: return@patch call.respond(HttpStatusCode.Unauthorized)
+
+            val tildelRessursRequest = call.receive<TildelRessursRequest>()
+
+            EndreOppgaveService(oppgaveClient).tildelRessursTilOppgave(
+                OppgaveId(tildelRessursRequest.id),
+                Versjon(tildelRessursRequest.versjon),
+                NavIdent(tildelRessursRequest.navIdent),
+                token
+            )
         }
     }
 }

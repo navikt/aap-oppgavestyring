@@ -5,7 +5,7 @@ import oppgavestyring.oppgave.adapter.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class EndreOppgaveServiceTest {
+class EndreOppgaveServiceTestGateway {
 
     private val fakeOppgaveClient = FakeOppgaveClient()
     private val endreOppgaveService = EndreOppgaveService(fakeOppgaveClient)
@@ -42,7 +42,7 @@ class EndreOppgaveServiceTest {
     }
 }
 
-class FakeOppgaveClient : Oppgave {
+class FakeOppgaveClient : OppgaveGateway {
 
     var map : MutableMap<Long, PatchOppgaveRequest> = HashMap()
 
