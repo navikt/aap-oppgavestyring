@@ -6,7 +6,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.authToken
-import oppgavestyring.oppgave.EndreOppgaveService
+import oppgavestyring.oppgave.OppgaveService
 import oppgavestyring.oppgave.NavIdent
 import oppgavestyring.oppgave.OppgaveId
 import oppgavestyring.oppgave.Versjon
@@ -14,18 +14,16 @@ import oppgavestyring.oppgave.adapter.*
 
 fun Route.oppgaver(oppgaveClient: OppgaveClient) {
 
+    val oppgaveService = OppgaveService(oppgaveClient)
+
     route("/oppgaver") {
 
         get {
 //            val token = call.authToken()
 //                ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
-            oppgaveClient.søk(
-                token = Token("venter på wonderwall i frontend"),
-                params = SøkQueryParams(
-                    tema = listOf("AAP"),
-                    statuskategori = Statuskategori.AAPEN,
-                ),
+            oppgaveService.søk(
+                Token("venter på wonderwall i frontend")
             ).onSuccess {
                 call.respond(HttpStatusCode.OK, map(it))
             }.onFailure {
@@ -37,12 +35,12 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
             val token = call.authToken()
                 ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
-            val id = call.parameters["id"]?.toLong()
+            val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
                 ?: return@get call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
 
-            oppgaveClient.hent(
+            oppgaveService.hent(
                 token = token,
-                oppgaveId = id,
+                oppgaveId = id
             ).onSuccess {
                 call.respond(HttpStatusCode.OK, it)
             }.onFailure {
@@ -54,7 +52,7 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
             val token = call.authToken()
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 
-            oppgaveClient.opprett(
+            oppgaveService.opprett(
                 token = token,
                 request = call.receive()
             ).onSuccess {
@@ -70,11 +68,11 @@ fun Route.oppgaver(oppgaveClient: OppgaveClient) {
 
             val tildelRessursRequest = call.receive<TildelRessursRequest>()
 
-            EndreOppgaveService(oppgaveClient).tildelRessursTilOppgave(
-                OppgaveId(tildelRessursRequest.id),
-                Versjon(tildelRessursRequest.versjon),
-                NavIdent(tildelRessursRequest.navIdent),
-                token
+            oppgaveService.tildelRessursTilOppgave(
+                id = OppgaveId(tildelRessursRequest.id),
+                versjon = Versjon(tildelRessursRequest.versjon),
+                navIdent = NavIdent(tildelRessursRequest.navIdent),
+                token = token
             )
         }
     }

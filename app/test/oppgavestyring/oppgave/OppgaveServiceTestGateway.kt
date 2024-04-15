@@ -5,10 +5,10 @@ import oppgavestyring.oppgave.adapter.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class EndreOppgaveServiceTestGateway {
+class OppgaveServiceTestGateway {
 
     private val fakeOppgaveClient = FakeOppgaveClient()
-    private val endreOppgaveService = EndreOppgaveService(fakeOppgaveClient)
+    private val endreOppgaveService = OppgaveService(fakeOppgaveClient)
 
     @Test
     fun `skal_kunne_tildele_en_ressurs_til_en_oppgave`() {
@@ -54,7 +54,7 @@ class FakeOppgaveClient : OppgaveGateway {
         map.put(request.id, request)
     }
 
-    override suspend fun hent(token: Token, oppgaveId: Long): Result<OpprettResponse> {
+    override suspend fun hent(token: Token, oppgaveId: OppgaveId): Result<OpprettResponse> {
         TODO("Not yet implemented")
     }
 

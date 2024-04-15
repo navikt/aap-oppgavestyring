@@ -20,6 +20,7 @@ import oppgavestyring.Config
 import oppgavestyring.LOG
 import oppgavestyring.SECURE_LOG
 import oppgavestyring.oppgave.OppgaveGateway
+import oppgavestyring.oppgave.OppgaveId
 import java.util.*
 
 data class Token(private val token: String) {
@@ -52,11 +53,11 @@ class OppgaveClient(private val config: Config) : OppgaveGateway {
 
     override suspend fun hent(
         token: Token,
-        oppgaveId: Long,
+        oppgaveId: OppgaveId,
     ): Result<OpprettResponse> {
         val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
 
-        val response = client.get("$host/api/v1/oppgaver/$oppgaveId") {
+        val response = client.get("$host/api/v1/oppgaver/${oppgaveId.asLong()}") {
             accept(ContentType.Application.Json)
             header("X-Correlation-ID", UUID.randomUUID().toString())
             bearerAuth(obo)
