@@ -12,27 +12,29 @@ class EndreOppgaveServiceTest {
 
     @Test
     fun `skal_kunne_tildele_en_ressurs_til_en_oppgave`() {
-        val oppgaveId = 1L
+        val oppgaveId = OppgaveId(1L)
 
         runBlocking {
             endreOppgaveService.tildelRessursTilOppgave(
                 oppgaveId,
+                Versjon(1L),
                 NavIdent("H113521"),
                 Token("Dummy Token")
             )
         }
 
-        val tilordnetRessurs = fakeOppgaveClient.map.get(oppgaveId)!!.tilordnetRessurs!!
+        val tilordnetRessurs = fakeOppgaveClient.map.get(oppgaveId.asLong())!!.tilordnetRessurs!!
         assertThat(tilordnetRessurs).isEqualTo("H113521")
     }
 
     @Test
     fun `skal_kunne_tildele_en_ressurs_til_en_oppgave2`() {
-        val oppgaveId = 1L
+        val oppgaveId = OppgaveId(1L)
 
         runBlocking {
             endreOppgaveService.tildelRessursTilOppgave(
                 oppgaveId,
+                Versjon(1L),
                 NavIdent("H113521"),
                 Token("Dummy Token")
             )

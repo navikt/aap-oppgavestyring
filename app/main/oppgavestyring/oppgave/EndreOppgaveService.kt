@@ -6,12 +6,12 @@ import oppgavestyring.oppgave.adapter.Token
 
 class EndreOppgaveService(private val oppgaveClient: Oppgave) {
 
-    suspend fun tildelRessursTilOppgave(id: Long, navIdent: NavIdent, token: Token) {
+    suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token) {
         oppgaveClient.endre(
             token,
             PatchOppgaveRequest(
-                id = id,
-                versjon = 1,
+                id = id.asLong(),
+                versjon = versjon.asLong(),
                 tilordnetRessurs = navIdent.asString()))
     }
 }
