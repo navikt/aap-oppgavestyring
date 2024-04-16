@@ -18,6 +18,7 @@ import oppgavestyring.actuators.api.actuators
 import oppgavestyring.oppgave.adapter.OppgaveClient
 import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
+import oppgavestyring.oppgave.db.FakeOppgaveRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -48,11 +49,12 @@ fun Application.server(
         }
     }
 
-    val client = OppgaveClient(config)
+    val oppgaveGateway = OppgaveClient(config)
+    val oppgaveRepository = FakeOppgaveRepository
 
     routing {
         actuators(prometheus)
-        oppgaver(client)
+        oppgaver(oppgaveRepository, oppgaveGateway)
     }
 }
 

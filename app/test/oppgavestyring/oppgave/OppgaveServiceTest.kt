@@ -2,13 +2,15 @@ package oppgavestyring.oppgave
 
 import kotlinx.coroutines.runBlocking
 import oppgavestyring.oppgave.adapter.*
+import oppgavestyring.oppgave.db.FakeOppgaveRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class OppgaveServiceTestGateway {
+class OppgaveServiceTest {
 
-    private val fakeOppgaveClient = FakeOppgaveClient()
-    private val endreOppgaveService = OppgaveService(fakeOppgaveClient)
+    private val oppgaveGateway = FakeOppgaveClient()
+    private val oppgaveRepository = FakeOppgaveRepository
+    private val endreOppgaveService = OppgaveService(oppgaveRepository, oppgaveGateway)
 
     @Test
     fun `skal_kunne_tildele_en_ressurs_til_en_oppgave`() {
@@ -23,7 +25,7 @@ class OppgaveServiceTestGateway {
             )
         }
 
-        val tilordnetRessurs = fakeOppgaveClient.map.get(oppgaveId.asLong())!!.tilordnetRessurs!!
+        val tilordnetRessurs = oppgaveGateway.map.get(oppgaveId.asLong())!!.tilordnetRessurs!!
         assertThat(tilordnetRessurs).isEqualTo("H113521")
     }
 

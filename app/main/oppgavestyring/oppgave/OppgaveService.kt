@@ -2,13 +2,17 @@ package oppgavestyring.oppgave
 
 import oppgavestyring.oppgave.adapter.*
 
-class OppgaveService(private val oppgaveGateway: OppgaveGateway) {
+class OppgaveService(private val oppgaveRepository: OppgaveRepository, private val oppgaveGateway: OppgaveGateway) {
 
     suspend fun opprett(token: Token, request: OpprettRequest): Result<OpprettResponse> {
-        return oppgaveGateway.opprett(
+        val nyOppgave = oppgaveGateway.opprett(
             token = token,
             request = request
         )
+
+        //oppgaveRepository.lagre(nyOppgave)
+
+        return nyOppgave
     }
 
     suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token) {

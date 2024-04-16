@@ -6,15 +6,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.authToken
-import oppgavestyring.oppgave.OppgaveService
-import oppgavestyring.oppgave.NavIdent
-import oppgavestyring.oppgave.OppgaveId
-import oppgavestyring.oppgave.Versjon
+import oppgavestyring.oppgave.*
 import oppgavestyring.oppgave.adapter.*
 
-fun Route.oppgaver(oppgaveClient: OppgaveClient) {
+fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveClient) {
 
-    val oppgaveService = OppgaveService(oppgaveClient)
+    val oppgaveService = OppgaveService(oppgaveRepository, oppgaveClient)
 
     route("/oppgaver") {
 
