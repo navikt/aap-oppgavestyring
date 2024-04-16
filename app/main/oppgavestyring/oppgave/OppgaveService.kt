@@ -10,7 +10,9 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
             request = request
         )
 
-        //oppgaveRepository.lagre(nyOppgave)
+        nyOppgave.onSuccess {
+            oppgaveRepository.lagre(it)
+        }
 
         return nyOppgave
     }

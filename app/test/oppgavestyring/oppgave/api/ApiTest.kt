@@ -1,4 +1,4 @@
-package oppgavestyring.oppgave
+package oppgavestyring.oppgave.api
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*

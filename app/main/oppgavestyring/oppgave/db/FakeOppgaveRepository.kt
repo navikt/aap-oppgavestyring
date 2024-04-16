@@ -4,8 +4,11 @@ import oppgavestyring.oppgave.OppgaveRepository
 import oppgavestyring.oppgave.adapter.OpprettResponse
 
 object FakeOppgaveRepository : OppgaveRepository {
-    override fun lagre(nyOppgave: Result<OpprettResponse>) {
-        TODO("Not yet implemented")
+
+    private val map : MutableMap<Long, OpprettResponse> = HashMap()
+
+    override fun lagre(nyOppgave: OpprettResponse) {
+        map.put(nyOppgave.id, nyOppgave)
     }
 
 }
