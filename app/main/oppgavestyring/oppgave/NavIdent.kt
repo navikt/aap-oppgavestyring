@@ -1,10 +1,12 @@
 package oppgavestyring.oppgave
 
+private const val REGEX = "^[A-Å]\\d{6}$"
+
 data class NavIdent(private val navIdent: String) {
 
     init {
-        if (navIdent.length == 0) throw IllegalArgumentException("navIdent kan ikke være blank")
-        if (navIdent.length > 7) throw IllegalArgumentException("navIdent må være under 8 tegn")
+        if (!REGEX.toRegex().matches(navIdent))
+            throw IllegalArgumentException("Feil format på navIdent: $navIdent. Riktig format er stor bokstav og 6 tall.")
     }
     fun asString(): String = navIdent
 }
