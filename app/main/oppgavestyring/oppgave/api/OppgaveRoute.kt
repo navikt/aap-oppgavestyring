@@ -59,14 +59,16 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
             }
         }
 
-        patch("/tildelRessurs") {
+        patch("{id}/tildelRessurs") {
             val token = call.authToken()
                 ?: return@patch call.respond(HttpStatusCode.Unauthorized)
+            val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
+                ?: return@patch call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
 
             val tildelRessursRequest = call.receive<TildelRessursRequest>()
 
             oppgaveService.tildelRessursTilOppgave(
-                id = OppgaveId(tildelRessursRequest.id),
+                id = id,
                 versjon = Versjon(tildelRessursRequest.versjon),
                 navIdent = NavIdent(tildelRessursRequest.navIdent),
                 token = token
