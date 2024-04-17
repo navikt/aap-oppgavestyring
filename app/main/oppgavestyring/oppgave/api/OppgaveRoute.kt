@@ -82,6 +82,23 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
                 token = token
             )
         }
+
+        patch("/{id}/frigi") {
+            LOG.info("Forsøker å frigi ressurs fra oppgave")
+
+            val token = call.authToken()
+                ?: return@patch call.respond(HttpStatusCode.Unauthorized)
+            val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
+                ?: return@patch call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
+
+            val tildelRessursRequest = call.receive<TildelRessursRequest>()
+
+            oppgaveService.frigiRessursFraOppgave(
+                id = id,
+                versjon = Versjon(tildelRessursRequest.versjon),
+                token = token
+            )
+        }
     }
 }
 

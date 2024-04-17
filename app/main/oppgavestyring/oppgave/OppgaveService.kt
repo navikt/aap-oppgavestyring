@@ -26,6 +26,16 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
                 tilordnetRessurs = navIdent.asString()))
     }
 
+    suspend fun frigiRessursFraOppgave(id: OppgaveId, versjon: Versjon, token: Token) {
+        oppgaveGateway.endre(
+            token = token,
+            oppgaveId = id,
+            request = PatchOppgaveRequest(
+                versjon = versjon.asLong(),
+                tilordnetRessurs = null)
+        )
+    }
+
     suspend fun søk(token: Token): Result<SøkOppgaverResponse> {
         return oppgaveGateway.søk(
             token = token,
