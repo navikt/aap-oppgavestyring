@@ -59,7 +59,7 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
             }
         }
 
-        patch("{id}/tildelRessurs") {
+        patch("/{id}/tildelRessurs") {
             val token = call.authToken()
                 ?: return@patch call.respond(HttpStatusCode.Unauthorized)
             val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
