@@ -87,11 +87,12 @@ class OppgaveClient(private val config: Config) : OppgaveGateway {
 
     override suspend fun endre(
         token: Token,
+        oppgaveId: OppgaveId,
         request: PatchOppgaveRequest) {
 
         val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
 
-        client.patch("$host/api/v1/oppgaver") {
+        client.patch("$host/api/v1/oppgaver/${oppgaveId.asLong()}") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             header("X-Correlation-ID", UUID.randomUUID().toString())

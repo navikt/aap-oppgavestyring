@@ -20,8 +20,8 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
     suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token) {
         oppgaveGateway.endre(
             token = token,
+            oppgaveId = id,
             request = PatchOppgaveRequest(
-                id = id.asLong(),
                 versjon = versjon.asLong(),
                 tilordnetRessurs = navIdent.asString()))
     }

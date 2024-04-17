@@ -11,8 +11,8 @@ class FakeOppgaveClient : OppgaveGateway {
         TODO("Not yet implemented")
     }
 
-    override suspend fun endre(token: Token, request: PatchOppgaveRequest) {
-        map.put(request.id, request)
+    override suspend fun endre(token: Token, oppgaveId: OppgaveId, request: PatchOppgaveRequest) {
+        map.put(oppgaveId.asLong(), request)
     }
 
     override suspend fun hent(token: Token, oppgaveId: OppgaveId): Result<OpprettResponse> {
