@@ -82,8 +82,10 @@ private fun map(it: SøkOppgaverResponse): OppgaverResponse {
         it.oppgaver.map {
             Oppgave(
                 oppgaveId = it.id,
+                versjon = it.versjon,
                 oppgavetype = Oppgavetype.AVKLARINGSBEHOV,
-                foedselsnummer = it.aktoerId!!,
+                foedselsnummer = it.aktoerId!!, //TODO:
+                tilordnetRessurs = it.tilordnetRessurs,
                 opprettet = it.opprettetTidspunkt!!
             )
         }

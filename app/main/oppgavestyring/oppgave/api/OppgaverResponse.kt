@@ -6,9 +6,11 @@ data class OppgaverResponse(
 
 data class Oppgave(
     val oppgaveId: Long,
+    val versjon: Int,
     val oppgavetype: Oppgavetype,
     val foedselsnummer: String, //innbygger
     val opprettet: String,
+    val tilordnetRessurs: String? = null,
     val reservertTil: String? = null
 )
 
