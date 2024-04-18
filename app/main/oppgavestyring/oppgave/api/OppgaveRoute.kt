@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.logging.*
 import oppgavestyring.LOG
 import oppgavestyring.authToken
 import oppgavestyring.oppgave.*
@@ -80,7 +81,11 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
                 versjon = Versjon(tildelRessursRequest.versjon),
                 navIdent = NavIdent(tildelRessursRequest.navIdent),
                 token = token
-            )
+            ).onSuccess {
+                call.respond(HttpStatusCode.OK, it)
+            }.onFailure {
+                call.respond(HttpStatusCode.InternalServerError)
+            }
         }
 
         patch("/{id}/frigi") {
@@ -97,7 +102,11 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
                 id = id,
                 versjon = Versjon(tildelRessursRequest.versjon),
                 token = token
-            )
+            ).onSuccess {
+                call.respond(HttpStatusCode.OK, it)
+            }.onFailure {
+                call.respond(HttpStatusCode.InternalServerError)
+            }
         }
     }
 }

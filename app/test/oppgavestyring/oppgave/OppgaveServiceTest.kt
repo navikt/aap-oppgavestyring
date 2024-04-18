@@ -25,7 +25,8 @@ class OppgaveServiceTest {
             )
         }
 
-        val tilordnetRessurs = oppgaveGateway.map.get(oppgaveId.asLong())!!.tilordnetRessurs!!
+        val response = oppgaveGateway.map.get(oppgaveId)
+        val tilordnetRessurs = response!!.tilordnetRessurs
         assertThat(tilordnetRessurs).isEqualTo("H113521")
     }
 

@@ -17,8 +17,8 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
         return nyOppgave
     }
 
-    suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token) {
-        oppgaveGateway.endre(
+    suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token): Result<OpprettResponse> {
+        return oppgaveGateway.endre(
             token = token,
             oppgaveId = id,
             request = PatchOppgaveRequest(
@@ -26,8 +26,8 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
                 tilordnetRessurs = navIdent.asString()))
     }
 
-    suspend fun frigiRessursFraOppgave(id: OppgaveId, versjon: Versjon, token: Token) {
-        oppgaveGateway.endre(
+    suspend fun frigiRessursFraOppgave(id: OppgaveId, versjon: Versjon, token: Token): Result<OpprettResponse> {
+        return oppgaveGateway.endre(
             token = token,
             oppgaveId = id,
             request = PatchOppgaveRequest(
