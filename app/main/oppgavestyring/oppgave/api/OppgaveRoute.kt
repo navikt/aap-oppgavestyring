@@ -5,11 +5,12 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.logging.*
 import oppgavestyring.LOG
 import oppgavestyring.authToken
 import oppgavestyring.oppgave.*
-import oppgavestyring.oppgave.adapter.*
+import oppgavestyring.oppgave.adapter.OppgaveClient
+import oppgavestyring.oppgave.adapter.SøkOppgaverResponse
+import oppgavestyring.oppgave.adapter.Token
 
 fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveClient) {
 

@@ -17,11 +17,13 @@ import io.ktor.serialization.jackson.*
 import kotlinx.coroutines.runBlocking
 import no.nav.aap.ktor.client.auth.azure.AzureAdTokenProvider
 import oppgavestyring.Config
-import oppgavestyring.LOG
 import oppgavestyring.SECURE_LOG
 import oppgavestyring.oppgave.OppgaveGateway
 import oppgavestyring.oppgave.OppgaveId
+import org.slf4j.LoggerFactory
 import java.util.*
+
+private val LOG: org.slf4j.Logger = LoggerFactory.getLogger(OppgaveClient::class.java)
 
 data class Token(private val token: String) {
     fun asString() : String = token
