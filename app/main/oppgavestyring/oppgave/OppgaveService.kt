@@ -1,5 +1,6 @@
 package oppgavestyring.oppgave
 
+import oppgavestyring.LOG
 import oppgavestyring.oppgave.adapter.*
 
 class OppgaveService(private val oppgaveRepository: OppgaveRepository, private val oppgaveGateway: OppgaveGateway) {
@@ -18,22 +19,33 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
     }
 
     suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token): Result<OpprettResponse> {
-        return oppgaveGateway.endre(
+        val endretOppgave = oppgaveGateway.endre(
             token = token,
             oppgaveId = id,
             request = PatchOppgaveRequest(
                 versjon = versjon.asLong(),
-                tilordnetRessurs = navIdent.asString()))
+                tilordnetRessurs = navIdent.asString()
+            )
+        )
+
+        endretOppgave.onSuccess { LOG.info("versjon: ${it.versjon} tilordnetRessurs: ${it.tilordnetRessurs}") }
+
+        return endretOppgave
     }
 
     suspend fun frigiRessursFraOppgave(id: OppgaveId, versjon: Versjon, token: Token): Result<OpprettResponse> {
-        return oppgaveGateway.endre(
+        val endretOppgave = oppgaveGateway.endre(
             token = token,
             oppgaveId = id,
             request = PatchOppgaveRequest(
                 versjon = versjon.asLong(),
-                tilordnetRessurs = null)
+                tilordnetRessurs = null
+            )
         )
+
+        endretOppgave.onSuccess { LOG.info("versjon: ${it.versjon} tilordnetRessurs: ${it.tilordnetRessurs}") }
+
+        return endretOppgave
     }
 
     suspend fun søk(token: Token): Result<SøkOppgaverResponse> {
