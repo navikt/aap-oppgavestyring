@@ -104,11 +104,11 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
 
             LOG.info("Uthenting av ID OK")
 
-            val tildelRessursRequest = call.receive<TildelRessursRequest>()
+            val frigiOppgaveRequest = call.receive<FrigiOppgaveRequest>()
 
             oppgaveService.frigiRessursFraOppgave(
                 id = id,
-                versjon = Versjon(tildelRessursRequest.versjon),
+                versjon = Versjon(frigiOppgaveRequest.versjon),
                 token = token
             ).onSuccess {
                 LOG.info("Oppgave frigitt OK")
