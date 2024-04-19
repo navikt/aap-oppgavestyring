@@ -6,14 +6,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.LOG
-import oppgavestyring.SECURE_LOG
 import oppgavestyring.authToken
 import oppgavestyring.oppgave.*
 import oppgavestyring.oppgave.adapter.OppgaveClient
 import oppgavestyring.oppgave.adapter.SøkOppgaverResponse
 import oppgavestyring.oppgave.adapter.Token
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveClient) {
 
@@ -29,8 +26,10 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
             oppgaveService.søk(
                 Token("venter på wonderwall i frontend")
             ).onSuccess {
+                LOG.info("Fant ${it.antallTreffTotalt} oppgaver knyttet til AAP")
                 call.respond(HttpStatusCode.OK, map(it))
             }.onFailure {
+                LOG.info("Uthenting av oppgaver feilet ${it.message}")
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }
