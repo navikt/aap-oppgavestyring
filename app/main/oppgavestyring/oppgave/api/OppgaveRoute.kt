@@ -97,8 +97,13 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
 
             val token = call.authToken()
                 ?: return@patch call.respond(HttpStatusCode.Unauthorized)
+
+            LOG.info("Token OK")
+
             val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
                 ?: return@patch call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
+
+            LOG.info("Uthenting av ID OK")
 
             val tildelRessursRequest = call.receive<TildelRessursRequest>()
 
@@ -107,8 +112,10 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
                 versjon = Versjon(tildelRessursRequest.versjon),
                 token = token
             ).onSuccess {
+                LOG.info("Oppgave frigitt OK")
                 call.respond(HttpStatusCode.OK, it)
             }.onFailure {
+                LOG.error("Frigjøring av oppgave feilet: ${it.message}")
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }
