@@ -23,8 +23,6 @@ import oppgavestyring.oppgave.OppgaveId
 import org.slf4j.LoggerFactory
 import java.util.*
 
-private val LOG: org.slf4j.Logger = LoggerFactory.getLogger(OppgaveClient::class.java)
-
 data class Token(private val token: String) {
     fun asString() : String = token
 }
@@ -49,7 +47,7 @@ class OppgaveClient(private val config: Config) : OppgaveGateway {
         }
 
         return response.tryInto<OpprettResponse>().also {
-            LOG.info("Oppgave opprettet: ${response.headers[HttpHeaders.Location]}")
+            log.info("Oppgave opprettet: ${response.headers[HttpHeaders.Location]}")
         }
     }
 
@@ -103,8 +101,12 @@ class OppgaveClient(private val config: Config) : OppgaveGateway {
         }
 
         return response.tryInto<OpprettResponse>().also {
-            LOG.info("Oppgave endret: ${response.headers[HttpHeaders.Location]}")
+            log.info("Oppgave endret: ${response.headers[HttpHeaders.Location]}")
         }
+    }
+
+    companion object {
+        val log = LoggerFactory.getLogger(OppgaveClient::class.java)
     }
 }
 
@@ -137,7 +139,7 @@ private fun HttpResponse.logWithError(msg: String): IllegalStateException {
             Response: $status
         """.trimIndent()
     ).also {
-        LOG.error(msg, it)
+        OppgaveClient.log.error(msg, it)
     }
 }
 
