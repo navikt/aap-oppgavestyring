@@ -8,12 +8,9 @@ import io.ktor.server.routing.*
 import oppgavestyring.LOG
 import oppgavestyring.authToken
 import oppgavestyring.oppgave.*
-import oppgavestyring.oppgave.adapter.OppgaveClient
 import oppgavestyring.oppgave.adapter.SøkOppgaverResponse
 
-fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveClient) {
-
-    val oppgaveService = OppgaveService(oppgaveRepository, oppgaveClient)
+fun Route.oppgaver(oppgaveService: OppgaveService) {
 
     route("/oppgaver") {
 

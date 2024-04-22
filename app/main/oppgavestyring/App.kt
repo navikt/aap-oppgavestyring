@@ -15,6 +15,7 @@ import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
+import oppgavestyring.oppgave.OppgaveService
 import oppgavestyring.oppgave.adapter.OppgaveClient
 import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
@@ -51,10 +52,11 @@ fun Application.server(
 
     val oppgaveGateway = OppgaveClient(config)
     val oppgaveRepository = FakeOppgaveRepository
+    val oppgaveService = OppgaveService(oppgaveRepository, oppgaveGateway)
 
     routing {
         actuators(prometheus)
-        oppgaver(oppgaveRepository, oppgaveGateway)
+        oppgaver(oppgaveService)
     }
 }
 
