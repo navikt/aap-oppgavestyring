@@ -20,11 +20,11 @@ fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveC
 
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
-//            val token = call.authToken()
-//                ?: return@get call.respond(HttpStatusCode.Unauthorized)
+            val token = call.authToken()
+                ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
             oppgaveService.søk(
-                Token("venter på wonderwall i frontend")
+                token = token
             ).onSuccess {
                 LOG.info("Fant ${it.antallTreffTotalt} oppgaver knyttet til AAP")
                 call.respond(HttpStatusCode.OK, map(it))
