@@ -10,7 +10,6 @@ import oppgavestyring.authToken
 import oppgavestyring.oppgave.*
 import oppgavestyring.oppgave.adapter.OppgaveClient
 import oppgavestyring.oppgave.adapter.SøkOppgaverResponse
-import oppgavestyring.oppgave.adapter.Token
 
 fun Route.oppgaver(oppgaveRepository: OppgaveRepository, oppgaveClient: OppgaveClient) {
 
