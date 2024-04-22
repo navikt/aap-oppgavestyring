@@ -114,10 +114,11 @@ internal suspend inline fun <reified R : Any> HttpResponse.tryInto(): Result<R> 
 
     return when (status.value) {
         in 200..202 -> Result.success(body<R>())
-        400 -> Result.failure(logWithError("Ugyldig request (oppgave)"))
-        401 -> Result.failure(logWithError("Ugyldig token (oppgave)"))
-        403 -> Result.failure(logWithError("Ugyldig tilgang (oppgave)"))
-        else -> Result.failure(logWithError("Ukjent feil (oppgave)"))
+        400 -> Result.failure(logWithError("Oppgave API svarer med ugyldig request"))
+        401 -> Result.failure(logWithError("Oppgave API svarer med ugyldig token"))
+        403 -> Result.failure(logWithError("Oppgave API svarer med ugyldig tilgang"))
+        409 -> Result.failure(logWithError("Oppgave API har en oppdatert versjon av oppgaven"))
+        else -> Result.failure(logWithError("Oppgave API returnerer en ukjent feilkode: ${status.value}"))
     }
 }
 
