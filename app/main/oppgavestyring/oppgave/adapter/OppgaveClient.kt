@@ -157,7 +157,7 @@ private object HttpClientFactory {
             jackson {
                 disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                setSerializationInclusion(JsonInclude.Include.ALWAYS)
                 registerModule(JavaTimeModule())
             }
         }
