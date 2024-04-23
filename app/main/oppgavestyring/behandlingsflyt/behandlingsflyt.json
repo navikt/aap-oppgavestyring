@@ -1,0 +1,86 @@
+#  henteet fra https://confluence.adeo.no/pages/viewpage.action?pageId=603365073
+
+{
+  "saksnummer": "4LDQPDS",
+  "referanse": "6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce",
+  "behandlingType": "Førstegangsbehandling",
+  "status": "UTREDES",
+  "avklaringsbehov": [
+    {
+      "definisjon": {
+        "type": "5003",
+        "behovType": "MANUELT_PÅKREVD",
+        "løsesISteg": "AVKLAR_SYKDOM"
+      },
+      "status": "AVSLUTTET",
+      "endringer": [
+        {
+          "status": "OPPRETTET",
+          "tidsstempel": "2024-04-22T14:53:42.337",
+          "endretAv": "Kelvin"
+        },
+        {
+          "status": "AVSLUTTET",
+          "tidsstempel": "2024-04-22T14:53:42.589",
+          "endretAv": "Saksbehandler"
+        }
+      ]
+    },
+    {
+      "definisjon": {
+        "type": "5006",
+        "behovType": "MANUELT_PÅKREVD",
+        "løsesISteg": "VURDER_BISTANDSBEHOV"
+      },
+      "status": "AVSLUTTET",
+      "endringer": [
+        {
+          "status": "OPPRETTET",
+          "tidsstempel": "2024-04-22T14:53:43.077",
+          "endretAv": "Kelvin"
+        },
+        {
+          "status": "AVSLUTTET",
+          "tidsstempel": "2024-04-22T14:53:43.111",
+          "endretAv": "Saksbehandler"
+        }
+      ]
+    },
+    {
+      "definisjon": {
+        "type": "5098",
+        "behovType": "MANUELT_PÅKREVD",
+        "løsesISteg": "FORESLÅ_VEDTAK"
+      },
+      "status": "AVSLUTTET",
+      "endringer": [
+        {
+          "status": "OPPRETTET",
+          "tidsstempel": "2024-04-22T14:53:45.862",
+          "endretAv": "Kelvin"
+        },
+        {
+          "status": "AVSLUTTET",
+          "tidsstempel": "2024-04-22T14:53:46.657",
+          "endretAv": "Saksbehandler"
+        }
+      ]
+    },
+    {
+      "definisjon": {
+        "type": "5099",
+        "behovType": "MANUELT_PÅKREVD",
+        "løsesISteg": "FATTE_VEDTAK"
+      },
+      "status": "OPPRETTET",
+      "endringer": [
+        {
+          "status": "OPPRETTET",
+          "tidsstempel": "2024-04-22T14:53:47.202",
+          "endretAv": "Kelvin"
+        }
+      ]
+    }
+  ],
+  "opprettetTidspunkt": "2024-04-22T14:53:47.183461971"
+}
