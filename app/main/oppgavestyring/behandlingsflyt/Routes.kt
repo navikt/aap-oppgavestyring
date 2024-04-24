@@ -7,13 +7,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.SECURE_LOG
 import oppgavestyring.authToken
-import oppgavestyring.oppgave.OppgaveRepository
 import oppgavestyring.oppgave.OppgaveService
 import oppgavestyring.oppgave.adapter.OpprettRequest
 import oppgavestyring.oppgave.adapter.Prioritet
 import java.time.LocalDate
 
-fun Route.behandlingsflyt(oppgaveService: OppgaveService, repository: OppgaveRepository) {
+fun Route.behandlingsflyt(oppgaveService: OppgaveService) {
     route("/behandling") {
         post {
             val req = call.receive<Request>()
@@ -31,14 +30,11 @@ fun Route.behandlingsflyt(oppgaveService: OppgaveService, repository: OppgaveRep
                 token,
                 oppgave
             ).onSuccess { nyOppgave ->
-                repository.lagre(nyOppgave)
                 call.respond("OK")
             }.onFailure {
                 SECURE_LOG.warn("Feil fra oppgave", it)
                 call.respond(HttpStatusCode.InternalServerError)
             }
-
-
         }
     }
 }

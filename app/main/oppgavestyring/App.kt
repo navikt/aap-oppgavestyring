@@ -58,7 +58,7 @@ fun Application.server(
     routing {
         actuators(prometheus)
         oppgaver(oppgaveService)
-        behandlingsflyt(oppgaveService, oppgaveRepository)
+        behandlingsflyt(oppgaveService)
     }
 }
 
