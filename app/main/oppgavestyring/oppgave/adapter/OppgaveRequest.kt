@@ -2,7 +2,7 @@ package oppgavestyring.oppgave.adapter
 
 data class OpprettRequest(
     val oppgavetype: String, // se kodeverk
-    val tema: String, // se kodeverk
+    val tema: String = "AAP", // se kodeverk
     val prioritet: Prioritet,
     val aktivDato: String, // dato
     val personident: String? = null, // 11 - 13 tegn
