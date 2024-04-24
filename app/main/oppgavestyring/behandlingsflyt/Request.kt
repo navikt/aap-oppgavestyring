@@ -6,5 +6,11 @@ data class Request(
     val saksnummer: String,
     val referanse: UUID,
     val personident: String,
-    val beskrivelse: String
+    val avklaringsbehov: String,
+    val url: String,
+    val status: Status
 )
+
+enum class Status {
+    OPPRETTET, LUKKET
+}

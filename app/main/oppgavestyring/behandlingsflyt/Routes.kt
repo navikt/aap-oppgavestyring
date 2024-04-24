@@ -23,7 +23,7 @@ fun Route.behandlingsflyt(oppgaveService: OppgaveService, repository: OppgaveRep
                 prioritet = Prioritet.NORM,
                 aktivDato = LocalDate.now().toString(),
                 personident = req.personident,
-                beskrivelse = req.beskrivelse,
+                beskrivelse = req.avklaringsbehov,
                 opprettetAvEnhetsnr = "9999",
                 behandlesAvApplikasjon = "KELVIN"
             )
