@@ -7,28 +7,19 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.SECURE_LOG
 import oppgavestyring.authToken
+import oppgavestyring.oppgave.Personident
 import oppgavestyring.oppgave.OppgaveService
-import oppgavestyring.oppgave.adapter.OpprettRequest
-import oppgavestyring.oppgave.adapter.Prioritet
-import java.time.LocalDate
 
 fun Route.behandlingsflyt(oppgaveService: OppgaveService) {
     route("/behandling") {
         post {
             val req = call.receive<Request>()
             val token = call.authToken() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-            val oppgave = OpprettRequest(
-                oppgavetype = "BEH_SAK",
-                prioritet = Prioritet.NORM,
-                aktivDato = LocalDate.now().toString(),
-                personident = req.personident,
-                beskrivelse = req.avklaringsbehov,
-                opprettetAvEnhetsnr = "9999",
-                behandlesAvApplikasjon = "KELVIN"
-            )
-            oppgaveService.opprett(
-                token,
-                oppgave
+
+            oppgaveService.opprett_v2(
+                token = token,
+                personident = Personident(req.personident),
+                beskrivelse = req.avklaringsbehov
             ).onSuccess { nyOppgave ->
                 call.respond("OK")
             }.onFailure {
