@@ -3,7 +3,7 @@ plugins {
     id("io.ktor.plugin") version "2.3.10"
 }
 
-val aapLibVersion = "5.0.13"
+val aapLibVersion = "5.0.15"
 val ktorVersion = "2.3.10"
 
 application {
