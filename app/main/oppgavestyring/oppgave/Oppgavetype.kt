@@ -1,7 +1,9 @@
 package oppgavestyring.oppgave
 
-enum class Oppgavetype {
+enum class Oppgavetype(private val kode: String) {
 
-    AVKLARINGSBEHOV,
+    BEHANDLE_SAK("BEH_SAK"),
+    AVKLARINGSBEHOV("TODO");
 
+    fun kode() = kode
 }

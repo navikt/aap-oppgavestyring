@@ -1,6 +1,7 @@
 package oppgavestyring.oppgave
 
 import oppgavestyring.LOG
+import oppgavestyring.oppgave.Oppgavetype.BEHANDLE_SAK
 import oppgavestyring.oppgave.adapter.*
 import java.time.LocalDate
 
@@ -8,7 +9,7 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
 
     suspend fun opprett_v2(token: Token, personident: Personident, beskrivelse: String): Result<OpprettResponse> {
         val request = OpprettRequest(
-            oppgavetype = "BEH_SAK",
+            oppgavetype = BEHANDLE_SAK.kode(),
             prioritet = Prioritet.NORM,
             aktivDato = LocalDate.now().toString(),
             personident = personident.asString(),
