@@ -49,22 +49,6 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
             }
         }
 
-        post("/opprett") {
-            LOG.info("Forsøker å opprette en ny oppgave")
-
-            val token = call.authToken()
-                ?: return@post call.respond(HttpStatusCode.Unauthorized)
-
-            oppgaveService.opprett(
-                token = token,
-                request = call.receive()
-            ).onSuccess {
-                call.respond(HttpStatusCode.Created, it)
-            }.onFailure {
-                call.respond(HttpStatusCode.InternalServerError)
-            }
-        }
-
         patch("/{id}/tildelRessurs") {
             LOG.info("Forsøker å tildele ressurs til oppgave")
 

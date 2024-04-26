@@ -3,7 +3,7 @@ package oppgavestyring.oppgave.api
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import oppgavestyring.oppgave.adapter.OpprettRequest
+import oppgavestyring.behandlingsflyt.Request
 import oppgavestyring.oppgave.adapter.OpprettResponse
 import oppgavestyring.oppgave.adapter.Prioritet
 import oppgavestyring.oppgave.adapter.Status
@@ -11,24 +11,25 @@ import oppgavestyring.oppgavestyringWithFakes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.util.*
 
 class ApiTest {
 
     @Test
     fun `opprett oppgave`() {
         oppgavestyringWithFakes { _, client ->
-            val actual = client.post("/oppgaver/opprett") {
+            val actual = client.post("/behandling") {
                 contentType(ContentType.Application.Json)
                 bearerAuth("token")
                 accept(ContentType.Application.Json)
                 setBody(
-                    OpprettRequest(
-                        tema = "AAP",
-                        oppgavetype = "JFR",
-                        behandlingstema = null, // kommer fra jp som noen har satt for å få den tilbake
-                        behandlingstype = null, // kommer fra jp som noen har satt for å få den tilbake
-                        aktivDato = "${LocalDate.now()}",
-                        prioritet = Prioritet.NORM,
+                    Request(
+                        saksnummer = "4LDQPDS",
+                        referanse = UUID.fromString("6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce"),
+                        personident = "12345678911",
+                        avklaringsbehov = "Dette er et avklaringsbehov",
+                        url = "https://aap-saksbehandling.intern.dev.nav.no/sak/4LDQPDS/%7BbehandlingReferanse%7D",
+                        status = oppgavestyring.behandlingsflyt.Status.OPPRETTET
                     )
                 )
             }
@@ -42,18 +43,18 @@ class ApiTest {
         oppgavestyringWithFakes { fakes, client ->
             val now = LocalDate.now()
 
-            val oppgaveId = client.post("/oppgaver/opprett") {
+            val oppgaveId = client.post("/behandling") {
                 contentType(ContentType.Application.Json)
                 bearerAuth("token")
                 accept(ContentType.Application.Json)
                 setBody(
-                    OpprettRequest(
-                        tema = "AAP",
-                        oppgavetype = "JFR",
-                        behandlingstema = null, // kommer fra jp som noen har satt for å få den tilbake
-                        behandlingstype = null, // kommer fra jp som noen har satt for å få den tilbake
-                        aktivDato = "$now",
-                        prioritet = Prioritet.NORM,
+                    Request(
+                        saksnummer = "4LDQPDS",
+                        referanse = UUID.fromString("6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce"),
+                        personident = "12345678911",
+                        avklaringsbehov = "Dette er et avklaringsbehov",
+                        url = "https://aap-saksbehandling.intern.dev.nav.no/sak/4LDQPDS/%7BbehandlingReferanse%7D",
+                        status = oppgavestyring.behandlingsflyt.Status.OPPRETTET
                     )
                 )
             }.let {
@@ -70,7 +71,7 @@ class ApiTest {
                 id = oppgaveId,
                 tildeltEnhetsnr = "1234",
                 tema = "AAP",
-                oppgavetype = "JFR",
+                oppgavetype = "BEH_SAK",
                 versjon = 1,
                 prioritet = Prioritet.NORM,
                 status = Status.OPPRETTET,

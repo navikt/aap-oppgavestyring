@@ -21,7 +21,7 @@ fun Route.behandlingsflyt(oppgaveService: OppgaveService) {
                 personident = Personident(req.personident),
                 beskrivelse = req.avklaringsbehov
             ).onSuccess { nyOppgave ->
-                call.respond("OK")
+                call.respond(HttpStatusCode.Created,"OK")
             }.onFailure {
                 SECURE_LOG.warn("Feil fra oppgave", it)
                 call.respond(HttpStatusCode.InternalServerError)

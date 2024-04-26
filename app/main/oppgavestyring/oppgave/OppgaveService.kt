@@ -30,19 +30,6 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
         return nyOppgave
     }
 
-    suspend fun opprett(token: Token, request: OpprettRequest): Result<OpprettResponse> {
-        val nyOppgave = oppgaveGateway.opprett(
-            token = token,
-            request = request
-        )
-
-        nyOppgave.onSuccess {
-            oppgaveRepository.lagre(it)
-        }
-
-        return nyOppgave
-    }
-
     suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token): Result<OpprettResponse> {
         val endretOppgave = oppgaveGateway.endre(
             token = token,
