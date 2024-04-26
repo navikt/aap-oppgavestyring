@@ -12,6 +12,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: behandlingsflyt
         - application: mottak
         - application: saksbehandling
     outbound:
