@@ -7,7 +7,6 @@ data class Request(
     val referanse: UUID,
     val personident: String,
     val avklaringsbehov: String,
-    val url: String,
     val status: Status
 )
 
