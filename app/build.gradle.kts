@@ -5,7 +5,7 @@ plugins {
 
 val aapLibVersion = "5.0.15"
 val ktorVersion = "2.3.10"
-val exposedVersion = "0.49.0"
+val exposedVersion = "0.50.0"
 
 application {
     mainClass.set("oppgavestyring.AppKt")
