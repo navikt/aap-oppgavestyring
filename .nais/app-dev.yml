@@ -21,6 +21,12 @@ spec:
   replicas:
     max: 1
     min: 1
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_15
+        databases:
+          - name: oppgavestyring
+            envVarPrefix: DB_OPPGAVESTYRING
   tokenx:
     enabled: true
   azure:

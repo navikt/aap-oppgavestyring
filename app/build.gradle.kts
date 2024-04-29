@@ -5,6 +5,7 @@ plugins {
 
 val aapLibVersion = "5.0.15"
 val ktorVersion = "2.3.10"
+val exposedVersion = "0.49.0"
 
 application {
     mainClass.set("oppgavestyring.AppKt")
@@ -23,6 +24,16 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
+
+    // persistence
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("org.flywaydb:flyway-core:10.11.1")
+    implementation("org.flywaydb:flyway-database-postgresql:10.11.1")
+    implementation("com.zaxxer:HikariCP:5.1.0")
+    runtimeOnly("org.postgresql:postgresql:42.7.3")
+    testImplementation("org.testcontainers:postgresql:1.19.7")
 
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:1.12.5")
