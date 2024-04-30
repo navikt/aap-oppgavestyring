@@ -16,8 +16,6 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
 import oppgavestyring.behandlingsflyt.behandlingsflyt
-import oppgavestyring.config.db.DatabaseSingleton
-import oppgavestyring.config.db.DbConfig
 import oppgavestyring.oppgave.OppgaveService
 import oppgavestyring.oppgave.adapter.OppgaveClient
 import oppgavestyring.oppgave.adapter.Token
