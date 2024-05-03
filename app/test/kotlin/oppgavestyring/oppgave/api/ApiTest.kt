@@ -31,7 +31,7 @@ class ApiTest {
                             saksnummer = "4LDQPDS",
                             referanse = UUID.fromString("6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce"),
                             personident = "12345678911",
-                            avklaringsbehov = "Dette er et avklaringsbehov",
+                            //avklaringsbehov = "Dette er et avklaringsbehov",
                             status = oppgavestyring.behandlingsflyt.Status.OPPRETTET
                         )
                     )
@@ -88,7 +88,7 @@ class ApiTest {
                         saksnummer = "4LDQPDS",
                         referanse = UUID.fromString("6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce"),
                         personident = "12345678911",
-                        avklaringsbehov = "Dette er et avklaringsbehov",
+                        //avklaringsbehov = "Dette er et avklaringsbehov",
                         status = oppgavestyring.behandlingsflyt.Status.OPPRETTET
                     )
                 )

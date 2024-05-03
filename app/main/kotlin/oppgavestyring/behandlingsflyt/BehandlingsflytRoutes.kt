@@ -19,7 +19,7 @@ fun Route.behandlingsflyt(oppgaveService: OppgaveService) {
             oppgaveService.opprett_v2(
                 token = token,
                 personident = Personident(req.personident),
-                beskrivelse = req.avklaringsbehov
+                beskrivelse = "Test"//req.avklaringsbehov
             ).onSuccess { nyOppgave ->
                 call.respond(HttpStatusCode.Created,"OK")
             }.onFailure {
