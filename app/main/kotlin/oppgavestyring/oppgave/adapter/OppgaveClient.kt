@@ -36,7 +36,7 @@ class OppgaveClient(private val config: Config) : OppgaveGateway {
         token: Token,
         request: OpprettRequest,
     ): Result<OpprettResponse> {
-        val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
+        val obo = azure.getClientCredentialToken(config.oppgave.scope)
 
         val response = client.post("$host/api/v1/oppgaver") {
             contentType(ContentType.Application.Json)
