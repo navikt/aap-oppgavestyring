@@ -11,5 +11,8 @@ data class Request(
 )
 
 enum class Status {
-    OPPRETTET, LUKKET
+    OPPRETTET,
+    UTREDES,
+    AVSLUTTET,
+    PÅ_VENT
 }
