@@ -6,7 +6,7 @@ data class Request(
     val saksnummer: String,
     val referanse: UUID,
     val personident: String,
-    val avklaringsbehov: String,
+    //val avklaringsbehov: String,
     val status: Status
 )
 
