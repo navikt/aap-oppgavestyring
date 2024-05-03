@@ -65,6 +65,7 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
             token = token,
             params = SøkQueryParams(
                 tema = listOf("AAP"),
+                oppgavetype = listOf(BEHANDLE_SAK.kode()),
                 statuskategori = Statuskategori.AAPEN,
             )
         )
