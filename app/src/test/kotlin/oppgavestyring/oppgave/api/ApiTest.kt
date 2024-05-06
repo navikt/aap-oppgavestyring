@@ -106,7 +106,7 @@ class ApiTest {
                 id = oppgaveId,
                 tildeltEnhetsnr = "1234",
                 tema = "AAP",
-                oppgavetype = "BEH_SAK",
+                oppgavetype = "STARTV",
                 versjon = 1,
                 prioritet = Prioritet.NORM,
                 status = Status.OPPRETTET,
