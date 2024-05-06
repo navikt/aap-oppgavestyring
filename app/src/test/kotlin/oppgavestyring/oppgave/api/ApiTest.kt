@@ -37,7 +37,7 @@ class ApiTest {
                     )
                 }
 
-                assertEquals(HttpStatusCode.Created, actual.status)
+                assertEquals(HttpStatusCode.NoContent, actual.status)
             }
         }
 
@@ -69,7 +69,7 @@ class ApiTest {
                     )
                 }
 
-                assertEquals(HttpStatusCode.Created, actual.status)
+                assertEquals(HttpStatusCode.NoContent, actual.status)
             }
         }
     }
@@ -93,7 +93,7 @@ class ApiTest {
                     )
                 )
             }.let {
-                require(it.status == HttpStatusCode.Created) { "not created" }
+                require(it.status == HttpStatusCode.NoContent) { "not created" }
                 fakes.oppgave.oppgaveIdSeq
             }
 
