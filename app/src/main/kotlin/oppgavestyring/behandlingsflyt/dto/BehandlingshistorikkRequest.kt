@@ -19,11 +19,11 @@ data class BehandlingshistorikkRequest(
 
 enum class Behandlingstype{
 
-    Førstegangsbehandling,
-    Revurdering,
-    Tilbakekreving,
-    Klage
-
+    FØRSTEGANGSBEHANDLING,
+    REVURDERINGER,
+    KLAGE,
+    ANKE,
+    TILBAKEKREVING
 }
 
 enum class Behandlingstatus {

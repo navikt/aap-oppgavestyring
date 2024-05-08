@@ -17,11 +17,3 @@ enum class Status {
     PÅ_VENT
 }
 
-// Hentet fra confluence sak og behandling
-enum class BehandlingsTypeSak {
-    FØRSTEGANGSBEHANDLING,
-    REVURDERINGER,
-    KLAGE,
-    ANKE,
-    TILBAKEKREVING
-}
