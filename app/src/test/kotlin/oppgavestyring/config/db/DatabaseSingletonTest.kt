@@ -75,6 +75,7 @@ class DatabaseSingletonTest {
         connectToDatabase()
         Flyway.migrate(DatabaseSingleton.connection ?:
             throw IllegalStateException("Database connection is not initialized"))
+        println("SDFSDFDF")
     }
 
 }
