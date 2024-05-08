@@ -9,7 +9,7 @@ object Flyway {
             .cleanDisabled(false) // TODO: husk å skru av denne før prod
             .cleanOnValidationError(true) // TODO: husk å skru av denne før prod
             .dataSource(dataSource)
-            .locations("resources/flyway")
+            .locations("flyway")
             .validateMigrationNaming(true)
             .load()
             .migrate()

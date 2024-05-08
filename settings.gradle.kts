@@ -1,2 +1,4 @@
 rootProject.name = "aap-oppgavestyring"
-include("app")
+include(
+    "app"
+)
