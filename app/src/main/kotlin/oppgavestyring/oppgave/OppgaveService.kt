@@ -75,4 +75,10 @@ class OppgaveService(private val oppgaveRepository: OppgaveRepository, private v
             token = token,
             oppgaveId = oppgaveId)
     }
+
+    suspend fun lukkOppgave(behandlingsreferanse: String) {
+        // TODO impolement
+        throw NotImplementedError("Kan ikke lukke oppgave enda")
+    }
+
 }

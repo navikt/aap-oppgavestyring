@@ -14,11 +14,12 @@ data class BehandlingshistorikkRequest(
     fun erLukket() =
         (status == Behandlingstatus.AVSLUTTET) ||
                 avklaringsbehov.all { it.status == Avklaringsbehovstatus.AVSLUTTET }
-    fun getÅpentAvklaringsbehov() = avklaringsbehov.firstOrNull {it.status != Avklaringsbehovstatus.AVSLUTTET && it.status != Avklaringsbehovstatus.AVBRUTT}
+
+    fun getÅpentAvklaringsbehov() = avklaringsbehov.firstOrNull {it.status == Avklaringsbehovstatus.OPPRETTET ||
+            it.status == Avklaringsbehovstatus.SENDT_TILBAKE_FRA_BESLUTTER}
 }
 
 enum class Behandlingstype{
-
     FØRSTEGANGSBEHANDLING,
     REVURDERINGER,
     KLAGE,
@@ -41,17 +42,17 @@ enum class Avklaringsbehovstatus {
     AVBRUTT
 }
 
-enum class Avklaringsbehovtype {
-    MANUELT_SATT_PÅ_VENT_KODE,
-    AVKLAR_STUDENT_KODE,
-    AVKLAR_SYKDOM_KODE,
-    FASTSETT_ARBEIDSEVNE_KODE,
-    FRITAK_MELDEPLIKT_KODE,
-    AVKLAR_BISTANDSBEHOV_KODE,
-    VURDER_SYKEPENGEERSTATNING_KODE,
-    FASTSETT_BEREGNINGSTIDSPUNKT_KODE,
-    FORESLÅ_VEDTAK_KODE,
-    FATTE_VEDTAK_KODE
+enum class Avklaringsbehovtype(val beskrivelse: String) {
+    MANUELT_SATT_PÅ_VENT_KODE("sdgdbdghbdgb"),
+    AVKLAR_STUDENT_KODE("sdfbhsdnbdsfndfn"),
+    AVKLAR_SYKDOM_KODE("sdfsdgbsdgbdsgbsd"),
+    FASTSETT_ARBEIDSEVNE_KODE("segsdgsdfgsdgsd"),
+    FRITAK_MELDEPLIKT_KODE("sdfhgsdhgsdfg"),
+    AVKLAR_BISTANDSBEHOV_KODE("sfdbsdfgbsdfbsdfgvb"),
+    VURDER_SYKEPENGEERSTATNING_KODE("dszfgbsdfgbsdfgsd"),
+    FASTSETT_BEREGNINGSTIDSPUNKT_KODE("sdgthsdfhjfhmfhn"),
+    FORESLÅ_VEDTAK_KODE("sdgbhsdfbnsdfb"),
+    FATTE_VEDTAK_KODE("sdhsdgsdfgdg")
 }
 
 data class AvklaringsbehovHendelseDto(
