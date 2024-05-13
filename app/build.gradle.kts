@@ -33,7 +33,7 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql:10.12.0")
     implementation("com.zaxxer:HikariCP:5.1.0")
     runtimeOnly("org.postgresql:postgresql:42.7.3")
-    testImplementation("org.testcontainers:postgresql:1.19.7")
+    testImplementation("org.testcontainers:postgresql:1.19.8")
 
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:1.12.5")
