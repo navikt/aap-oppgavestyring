@@ -28,6 +28,7 @@ dependencies {
     // persistence
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
     implementation("org.flywaydb:flyway-core:10.12.0")
     implementation("org.flywaydb:flyway-database-postgresql:10.12.0")

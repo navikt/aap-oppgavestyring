@@ -2,7 +2,7 @@ package oppgavestyring.config.db
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import oppgavestyring.TestDatabaseSingleton
+import oppgavestyring.TestDatabase
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
@@ -17,29 +17,27 @@ import org.junit.jupiter.api.Test
 
 class DatabaseSingletonTest {
     companion object {
-        val database = TestDatabaseSingleton.getInstance()
-
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
-            database.start()
+            TestDatabase.start()
         }
 
         @AfterAll
         @JvmStatic
-        fun teardown() { database.stop() }
+        fun teardown() { TestDatabase.stop() }
     }
 
     @BeforeEach
     fun beforeEach() {
-        database.reset()
+        TestDatabase.reset()
     }
 
     private fun connectToDatabase() {
         DatabaseSingleton.init(DbConfig(
-            connectionURL = database.connectionUrl,
-            username = database.username,
-            password = database.password))}
+            connectionURL = TestDatabase.connectionUrl,
+            username = TestDatabase.username,
+            password = TestDatabase.password))}
 
     @Test
     fun `verify working database connection`() {

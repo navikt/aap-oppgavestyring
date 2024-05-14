@@ -6,7 +6,7 @@ import oppgavestyring.oppgave.db.FakeOppgaveRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class OppgaveServiceTest {
+class OppgaveTabellServiceTest {
 
     private val oppgaveGateway = FakeOppgaveClient()
     private val oppgaveRepository = FakeOppgaveRepository
