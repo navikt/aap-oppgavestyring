@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class BehandlingshistorikkRequest(
     val personident: String,
     val saksnummer: String,
-    val behandlingsreferanse: String,
+    val referanse: String,
     val behandlingType: Behandlingstype,
     val status: Behandlingstatus,
     val opprettetTidspunkt: LocalDateTime,
@@ -82,8 +82,3 @@ data class AvklaringsbehovhendelseEndring(
     val endretAv: String
 )
 
-enum class Oppgavestatus {
-    ÅPEN,
-    AVSLUTTET,
-    PÅ_VENT
-}

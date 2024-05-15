@@ -21,13 +21,13 @@ class BehandlingsflytAdapter(
         if (åpentAvklaringsbehov != null) oppgaveService.opprett_v2(
             personident = behanlding.personident,
             avklaringsbehovtype = Avklaringsbehovtype.fraKode(åpentAvklaringsbehov.definisjon.type),
-            behandlingsreferanse = behanlding.behandlingsreferanse,
+            behandlingsreferanse = behanlding.referanse,
             behandlingstype = behanlding.behandlingType,
             avklaringsbehovOpprettetTidspunkt = åpentAvklaringsbehov.getOpprettelsestidspunkt(),
             behandlingOpprettetTidspunkt = behanlding.opprettetTidspunkt
         )
         else if (behanlding.erLukket()) {
-            oppgaveService.lukkOppgave(behanlding.behandlingsreferanse)
+            oppgaveService.lukkOppgave(behanlding.referanse)
         }
 
     }

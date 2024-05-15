@@ -44,7 +44,7 @@ class ApiTest {
                     setBody(
                         BehandlingshistorikkRequest(
                             saksnummer = "4LDQPDS",
-                            behandlingsreferanse = "6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce",
+                            referanse = "6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce",
                             personident = "12345678911",
                             behandlingType = Behandlingstype.FØRSTEGANGSBEHANDLING,
                             status = Behandlingstatus.OPPRETTET,

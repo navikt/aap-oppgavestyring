@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 
 
 fun generateBehandlingshistorikkRequest() = BehandlingshistorikkRequest(
-    behandlingsreferanse = "asfdvdb",
+    referanse = "asfdvdb",
     status = Behandlingstatus.OPPRETTET,
     saksnummer = "asrgsadrgdfgsw",
     personident = "12345678901",
@@ -61,7 +61,7 @@ class BehandlingsflytAdapterTest {
         behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
 
 
-        verify(exactly = 1){ oppgaveService.lukkOppgave(request.behandlingsreferanse) }
+        verify(exactly = 1){ oppgaveService.lukkOppgave(request.referanse) }
     }
 
     @Test
@@ -73,7 +73,7 @@ class BehandlingsflytAdapterTest {
 
         behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
 
-        verify(exactly = 1){ oppgaveService.lukkOppgave(request.behandlingsreferanse) }
+        verify(exactly = 1){ oppgaveService.lukkOppgave(request.referanse) }
     }
 
 }
