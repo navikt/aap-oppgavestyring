@@ -22,10 +22,6 @@ class DatabaseSingletonTest {
         fun beforeAll() {
             TestDatabase.start()
         }
-
-        @AfterAll
-        @JvmStatic
-        fun teardown() { TestDatabase.stop() }
     }
 
     @BeforeEach
