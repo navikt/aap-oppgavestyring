@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 
 fun generateOppgave() = Oppgave.new {
     behandlingsreferanse = "behandlingsreferanse"
-    behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
+    behandlingstype = Behandlingstype.Førstegangsbehandling
     status = Avklaringsbehovstatus.OPPRETTET
     avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
     behandlingOpprettetTidspunkt = LocalDateTime.now()

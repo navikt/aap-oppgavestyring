@@ -16,12 +16,12 @@ fun generateBehandlingshistorikkRequest() = BehandlingshistorikkRequest(
     status = Behandlingstatus.OPPRETTET,
     saksnummer = "asrgsadrgdfgsw",
     personident = "12345678901",
-    behandlingType = Behandlingstype.FØRSTEGANGSBEHANDLING,
+    behandlingType = Behandlingstype.Førstegangsbehandling,
     opprettetTidspunkt = LocalDateTime.now(),
     avklaringsbehov = listOf(generateAvklaringsbehovRequest())
 )
 
-fun generateAvklaringsbehovRequest() = AvklaringsbehovhendelseDto(
+fun generateAvklaringsbehovRequest() = AvklaringsbehovDto(
     status = Avklaringsbehovstatus.OPPRETTET,
     definisjon = Definisjon("5003"),
     endringer = listOf(

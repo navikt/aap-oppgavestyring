@@ -1,6 +1,8 @@
 package oppgavestyring.behandlingsflyt.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDateTime
+
 
 data class BehandlingshistorikkRequest(
     val personident: String,
@@ -9,25 +11,22 @@ data class BehandlingshistorikkRequest(
     val behandlingType: Behandlingstype,
     val status: Behandlingstatus,
     val opprettetTidspunkt: LocalDateTime,
-    val avklaringsbehov: List<AvklaringsbehovhendelseDto>,
+    val avklaringsbehov: List<AvklaringsbehovDto>,
 ) {
     fun erLukket() =
         (status == Behandlingstatus.AVSLUTTET) ||
                 avklaringsbehov.all { it.status == Avklaringsbehovstatus.AVSLUTTET }
 
+    @JsonIgnore
     fun getÅpentAvklaringsbehov() = avklaringsbehov.firstOrNull {it.status == Avklaringsbehovstatus.OPPRETTET ||
             it.status == Avklaringsbehovstatus.SENDT_TILBAKE_FRA_BESLUTTER}
 }
 
 enum class Behandlingstype{
-    FØRSTEGANGSBEHANDLING,
-    REVURDERINGER,
-    KLAGE,
-    ANKE,
-    TILBAKEKREVING,
-    TOTRINNS_VURDERT,
-    SENDT_TILBAKE_FRA_BESLUTTER,
-    AVBRUTT
+    Førstegangsbehandling,
+    Revurdering,
+    Tilbakekreving,
+    Klage
 }
 
 enum class Behandlingstatus {
@@ -63,7 +62,7 @@ enum class Avklaringsbehovtype(val kode: String) {
     }
 }
 
-data class AvklaringsbehovhendelseDto(
+data class AvklaringsbehovDto(
     val definisjon: Definisjon,
     val status: Avklaringsbehovstatus,
     val endringer: List<AvklaringsbehovhendelseEndring>

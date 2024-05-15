@@ -41,28 +41,29 @@ class ApiTest {
                     contentType(ContentType.Application.Json)
                     bearerAuth("token")
                     accept(ContentType.Application.Json)
-                    setBody(
-                        BehandlingshistorikkRequest(
-                            saksnummer = "4LDQPDS",
-                            referanse = "6ab21bd2-a036-40e5-bc14-cdc59b6ea4ce",
-                            personident = "12345678911",
-                            behandlingType = Behandlingstype.FØRSTEGANGSBEHANDLING,
-                            status = Behandlingstatus.OPPRETTET,
-                            opprettetTidspunkt = LocalDateTime.now(),
-                            avklaringsbehov = listOf(
-                                AvklaringsbehovhendelseDto(
-                                    definisjon = Definisjon("5003"),
-                                    status = Avklaringsbehovstatus.OPPRETTET,
-                                    endringer = listOf(
-                                        AvklaringsbehovhendelseEndring(
-                                            status = Avklaringsbehovstatus.OPPRETTET,
-                                            tidsstempel = LocalDateTime.now(),
-                                            endretAv = "23563247"
-                                        )
-                                    )
-                                )
-                            )
-                        )
+                    setBody("""{
+                        "personident" : "14098929550",
+                        "saksnummer" : "24352363",
+                        "referanse" : "yolo",
+                        "behandlingType" : "Klage",
+                        "status" : "PÅ_VENT",
+                        "avklaringsbehov" : [ 
+                            {
+                                "definisjon" : {
+                                    "type" : "5003",
+                                    "behovType" : "MANUELT_PÅKREVD",
+                                    "løsesISteg" : "BARNETILLEGG"
+                                },
+                                "status" : "OPPRETTET",
+                                "endringer" : [ {
+                                    "status" : "OPPRETTET",
+                                    "tidsstempel" : "2024-05-15T16:27:31.996299178",
+                                    "frist" : "2025-05-15",
+                                    "endretAv" : "T123456"
+                                } ]
+                            } ],
+                        "opprettetTidspunkt" : "2024-05-15T16:27:31.985882524"
+                    }"""
                     )
                 }
 
@@ -88,7 +89,7 @@ class ApiTest {
                         behandlingsreferanse = "23642"
                         status = Avklaringsbehovstatus.OPPRETTET
                         avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
-                        behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
+                        behandlingstype = Behandlingstype.Førstegangsbehandling
                         avklaringsbehovOpprettetTidspunkt = avklaringsbehovTidspunkt
                         behandlingOpprettetTidspunkt = behandlingTidspunkt
                         this.personnummer = personnummer
@@ -121,7 +122,7 @@ class ApiTest {
                         behandlingsreferanse = "23642"
                         status = Avklaringsbehovstatus.OPPRETTET
                         avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
-                        behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
+                        behandlingstype = Behandlingstype.Førstegangsbehandling
                         avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
                         behandlingOpprettetTidspunkt = LocalDateTime.now()
                         personnummer = "3564589"
@@ -151,7 +152,7 @@ class ApiTest {
                         behandlingsreferanse = "23642"
                         status = Avklaringsbehovstatus.OPPRETTET
                         avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
-                        behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
+                        behandlingstype = Behandlingstype.Førstegangsbehandling
                         avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
                         behandlingOpprettetTidspunkt = LocalDateTime.now()
                         personnummer = "3564589"
