@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
@@ -49,6 +52,17 @@ fun Application.server(
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             setSerializationInclusion(JsonInclude.Include.NON_NULL)
             registerModule(JavaTimeModule())
+        }
+    }
+
+    install(StatusPages) {
+        exception<Throwable> { call, cause ->
+            LOG.warn("Exception during request handling with cause: $cause")
+            if(cause is IllegalArgumentException) {
+                call.respondText(text = "400: $cause" , status = HttpStatusCode.BadRequest)
+            } else {
+                call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
+            }
         }
     }
 
