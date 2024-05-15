@@ -17,6 +17,8 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
 import oppgavestyring.behandlingsflyt.BehandlingsflytAdapter
 import oppgavestyring.behandlingsflyt.behandlingsflyt
+import oppgavestyring.config.db.DatabaseSingleton
+import oppgavestyring.config.db.DbConfig
 import oppgavestyring.oppgave.OppgaveService
 import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
@@ -49,6 +51,9 @@ fun Application.server(
             registerModule(JavaTimeModule())
         }
     }
+
+    DatabaseSingleton.init(DbConfig())
+    DatabaseSingleton.migrate()
 
     val oppgaveService = OppgaveService()
     val behandlingsflytAdapter = BehandlingsflytAdapter(oppgaveService)

@@ -5,6 +5,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import oppgavestyring.TestDatabase
 import oppgavestyring.behandlingsflyt.dto.*
+import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
 import oppgavestyring.oppgave.db.Tildelt
 import oppgavestyring.oppgavestyringWithFakes
@@ -18,13 +19,15 @@ import java.time.temporal.ChronoUnit
 
 class ApiTest {
     companion object {
-
-
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
             TestDatabase.start()
             Flyway.migrate(TestDatabase.getConnection())
+
+            System.setProperty("${DB_CONFIG_PREFIX}_JDBC_URL", TestDatabase.connectionUrl)
+            System.setProperty("${DB_CONFIG_PREFIX}_USERNAME", TestDatabase.username)
+            System.setProperty("${DB_CONFIG_PREFIX}_PASSWORD", TestDatabase.password)
         }
     }
 
