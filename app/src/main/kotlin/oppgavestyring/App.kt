@@ -58,6 +58,7 @@ fun Application.server(
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             LOG.warn("Exception during request handling with cause: $cause")
+            LOG.debug(cause.stackTrace.contentToString())
             if(cause is IllegalArgumentException) {
                 call.respondText(text = "400: $cause" , status = HttpStatusCode.BadRequest)
             } else {
