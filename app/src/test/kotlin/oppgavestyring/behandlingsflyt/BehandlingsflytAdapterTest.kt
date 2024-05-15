@@ -1,28 +1,36 @@
 package oppgavestyring.behandlingsflyt
 
-import io.mockk.*
-import kotlinx.coroutines.runBlocking
+import io.mockk.every
+import io.mockk.justRun
+import io.mockk.mockk
+import io.mockk.verify
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.oppgave.OppgaveService
+import oppgavestyring.oppgave.db.Oppgave
 import org.junit.jupiter.api.Test
-
 import java.time.LocalDateTime
 
 
 fun generateBehandlingshistorikkRequest() = BehandlingshistorikkRequest(
-    behandlingsreferanse = "sdghehsdfh",
-    opprettetTidspunkt = LocalDateTime.now(),
+    behandlingsreferanse = "asfdvdb",
     status = Behandlingstatus.OPPRETTET,
     saksnummer = "asrgsadrgdfgsw",
     personident = "12345678901",
     behandlingType = Behandlingstype.FØRSTEGANGSBEHANDLING,
+    opprettetTidspunkt = LocalDateTime.now(),
     avklaringsbehov = listOf(generateAvklaringsbehovRequest())
 )
 
-fun generateAvklaringsbehovRequest() = AvklaringsbehovHendelseDto(
+fun generateAvklaringsbehovRequest() = AvklaringsbehovhendelseDto(
     status = Avklaringsbehovstatus.OPPRETTET,
-    type = Avklaringsbehovtype.AVKLAR_SYKDOM_KODE,
-    endringer = emptyList()
+    definisjon = Definisjon("5003"),
+    endringer = listOf(
+        AvklaringsbehovhendelseEndring(
+            status = Avklaringsbehovstatus.OPPRETTET,
+            tidsstempel = LocalDateTime.now(),
+            endretAv = "24342313426"
+        )
+    )
 )
 
 class BehandlingsflytAdapterTest {
@@ -34,13 +42,12 @@ class BehandlingsflytAdapterTest {
     @Test
     fun `mapBehnadlingshistorikkTilOppgaveHendelser oppretter oppgave ved åpent avklaringsbehov`() {
         val request = generateBehandlingshistorikkRequest()
-        coJustRun { oppgaveService.opprett_v2(any(), any(), any()) }
+        every { oppgaveService.opprett_v2(any(), any(), any(), any(), any(), any()) } returns mockk<Oppgave>()
 
-        runBlocking {
-            behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
-        }
+        behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
 
-        coVerify(exactly = 1){ oppgaveService.opprett_v2(any(), any(), any() ) }
+
+        verify(exactly = 1){ oppgaveService.opprett_v2(any(), any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -48,13 +55,13 @@ class BehandlingsflytAdapterTest {
         val request = generateBehandlingshistorikkRequest().copy(status = Behandlingstatus.AVSLUTTET,
             avklaringsbehov = emptyList()
         )
-        coJustRun { oppgaveService.lukkOppgave(any()) }
+        justRun { oppgaveService.lukkOppgave(any()) }
 
-        runBlocking {
-            behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
-        }
 
-        coVerify(exactly = 1){ oppgaveService.lukkOppgave(request.behandlingsreferanse) }
+        behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
+
+
+        verify(exactly = 1){ oppgaveService.lukkOppgave(request.behandlingsreferanse) }
     }
 
     @Test
@@ -62,13 +69,11 @@ class BehandlingsflytAdapterTest {
         val request = generateBehandlingshistorikkRequest().copy(
             avklaringsbehov = listOf(generateAvklaringsbehovRequest().copy(status = Avklaringsbehovstatus.AVSLUTTET))
         )
-        coJustRun { oppgaveService.lukkOppgave(any()) }
+        justRun { oppgaveService.lukkOppgave(any()) }
 
-        runBlocking {
-            behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
-        }
+        behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
 
-        coVerify(exactly = 1){ oppgaveService.lukkOppgave(request.behandlingsreferanse) }
+        verify(exactly = 1){ oppgaveService.lukkOppgave(request.behandlingsreferanse) }
     }
 
 }

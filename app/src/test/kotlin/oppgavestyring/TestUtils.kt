@@ -1,5 +1,6 @@
 package oppgavestyring
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.jackson.*
@@ -12,8 +13,8 @@ import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
 import oppgavestyring.fakes.AzureFake
 import oppgavestyring.fakes.OppgaveFake
-import java.net.URI
 import org.testcontainers.containers.PostgreSQLContainer
+import java.net.URI
 import javax.sql.DataSource
 
 class Fakes : AutoCloseable {
@@ -45,7 +46,9 @@ internal fun oppgavestyringWithFakes(test: suspend (Fakes, HttpClient) -> Unit) 
 
             val client = createClient {
                 install(ContentNegotiation) {
-                    jackson {}
+                    jackson {
+                        registerModules(JavaTimeModule())
+                    }
                 }
             }
 
@@ -76,7 +79,10 @@ object TestDatabase {
     val username = postgres.username
     val password = postgres.password
     val connectionUrl get() = postgres.jdbcUrl
-    fun start() { postgres.start() }
+
+    private var hasStarted = false
+
+    fun start() { if (!hasStarted) postgres.start().also { hasStarted = true } }
     fun stop() { postgres.stop() }
     fun reset() { postgres.execInContainer(
         "psql",  "-U", "test", "-d", "test" , "-c", "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"

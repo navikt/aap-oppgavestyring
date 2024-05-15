@@ -1,24 +1,28 @@
 package oppgavestyring.oppgave.db
 
 import oppgavestyring.TestDatabase
+import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
-import oppgavestyring.behandlingsflyt.dto.Oppgavestatus
 import oppgavestyring.config.db.Flyway
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
 
 
 fun generateOppgave() = Oppgave.new {
-    behandlingsreferanse = UUID.randomUUID()
+    behandlingsreferanse = "behandlingsreferanse"
     behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
-    status = Oppgavestatus.ÅPEN
-    avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM_KODE
+    status = Avklaringsbehovstatus.OPPRETTET
+    avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
+    behandlingOpprettetTidspunkt = LocalDateTime.now()
+    personnummer = "12345678901"
+    avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
 }
 
 
@@ -30,7 +34,6 @@ class OppgaveTabellDaoTest {
         @JvmStatic
         fun beforeAll() {
             TestDatabase.start()
-            Flyway.migrate(TestDatabase.getConnection())
         }
     }
 
@@ -47,7 +50,7 @@ class OppgaveTabellDaoTest {
         }
 
         assertNotNull(opprettetOppgave.id)
-        assertNotNull(opprettetOppgave.opprettet)
+        assertNotNull(opprettetOppgave.avklaringsbehovOpprettetTidspunkt)
     }
 
     @Test
@@ -76,7 +79,7 @@ class OppgaveTabellDaoTest {
                 oppgave = opprettetOppgave
             }
 
-            assertEquals(ident, opprettetOppgave.tildelt.ident)
+            assertEquals(ident, opprettetOppgave.tildelt?.ident)
         }
 
     }

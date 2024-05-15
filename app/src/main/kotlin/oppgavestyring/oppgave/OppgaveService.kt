@@ -1,84 +1,59 @@
 package oppgavestyring.oppgave
 
-import oppgavestyring.LOG
-import oppgavestyring.oppgave.Oppgavetype.BEHANDLE_SAK
-import oppgavestyring.oppgave.adapter.*
-import java.time.LocalDate
+import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
+import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
+import oppgavestyring.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.oppgave.db.Oppgave
+import oppgavestyring.oppgave.db.OppgaveTabell
+import oppgavestyring.oppgave.db.Tildelt
+import java.time.LocalDateTime
 
-class OppgaveService(private val oppgaveRepository: OppgaveRepository, private val oppgaveGateway: OppgaveGateway) {
+typealias Behandlingsreferanse = String
 
-    suspend fun opprett_v2(token: Token, personident: Personident, beskrivelse: String): Result<OpprettResponse> {
-        val request = OpprettRequest(
-            oppgavetype = BEHANDLE_SAK.kode(),
-            prioritet = Prioritet.NORM,
-            aktivDato = LocalDate.now().toString(),
-            personident = personident.asString(),
-            beskrivelse = beskrivelse,
-            opprettetAvEnhetsnr = "9999",
-            behandlesAvApplikasjon = "KELVIN"
-        )
+class OppgaveService {
 
-        val nyOppgave = oppgaveGateway.opprett(
-            token = token,
-            request = request
-        )
-
-        nyOppgave.onSuccess {
-            oppgaveRepository.lagre(it)
+    fun opprett_v2(
+        personident: String,
+        behandlingsreferanse: Behandlingsreferanse,
+        behandlingstype: Behandlingstype,
+        avklaringsbehovtype: Avklaringsbehovtype,
+        avklaringsbehovOpprettetTidspunkt: LocalDateTime,
+        behandlingOpprettetTidspunkt: LocalDateTime
+    ): Oppgave {
+        return Oppgave.new {
+            this.behandlingsreferanse = behandlingsreferanse
+            this.behandlingstype = behandlingstype
+            this.avklaringsbehovtype = avklaringsbehovtype
+            status = Avklaringsbehovstatus.OPPRETTET
+            this.avklaringsbehovOpprettetTidspunkt = avklaringsbehovOpprettetTidspunkt
+            this.behandlingOpprettetTidspunkt = behandlingOpprettetTidspunkt
+            personnummer = personident
         }
-
-        return nyOppgave
     }
 
-    suspend fun tildelRessursTilOppgave(id: OppgaveId, versjon: Versjon, navIdent: NavIdent, token: Token): Result<OpprettResponse> {
-        val endretOppgave = oppgaveGateway.endre(
-            token = token,
-            oppgaveId = id,
-            request = PatchOppgaveRequest(
-                versjon = versjon.asLong(),
-                tilordnetRessurs = navIdent.asString()
-            )
-        )
-
-        endretOppgave.onSuccess { LOG.info("versjon: ${it.versjon} tilordnetRessurs: ${it.tilordnetRessurs}") }
-
-        return endretOppgave
+    fun frigiRessursFraOppgave(id: OppgaveId) {
+        Oppgave[id].tildelt?.delete()
     }
 
-    suspend fun frigiRessursFraOppgave(id: OppgaveId, versjon: Versjon, token: Token): Result<OpprettResponse> {
-        val endretOppgave = oppgaveGateway.endre(
-            token = token,
-            oppgaveId = id,
-            request = PatchOppgaveRequest(
-                versjon = versjon.asLong(),
-                tilordnetRessurs = null
-            )
-        )
-
-        endretOppgave.onSuccess { LOG.info("versjon: ${it.versjon} tilordnetRessurs: ${it.tilordnetRessurs}") }
-
-        return endretOppgave
+    fun tildelOppgave(id: OppgaveId, navIdent: NavIdent) {
+        val oppgave = Oppgave[id]
+        Tildelt.new {
+            ident = navIdent.asString()
+            this.oppgave = oppgave
+        }
     }
 
-    suspend fun søk(token: Token): Result<SøkOppgaverResponse> {
-        return oppgaveGateway.søk(
-            token = token,
-            params = SøkQueryParams(
-                tema = listOf("AAP"),
-                statuskategori = Statuskategori.AAPEN,
-            )
-        )
+    fun søk(): List<Oppgave> {
+        return Oppgave.all().toList()
     }
 
-    suspend fun hent(token: Token, oppgaveId: OppgaveId): Result<OpprettResponse> {
-        return oppgaveGateway.hent(
-            token = token,
-            oppgaveId = oppgaveId)
+    fun hent(oppgaveId: OppgaveId): Oppgave {
+        return Oppgave[oppgaveId]
     }
 
-    suspend fun lukkOppgave(behandlingsreferanse: String) {
-        // TODO impolement
-        throw NotImplementedError("Kan ikke lukke oppgave enda")
+    fun lukkOppgave(behandlingsreferanse:  Behandlingsreferanse) {
+        Oppgave.find { OppgaveTabell.behandlingsreferanse eq behandlingsreferanse }
+            .first().status = Avklaringsbehovstatus.OPPRETTET
     }
 
 }

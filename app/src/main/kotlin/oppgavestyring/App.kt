@@ -15,12 +15,11 @@ import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
+import oppgavestyring.behandlingsflyt.BehandlingsflytAdapter
 import oppgavestyring.behandlingsflyt.behandlingsflyt
 import oppgavestyring.oppgave.OppgaveService
-import oppgavestyring.oppgave.adapter.OppgaveClient
 import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
-import oppgavestyring.oppgave.db.FakeOppgaveRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -51,14 +50,13 @@ fun Application.server(
         }
     }
 
-    val oppgaveGateway = OppgaveClient(config)
-    val oppgaveRepository = FakeOppgaveRepository
-    val oppgaveService = OppgaveService(oppgaveRepository, oppgaveGateway)
+    val oppgaveService = OppgaveService()
+    val behandlingsflytAdapter = BehandlingsflytAdapter(oppgaveService)
 
     routing {
         actuators(prometheus)
         oppgaver(oppgaveService)
-        behandlingsflyt(oppgaveService)
+        behandlingsflyt(behandlingsflytAdapter)
     }
 }
 

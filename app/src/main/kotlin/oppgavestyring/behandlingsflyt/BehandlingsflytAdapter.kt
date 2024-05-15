@@ -1,11 +1,8 @@
 package oppgavestyring.behandlingsflyt
 
-import oppgavestyring.behandlingsflyt.dto.AvklaringsbehovHendelseDto
+import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.BehandlingshistorikkRequest
-import oppgavestyring.behandlingsflyt.dto.Oppgavestatus
 import oppgavestyring.oppgave.OppgaveService
-import oppgavestyring.oppgave.Personident
-import oppgavestyring.oppgave.adapter.Token
 
 
 class BehandlingsflytAdapter(
@@ -13,13 +10,21 @@ class BehandlingsflytAdapter(
 ) {
 
 
-    suspend fun mapBehnadlingshistorikkTilOppgaveHendelser(
+    fun mapBehnadlingshistorikkTilOppgaveHendelser(
         behanlding: BehandlingshistorikkRequest) {
 
-        if (behanlding.getÅpentAvklaringsbehov() != null) oppgaveService.opprett_v2(
-            token = Token("sdfgvsd"),
-            beskrivelse = behanlding.getÅpentAvklaringsbehov()!!.type.beskrivelse,
-            personident = Personident(behanlding.personident)
+        /**
+            Hvis åpent avklaringsbehov, lukk åpen oppgave på behandling, lag ny oppgave
+
+         */
+        val åpentAvklaringsbehov = behanlding.getÅpentAvklaringsbehov()
+        if (åpentAvklaringsbehov != null) oppgaveService.opprett_v2(
+            personident = behanlding.personident,
+            avklaringsbehovtype = Avklaringsbehovtype.fraKode(åpentAvklaringsbehov.definisjon.type),
+            behandlingsreferanse = behanlding.behandlingsreferanse,
+            behandlingstype = behanlding.behandlingType,
+            avklaringsbehovOpprettetTidspunkt = åpentAvklaringsbehov.getOpprettelsestidspunkt(),
+            behandlingOpprettetTidspunkt = behanlding.opprettetTidspunkt
         )
         else if (behanlding.erLukket()) {
             oppgaveService.lukkOppgave(behanlding.behandlingsreferanse)

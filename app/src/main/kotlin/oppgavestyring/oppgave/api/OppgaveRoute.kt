@@ -7,8 +7,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.LOG
 import oppgavestyring.authToken
-import oppgavestyring.oppgave.*
-import oppgavestyring.oppgave.adapter.SøkOppgaverResponse
+import oppgavestyring.oppgave.NavIdent
+import oppgavestyring.oppgave.OppgaveService
+import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Route.oppgaver(oppgaveService: OppgaveService) {
 
@@ -16,58 +17,47 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
 
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
-            val token = call.authToken()
-                ?: return@get call.respond(HttpStatusCode.Unauthorized)
-
-            oppgaveService.søk(
-                token = token
-            ).onSuccess {
-                LOG.info("Fant ${it.antallTreffTotalt} oppgaver knyttet til AAP")
-                call.respond(HttpStatusCode.OK, map(it))
-            }.onFailure {
-                LOG.info("Uthenting av oppgaver feilet ${it.message}")
-                call.respond(HttpStatusCode.InternalServerError)
+            transaction {
+                oppgaveService.søk()
             }
         }
 
         get("/{id}") {
             LOG.info("Forsøker å hente én konkret oppgave")
 
-            val token = call.authToken()
-                ?: return@get call.respond(HttpStatusCode.Unauthorized)
-
-            val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
+            val id = call.parameters["id"]?.toLong()
                 ?: return@get call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
 
-            oppgaveService.hent(
-                token = token,
-                oppgaveId = id
-            ).onSuccess {
-                call.respond(HttpStatusCode.OK, it)
-            }.onFailure {
-                call.respond(HttpStatusCode.InternalServerError)
+            val oppgave = transaction {
+                val oppgave = oppgaveService.hent(
+                    oppgaveId = id
+                )
+                Oppgave(
+                    oppgaveId = oppgave.id.value,
+                    avklaringsbehov = oppgave.avklaringsbehovtype,
+                    foedselsnummer = oppgave.personnummer,
+                    status = oppgave.status,
+                    avklaringsbehovOpprettetTid = oppgave.avklaringsbehovOpprettetTidspunkt,
+                    behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,
+                    tilordnetRessurs = oppgave.tildelt?.ident,
+                )
             }
+            call.respond(HttpStatusCode.OK, oppgave)
         }
 
         patch("/{id}/tildelRessurs") {
             LOG.info("Forsøker å tildele ressurs til oppgave")
 
-            val token = call.authToken()
-                ?: return@patch call.respond(HttpStatusCode.Unauthorized)
-            val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
+            val id = call.parameters["id"]?.toLong()
                 ?: return@patch call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
 
             val tildelRessursRequest = call.receive<TildelRessursRequest>()
 
-            oppgaveService.tildelRessursTilOppgave(
-                id = id,
-                versjon = Versjon(tildelRessursRequest.versjon),
-                navIdent = NavIdent(tildelRessursRequest.navIdent),
-                token = token
-            ).onSuccess {
-                call.respond(HttpStatusCode.OK, it)
-            }.onFailure {
-                call.respond(HttpStatusCode.InternalServerError)
+            transaction {
+                oppgaveService.tildelOppgave(
+                    id = id,
+                    navIdent = NavIdent(tildelRessursRequest.navIdent)
+                )
             }
         }
 
@@ -79,39 +69,19 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
 
             LOG.info("Token OK")
 
-            val id = call.parameters["id"]?.let { OppgaveId(it.toLong()) }
+            val id = call.parameters["id"]?.toLong()
                 ?: return@patch call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
 
             LOG.info("Uthenting av ID OK")
 
             val frigiOppgaveRequest = call.receive<FrigiOppgaveRequest>()
 
-            oppgaveService.frigiRessursFraOppgave(
-                id = id,
-                versjon = Versjon(frigiOppgaveRequest.versjon),
-                token = token
-            ).onSuccess {
-                LOG.info("Oppgave frigitt OK")
-                call.respond(HttpStatusCode.OK, it)
-            }.onFailure {
-                LOG.error("Frigjøring av oppgave feilet: ${it.message}")
-                call.respond(HttpStatusCode.InternalServerError)
+            transaction {
+                oppgaveService.frigiRessursFraOppgave(
+                    id = id,
+                )
             }
         }
     }
 }
 
-private fun map(it: SøkOppgaverResponse): OppgaverResponse {
-    return OppgaverResponse(
-        it.oppgaver.map {
-            Oppgave(
-                oppgaveId = it.id,
-                versjon = it.versjon,
-                oppgavetype = Oppgavetype.AVKLARINGSBEHOV,
-                foedselsnummer = it.aktoerId!!, //TODO: Fødselsnummer, d-nummer eller aktørId?
-                tilordnetRessurs = it.tilordnetRessurs,
-                opprettet = it.opprettetTidspunkt!!
-            )
-        }
-    )
-}

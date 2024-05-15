@@ -13,7 +13,7 @@ class FakeOppgaveClient : OppgaveGateway {
 
     override suspend fun endre(token: Token, oppgaveId: OppgaveId, request: PatchOppgaveRequest): Result<OpprettResponse> {
         val opprettResponse = OpprettResponse(
-            id = oppgaveId.asLong(),
+            id = oppgaveId,
             versjon = request.versjon.toInt() + 1,
             tilordnetRessurs = request.tilordnetRessurs,
             tema = "AAP",

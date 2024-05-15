@@ -1,19 +1,19 @@
 package oppgavestyring.config.db
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+
 import oppgavestyring.TestDatabase
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
+import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 class DatabaseSingletonTest {
     companion object {
@@ -61,7 +61,7 @@ class DatabaseSingletonTest {
 
             val id = testTable.insert {
                 it[someString] = "HELLLO!"
-                it[someTimeStamp] = Clock.System.now()
+                it[someTimeStamp] = Instant.now()
             } get testTable.id
 
             assertEquals(id, 1)

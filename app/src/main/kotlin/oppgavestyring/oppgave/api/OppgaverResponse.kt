@@ -1,19 +1,21 @@
 package oppgavestyring.oppgave.api
 
+
+import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
+import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
+import java.time.LocalDateTime
+
 data class OppgaverResponse(
     val oppgaver: List<Oppgave>,
 )
 
 data class Oppgave(
     val oppgaveId: Long,
-    val versjon: Int,
-    val oppgavetype: Oppgavetype,
+    val avklaringsbehov: Avklaringsbehovtype,
+    val status: Avklaringsbehovstatus,
     val foedselsnummer: String, //innbygger
-    val opprettet: String,
+    val avklaringsbehovOpprettetTid: LocalDateTime,
+    val behandlingOpprettetTid: LocalDateTime,
     val tilordnetRessurs: String? = null,
     val reservertTil: String? = null
 )
-
-enum class Oppgavetype {
-    AVKLARINGSBEHOV
-}

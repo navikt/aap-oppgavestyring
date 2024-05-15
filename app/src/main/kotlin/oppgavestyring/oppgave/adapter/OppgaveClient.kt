@@ -57,7 +57,7 @@ class OppgaveClient(private val config: Config) : OppgaveGateway {
     ): Result<OpprettResponse> {
         val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
 
-        val response = client.get("$host/api/v1/oppgaver/${oppgaveId.asLong()}") {
+        val response = client.get("$host/api/v1/oppgaver/${oppgaveId}") {
             accept(ContentType.Application.Json)
             header("X-Correlation-ID", UUID.randomUUID().toString())
             bearerAuth(obo)
@@ -92,7 +92,7 @@ class OppgaveClient(private val config: Config) : OppgaveGateway {
 
         val obo = azure.getOnBehalfOfToken(config.oppgave.scope, token.asString())
 
-        val response = client.patch("$host/api/v1/oppgaver/${oppgaveId.asLong()}") {
+        val response = client.patch("$host/api/v1/oppgaver/${oppgaveId}") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             header("X-Correlation-ID", UUID.randomUUID().toString())
