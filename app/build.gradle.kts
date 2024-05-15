@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "1.9.24"
     id("io.ktor.plugin") version "2.3.10"
@@ -57,6 +59,12 @@ tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "21"
     }
+
+    // https://stackoverflow.com/questions/77228513/flyway-unrecognised-migration-name-format-when-run-in-docker
+    withType<ShadowJar> {
+        mergeServiceFiles()
+    }
+
     withType<Test> {
         useJUnitPlatform()
     }
