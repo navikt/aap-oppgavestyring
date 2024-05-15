@@ -6,7 +6,7 @@ import io.ktor.http.*
 import oppgavestyring.TestDatabase
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.config.db.Flyway
-import oppgavestyring.oppgave.db.Oppgave
+import oppgavestyring.oppgave.db.Tildelt
 import oppgavestyring.oppgavestyringWithFakes
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -69,40 +69,103 @@ class ApiTest {
 
     }
 
-    @Test
-    fun `hent oppgave`() {
-        oppgavestyringWithFakes { fakes, client ->
-            val avklaringsbehovTidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)
-            val behandlingTidspunkt = avklaringsbehovTidspunkt.minusDays(3)
-            val personnummer = "12345678900"
 
-            val oppgaveId = transaction {
-                Oppgave.new {
-                    behandlingsreferanse = "23642"
-                    status = Avklaringsbehovstatus.OPPRETTET
-                    avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
-                    behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
-                    avklaringsbehovOpprettetTidspunkt = avklaringsbehovTidspunkt
-                    behandlingOpprettetTidspunkt = behandlingTidspunkt
-                    this.personnummer = personnummer
-                }.id.value
+    @Nested
+    inner class OppgaveDto {
+
+        @Test
+        fun `hent oppgave`() {
+            oppgavestyringWithFakes { fakes, client ->
+                val avklaringsbehovTidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)
+                val behandlingTidspunkt = avklaringsbehovTidspunkt.minusDays(3)
+                val personnummer = "12345678900"
+
+                val oppgaveId = transaction {
+                    oppgavestyring.oppgave.db.Oppgave.new {
+                        behandlingsreferanse = "23642"
+                        status = Avklaringsbehovstatus.OPPRETTET
+                        avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
+                        behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
+                        avklaringsbehovOpprettetTidspunkt = avklaringsbehovTidspunkt
+                        behandlingOpprettetTidspunkt = behandlingTidspunkt
+                        this.personnummer = personnummer
+                    }.id.value
+                }
+
+                val actual = client.get("/oppgaver/$oppgaveId") {
+                    bearerAuth("token")
+                    accept(ContentType.Application.Json)
+                }.body<oppgavestyring.oppgave.api.OppgaveDto>()
+
+                val expected = oppgavestyring.oppgave.api.OppgaveDto(
+                    oppgaveId = oppgaveId,
+                    avklaringsbehov = Avklaringsbehovtype.AVKLAR_SYKDOM,
+                    status = Avklaringsbehovstatus.OPPRETTET,
+                    foedselsnummer = personnummer,
+                    avklaringsbehovOpprettetTid = avklaringsbehovTidspunkt,
+                    behandlingOpprettetTid = behandlingTidspunkt
+                )
+
+                assertEquals(expected, actual)
             }
+        }
 
-            val actual = client.get("/oppgaver/$oppgaveId") {
-                bearerAuth("token")
-                accept(ContentType.Application.Json)
-            }.body<oppgavestyring.oppgave.api.Oppgave>()
+        @Test
+        fun `tildelOppgave`() {
+            oppgavestyringWithFakes { fakes, client ->
+                val oppgaveId = transaction {
+                    oppgavestyring.oppgave.db.Oppgave.new {
+                        behandlingsreferanse = "23642"
+                        status = Avklaringsbehovstatus.OPPRETTET
+                        avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
+                        behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
+                        avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
+                        behandlingOpprettetTidspunkt = LocalDateTime.now()
+                        personnummer = "3564589"
+                    }.id.value
+                }
 
-            val expected = oppgavestyring.oppgave.api.Oppgave(
-                oppgaveId = oppgaveId,
-                avklaringsbehov = Avklaringsbehovtype.AVKLAR_SYKDOM,
-                status = Avklaringsbehovstatus.OPPRETTET,
-                foedselsnummer = personnummer,
-                avklaringsbehovOpprettetTid = avklaringsbehovTidspunkt,
-                behandlingOpprettetTid = behandlingTidspunkt
-            )
+                val actual = client.patch("/oppgaver/$oppgaveId/tildelRessurs") {
+                    bearerAuth("token")
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        TildelRessursRequest(
+                            navIdent = "T123456",
+                            versjon = 12
+                        )
+                    )
+                }
 
-            assertEquals(expected, actual)
+                assertEquals(HttpStatusCode.NoContent, actual.status)
+            }
+        }
+
+        @Test
+        fun `frigi oppgave`() {
+            oppgavestyringWithFakes { fakes, client ->
+                val oppgaveId = transaction {
+                    val oppgave = oppgavestyring.oppgave.db.Oppgave.new {
+                        behandlingsreferanse = "23642"
+                        status = Avklaringsbehovstatus.OPPRETTET
+                        avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
+                        behandlingstype = Behandlingstype.FØRSTEGANGSBEHANDLING
+                        avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
+                        behandlingOpprettetTidspunkt = LocalDateTime.now()
+                        personnummer = "3564589"
+                    }
+                    Tildelt.new {
+                        ident = "T123456"
+                        this.oppgave = oppgave
+                    }
+                    oppgave.id.value
+                }
+
+                val actual = client.patch("/oppgaver/$oppgaveId/frigi") {
+                    bearerAuth("token")
+                }
+
+                assertEquals(HttpStatusCode.NoContent, actual.status)
+            }
         }
     }
 }

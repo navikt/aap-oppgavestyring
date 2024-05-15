@@ -6,7 +6,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.LOG
-import oppgavestyring.authToken
 import oppgavestyring.oppgave.NavIdent
 import oppgavestyring.oppgave.OppgaveService
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -17,9 +16,10 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
 
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
-            transaction {
-                oppgaveService.søk()
+            val oppgaver = transaction {
+                oppgaveService.søk().map { OppgaveDto.fromOppgave(it) }
             }
+            call.respond(OppgaverResponse(oppgaver))
         }
 
         get("/{id}") {
@@ -32,15 +32,7 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
                 val oppgave = oppgaveService.hent(
                     oppgaveId = id
                 )
-                Oppgave(
-                    oppgaveId = oppgave.id.value,
-                    avklaringsbehov = oppgave.avklaringsbehovtype,
-                    foedselsnummer = oppgave.personnummer,
-                    status = oppgave.status,
-                    avklaringsbehovOpprettetTid = oppgave.avklaringsbehovOpprettetTidspunkt,
-                    behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,
-                    tilordnetRessurs = oppgave.tildelt?.ident,
-                )
+                OppgaveDto.fromOppgave(oppgave)
             }
             call.respond(HttpStatusCode.OK, oppgave)
         }
@@ -59,13 +51,12 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
                     navIdent = NavIdent(tildelRessursRequest.navIdent)
                 )
             }
+
+            call.respond(HttpStatusCode.NoContent)
         }
 
         patch("/{id}/frigi") {
             LOG.info("Forsøker å frigi ressurs fra oppgave")
-
-            val token = call.authToken()
-                ?: return@patch call.respond(HttpStatusCode.Unauthorized)
 
             LOG.info("Token OK")
 
@@ -74,13 +65,14 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
 
             LOG.info("Uthenting av ID OK")
 
-            val frigiOppgaveRequest = call.receive<FrigiOppgaveRequest>()
-
             transaction {
                 oppgaveService.frigiRessursFraOppgave(
                     id = id,
                 )
             }
+
+            call.respond(HttpStatusCode.NoContent)
+
         }
     }
 }

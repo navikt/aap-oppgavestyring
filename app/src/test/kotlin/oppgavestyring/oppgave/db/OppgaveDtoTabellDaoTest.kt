@@ -26,7 +26,7 @@ fun generateOppgave() = Oppgave.new {
 }
 
 
-class OppgaveTabellDaoTest {
+class OppgaveDtoTabellDaoTest {
     companion object {
 
 
