@@ -16,7 +16,7 @@ class BehandlingsflytAdapter(
         oppgaveService.lukkOppgaverPåBehandling(behanlding.referanse)
 
         val åpentAvklaringsbehov = behanlding.getÅpentAvklaringsbehov()
-        if (åpentAvklaringsbehov != null) oppgaveService.opprett_v2(
+        if (åpentAvklaringsbehov != null) oppgaveService.opprett(
             personident = behanlding.personident,
             saksnummer = behanlding.saksnummer,
             avklaringsbehovtype = Avklaringsbehovtype.fraKode(åpentAvklaringsbehov.definisjon.type),

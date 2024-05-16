@@ -6,6 +6,7 @@ import oppgavestyring.behandlingsflyt.dto.Behandlingstype
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
+import org.jetbrains.exposed.sql.SizedIterable
 import java.time.LocalDateTime
 
 typealias Behandlingsreferanse = String
@@ -13,7 +14,7 @@ typealias Saksnummer = String
 
 class OppgaveService {
 
-    fun opprett_v2(
+    fun opprett(
         personident: String,
         saksnummer: Saksnummer,
         behandlingsreferanse: Behandlingsreferanse,
@@ -46,8 +47,12 @@ class OppgaveService {
         }
     }
 
-    fun søk(): List<Oppgave> {
-        return Oppgave.all().toList()
+    fun søk(): SizedIterable<Oppgave> {
+        return Oppgave.all()
+    }
+
+    fun hentÅpneOppgaver(): SizedIterable<Oppgave> {
+        return Oppgave.find { OppgaveTabell.status eq Avklaringsbehovstatus.OPPRETTET }
     }
 
     fun hent(oppgaveId: OppgaveId): Oppgave {

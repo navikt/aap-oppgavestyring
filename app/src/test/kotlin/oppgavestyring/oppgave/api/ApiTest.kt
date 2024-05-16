@@ -149,9 +149,8 @@ class ApiTest {
                 }
 
                 val actual = client.get("/oppgaver/${oppgave.id.value}") {
-                    bearerAuth("token")
                     accept(ContentType.Application.Json)
-                }.body<oppgavestyring.oppgave.api.OppgaveDto>()
+                }.body<OppgaveDto>()
 
                 val expected = OppgaveDto(
                     oppgaveId = oppgave.id.value,
@@ -170,6 +169,27 @@ class ApiTest {
                     .usingRecursiveComparison()
                     .ignoringFieldsMatchingRegexes("oppgaveOpprettet")
                     .isEqualTo(expected)
+            }
+        }
+
+        @Test
+        fun `hent alle oppgaver, verifiser at bare åpne oppgaver blir hentet`() {
+            oppgavestyringWithFakes{fakes, client ->
+                val åpenOppgaveId = transaction {
+                    genererOppgave().lukkOppgave()
+                    genererOppgave().id.value
+                }
+
+                val actual = client.get("/oppgaver") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isOne()
+
+                assertThat(actual.oppgaver.first().oppgaveId)
+                    .isEqualTo(åpenOppgaveId)
             }
         }
 

@@ -17,7 +17,7 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
             val oppgaver = transaction {
-                oppgaveService.søk().map { OppgaveDto.fromOppgave(it) }
+                oppgaveService.hentÅpneOppgaver().map { OppgaveDto.fromOppgave(it) }
             }
             call.respond(OppgaverResponse(oppgaver))
         }
