@@ -3,6 +3,7 @@ package oppgavestyring.oppgave.api
 
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
+import oppgavestyring.oppgave.Behandlingsreferanse
 import oppgavestyring.oppgave.db.Oppgave
 import java.time.LocalDateTime
 
@@ -12,6 +13,8 @@ data class OppgaverResponse(
 
 data class OppgaveDto(
     val oppgaveId: Long,
+    val behandlingsreferanse: Behandlingsreferanse,
+    val saksnummer: String,
     val avklaringsbehov: Avklaringsbehovtype,
     val status: Avklaringsbehovstatus,
     val foedselsnummer: String, //innbygger
@@ -23,6 +26,8 @@ data class OppgaveDto(
     companion object {
         fun fromOppgave(oppgave: Oppgave) = OppgaveDto(
             oppgaveId = oppgave.id.value,
+            behandlingsreferanse = oppgave.behandlingsreferanse,
+            saksnummer = oppgave.saksnummer,
             status = oppgave.status,
             foedselsnummer = oppgave.personnummer,
             tilordnetRessurs = oppgave.tildelt?.ident,

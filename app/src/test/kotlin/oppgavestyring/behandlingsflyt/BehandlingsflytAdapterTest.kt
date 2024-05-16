@@ -42,12 +42,12 @@ class BehandlingsflytAdapterTest {
     @Test
     fun `mapBehnadlingshistorikkTilOppgaveHendelser oppretter oppgave ved åpent avklaringsbehov`() {
         val request = generateBehandlingshistorikkRequest()
-        every { oppgaveService.opprett_v2(any(), any(), any(), any(), any(), any()) } returns mockk<Oppgave>()
+        every { oppgaveService.opprett_v2(any(), any(), any(), any(), any(), any(), any()) } returns mockk<Oppgave>()
 
         behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
 
 
-        verify(exactly = 1){ oppgaveService.opprett_v2(any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 1){ oppgaveService.opprett_v2(any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test

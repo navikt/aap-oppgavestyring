@@ -16,6 +16,7 @@ import kotlin.test.assertEquals
 
 
 fun generateOppgave() = Oppgave.new {
+    saksnummer = "23452345"
     behandlingsreferanse = "behandlingsreferanse"
     behandlingstype = Behandlingstype.Førstegangsbehandling
     status = Avklaringsbehovstatus.OPPRETTET

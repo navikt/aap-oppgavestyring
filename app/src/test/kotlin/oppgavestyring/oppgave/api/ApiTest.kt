@@ -86,6 +86,7 @@ class ApiTest {
 
                 val oppgaveId = transaction {
                     oppgavestyring.oppgave.db.Oppgave.new {
+                        saksnummer = "2352345"
                         behandlingsreferanse = "23642"
                         status = Avklaringsbehovstatus.OPPRETTET
                         avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
@@ -103,6 +104,8 @@ class ApiTest {
 
                 val expected = oppgavestyring.oppgave.api.OppgaveDto(
                     oppgaveId = oppgaveId,
+                    saksnummer = "2352345",
+                    behandlingsreferanse = "23642",
                     avklaringsbehov = Avklaringsbehovtype.AVKLAR_SYKDOM,
                     status = Avklaringsbehovstatus.OPPRETTET,
                     foedselsnummer = personnummer,
@@ -119,6 +122,7 @@ class ApiTest {
             oppgavestyringWithFakes { fakes, client ->
                 val oppgaveId = transaction {
                     oppgavestyring.oppgave.db.Oppgave.new {
+                        saksnummer = "23424"
                         behandlingsreferanse = "23642"
                         status = Avklaringsbehovstatus.OPPRETTET
                         avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
@@ -149,6 +153,7 @@ class ApiTest {
             oppgavestyringWithFakes { fakes, client ->
                 val oppgaveId = transaction {
                     val oppgave = oppgavestyring.oppgave.db.Oppgave.new {
+                        saksnummer = "23452345"
                         behandlingsreferanse = "23642"
                         status = Avklaringsbehovstatus.OPPRETTET
                         avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM

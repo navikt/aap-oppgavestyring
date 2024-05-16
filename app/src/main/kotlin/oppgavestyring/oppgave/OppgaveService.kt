@@ -9,11 +9,13 @@ import oppgavestyring.oppgave.db.Tildelt
 import java.time.LocalDateTime
 
 typealias Behandlingsreferanse = String
+typealias Saksnummer = String
 
 class OppgaveService {
 
     fun opprett_v2(
         personident: String,
+        saksnummer: Saksnummer,
         behandlingsreferanse: Behandlingsreferanse,
         behandlingstype: Behandlingstype,
         avklaringsbehovtype: Avklaringsbehovtype,
@@ -21,6 +23,7 @@ class OppgaveService {
         behandlingOpprettetTidspunkt: LocalDateTime
     ): Oppgave {
         return Oppgave.new {
+            this.saksnummer = saksnummer
             this.behandlingsreferanse = behandlingsreferanse
             this.behandlingstype = behandlingstype
             this.avklaringsbehovtype = avklaringsbehovtype

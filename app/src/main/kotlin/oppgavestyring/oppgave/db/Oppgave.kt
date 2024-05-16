@@ -17,6 +17,7 @@ class Oppgave(id: EntityID<Long>): LongEntity(id) {
 
     var behandlingsreferanse by OppgaveTabell.behandlingsreferanse
     var behandlingstype by OppgaveTabell.behandlingstype
+    var saksnummer by OppgaveTabell.saksnummer
     var status by OppgaveTabell.status
     var avklaringsbehovtype by OppgaveTabell.avklaringbehovtype
     var gjelderverdi by OppgaveTabell.gjelderverdi
@@ -47,6 +48,7 @@ class Tildelt(id: EntityID<Long>): LongEntity(id) {
 object OppgaveTabell: LongIdTable("OPPGAVE") {
     val behandlingsreferanse = varchar("BEHANDLINGSREFERANSE", 50)
     val behandlingstype = enumerationByName("BEHANDLINGSTYPE", 50, Behandlingstype::class)
+    val saksnummer = varchar("SAKSNUMMER", 50)
     val status = enumerationByName("STATUS", 50, Avklaringsbehovstatus::class)
     val avklaringbehovtype = enumerationByName("AVKLARINGBEHOVTYPE", 50, Avklaringsbehovtype::class)
     val gjelderverdi = varchar("GJELDERVERDI", 50).default("")
