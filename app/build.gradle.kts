@@ -49,6 +49,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.assertj:assertj-core:3.25.3")
     testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
 repositories {

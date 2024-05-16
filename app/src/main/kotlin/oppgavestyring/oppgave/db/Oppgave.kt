@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.javatime.timestamp
@@ -24,6 +25,7 @@ class Oppgave(id: EntityID<Long>): LongEntity(id) {
     var avklaringsbehovOpprettetTidspunkt by OppgaveTabell.avklaringsbehovOpprettetTidspunkt
     var behandlingOpprettetTidspunkt by OppgaveTabell.behandlingOpprettetTidspunkt
     var personnummer by OppgaveTabell.personnummer
+    val tidsstempel by OppgaveTabell.tidsstempel
 
     val utførere by Utfører referrersOn UtførerTabell.oppgave
     val tildelt by Tildelt optionalBackReferencedOn TildeltTabell.oppgave
@@ -55,6 +57,7 @@ object OppgaveTabell: LongIdTable("OPPGAVE") {
     val personnummer = varchar("PERSONNUMMER", 11)
     val avklaringsbehovOpprettetTidspunkt = datetime("AVKLARINGSBEHOV_OPPRETTET_TIDSPUNKT")
     val behandlingOpprettetTidspunkt = datetime("BEHANDLING_OPPRETTET_TIDSPUNKT")
+    val tidsstempel = datetime("TIDSSTEMPEL").defaultExpression(CurrentDateTime)
 }
 
 object UtførerTabell: LongIdTable("UTFORER") {

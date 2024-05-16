@@ -9,6 +9,7 @@ import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
 import oppgavestyring.oppgave.db.Tildelt
 import oppgavestyring.oppgavestyringWithFakes
+import org.assertj.core.api.Assertions
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
@@ -106,14 +107,19 @@ class ApiTest {
                     oppgaveId = oppgaveId,
                     saksnummer = "2352345",
                     behandlingsreferanse = "23642",
+                    behandlingstype = Behandlingstype.Førstegangsbehandling,
                     avklaringsbehov = Avklaringsbehovtype.AVKLAR_SYKDOM,
                     status = Avklaringsbehovstatus.OPPRETTET,
                     foedselsnummer = personnummer,
                     avklaringsbehovOpprettetTid = avklaringsbehovTidspunkt,
-                    behandlingOpprettetTid = behandlingTidspunkt
+                    behandlingOpprettetTid = behandlingTidspunkt,
+                    oppgaveOpprettet = LocalDateTime.now()
                 )
 
-                assertEquals(expected, actual)
+                Assertions.assertThat(actual)
+                    .usingRecursiveComparison()
+                    .ignoringFieldsMatchingRegexes("oppgaveOpprettet")
+                    .isEqualTo(expected)
             }
         }
 
