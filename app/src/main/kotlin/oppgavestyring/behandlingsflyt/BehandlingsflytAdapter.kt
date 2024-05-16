@@ -13,10 +13,8 @@ class BehandlingsflytAdapter(
     fun mapBehnadlingshistorikkTilOppgaveHendelser(
         behanlding: BehandlingshistorikkRequest) {
 
-        /**
-            Hvis åpent avklaringsbehov, lukk åpen oppgave på behandling, lag ny oppgave
+        oppgaveService.lukkOppgaverPåBehandling(behanlding.referanse)
 
-         */
         val åpentAvklaringsbehov = behanlding.getÅpentAvklaringsbehov()
         if (åpentAvklaringsbehov != null) oppgaveService.opprett_v2(
             personident = behanlding.personident,
@@ -27,9 +25,6 @@ class BehandlingsflytAdapter(
             avklaringsbehovOpprettetTidspunkt = åpentAvklaringsbehov.getOpprettelsestidspunkt(),
             behandlingOpprettetTidspunkt = behanlding.opprettetTidspunkt
         )
-        else if (behanlding.erLukket()) {
-            oppgaveService.lukkOppgave(behanlding.referanse)
-        }
 
     }
 

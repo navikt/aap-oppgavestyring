@@ -29,6 +29,8 @@ class Oppgave(id: EntityID<Long>): LongEntity(id) {
 
     val utførere by Utfører referrersOn UtførerTabell.oppgave
     val tildelt by Tildelt optionalBackReferencedOn TildeltTabell.oppgave
+
+    fun lukkOppgave() { status = Avklaringsbehovstatus.AVSLUTTET }
 }
 
 class Utfører(id: EntityID<Long>): LongEntity(id) {

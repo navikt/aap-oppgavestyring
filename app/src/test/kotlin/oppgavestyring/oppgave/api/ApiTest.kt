@@ -1,5 +1,6 @@
 package oppgavestyring.oppgave.api
 
+import behandlingsflytRequest
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -7,12 +8,16 @@ import oppgavestyring.TestDatabase
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
+import oppgavestyring.oppgave.db.Oppgave
+import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
 import oppgavestyring.oppgavestyringWithFakes
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -32,39 +37,22 @@ class ApiTest {
         }
     }
 
+    @BeforeEach
+    fun setup() {
+        TestDatabase.reset()
+        Flyway.migrate(TestDatabase.getConnection())
+    }
+
     @Nested
-    inner class `behandling`{
+    inner class `behandling route` {
 
         @Test
         fun `opprett oppgave`() {
             oppgavestyringWithFakes { _, client ->
                 val actual = client.post("/behandling") {
                     contentType(ContentType.Application.Json)
-                    bearerAuth("token")
-                    accept(ContentType.Application.Json)
-                    setBody("""{
-                        "personident" : "14098929550",
-                        "saksnummer" : "24352363",
-                        "referanse" : "yolo",
-                        "behandlingType" : "Klage",
-                        "status" : "PÅ_VENT",
-                        "avklaringsbehov" : [ 
-                            {
-                                "definisjon" : {
-                                    "type" : "5003",
-                                    "behovType" : "MANUELT_PÅKREVD",
-                                    "løsesISteg" : "BARNETILLEGG"
-                                },
-                                "status" : "OPPRETTET",
-                                "endringer" : [ {
-                                    "status" : "OPPRETTET",
-                                    "tidsstempel" : "2024-05-15T16:27:31.996299178",
-                                    "frist" : "2025-05-15",
-                                    "endretAv" : "T123456"
-                                } ]
-                            } ],
-                        "opprettetTidspunkt" : "2024-05-15T16:27:31.985882524"
-                    }"""
+                    setBody(
+                        behandlingsflytRequest
                     )
                 }
 
@@ -72,51 +60,113 @@ class ApiTest {
             }
         }
 
+
+        @Test
+        fun `lukk oppgave på samme behandling`() {
+            oppgavestyringWithFakes { _, client ->
+                val oppgave = transaction {
+                    Oppgave.new {
+                        saksnummer = "2352345"
+                        behandlingsreferanse = "354636"
+                        personnummer = "12345432543"
+                        status = Avklaringsbehovstatus.OPPRETTET
+                        avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
+                        behandlingstype = Behandlingstype.Førstegangsbehandling
+                        avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
+                        behandlingOpprettetTidspunkt = LocalDateTime.now()
+                        this.personnummer = personnummer
+                    }
+                }
+
+                client.post("/behandling") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        BehandlingshistorikkRequest(
+                            saksnummer = oppgave.saksnummer,
+                            behandlingType = oppgave.behandlingstype,
+                            status = Behandlingstatus.OPPRETTET,
+                            personident = oppgave.personnummer,
+                            avklaringsbehov = listOf(
+                                AvklaringsbehovDto(
+                                    definisjon = Definisjon(Avklaringsbehovtype.FATTE_VEDTAK.kode),
+                                    status = Avklaringsbehovstatus.OPPRETTET,
+                                    endringer = listOf(
+                                        AvklaringsbehovhendelseEndring(
+                                            status = Avklaringsbehovstatus.OPPRETTET,
+                                            endretAv = "yolo",
+                                            tidsstempel = LocalDateTime.now()
+                                        )
+                                    )
+                                )
+                            ),
+                            opprettetTidspunkt = LocalDateTime.now(),
+                            referanse = oppgave.behandlingsreferanse
+
+                        )
+                    )
+                }
+
+                transaction {
+                    oppgave.refresh()
+                    val nyOppgave = Oppgave.find { (OppgaveTabell.saksnummer eq oppgave.saksnummer) and
+                            (OppgaveTabell.avklaringbehovtype eq Avklaringsbehovtype.FATTE_VEDTAK) and
+                            (OppgaveTabell.status eq Avklaringsbehovstatus.OPPRETTET)
+                    }
+
+                    assertThat(oppgave.status).isEqualTo(Avklaringsbehovstatus.AVSLUTTET)
+                    assertThat(nyOppgave).isNotNull
+                }
+            }
+
+
+        }
+
     }
 
 
     @Nested
-    inner class OppgaveDto {
+    inner class `oppgave route` {
+
+        fun genererOppgave() = Oppgave.new {
+            saksnummer = "2352345"
+            behandlingsreferanse = "23642"
+            personnummer = "12345432543"
+            status = Avklaringsbehovstatus.OPPRETTET
+            avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
+            behandlingstype = Behandlingstype.Førstegangsbehandling
+            avklaringsbehovOpprettetTidspunkt =
+                LocalDateTime.of(2020, 1, 1, 1, 1, 1, 222).truncatedTo(ChronoUnit.MILLIS)
+            behandlingOpprettetTidspunkt = LocalDateTime.of(2021, 1, 1, 1, 1, 1, 222).truncatedTo(ChronoUnit.MILLIS)
+            this.personnummer = personnummer
+        }
 
         @Test
         fun `hent oppgave`() {
             oppgavestyringWithFakes { fakes, client ->
-                val avklaringsbehovTidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)
-                val behandlingTidspunkt = avklaringsbehovTidspunkt.minusDays(3)
-                val personnummer = "12345678900"
 
-                val oppgaveId = transaction {
-                    oppgavestyring.oppgave.db.Oppgave.new {
-                        saksnummer = "2352345"
-                        behandlingsreferanse = "23642"
-                        status = Avklaringsbehovstatus.OPPRETTET
-                        avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
-                        behandlingstype = Behandlingstype.Førstegangsbehandling
-                        avklaringsbehovOpprettetTidspunkt = avklaringsbehovTidspunkt
-                        behandlingOpprettetTidspunkt = behandlingTidspunkt
-                        this.personnummer = personnummer
-                    }.id.value
+                val oppgave = transaction {
+                    genererOppgave()
                 }
 
-                val actual = client.get("/oppgaver/$oppgaveId") {
+                val actual = client.get("/oppgaver/${oppgave.id.value}") {
                     bearerAuth("token")
                     accept(ContentType.Application.Json)
                 }.body<oppgavestyring.oppgave.api.OppgaveDto>()
 
-                val expected = oppgavestyring.oppgave.api.OppgaveDto(
-                    oppgaveId = oppgaveId,
+                val expected = OppgaveDto(
+                    oppgaveId = oppgave.id.value,
                     saksnummer = "2352345",
                     behandlingsreferanse = "23642",
                     behandlingstype = Behandlingstype.Førstegangsbehandling,
                     avklaringsbehov = Avklaringsbehovtype.AVKLAR_SYKDOM,
                     status = Avklaringsbehovstatus.OPPRETTET,
-                    foedselsnummer = personnummer,
-                    avklaringsbehovOpprettetTid = avklaringsbehovTidspunkt,
-                    behandlingOpprettetTid = behandlingTidspunkt,
+                    foedselsnummer = oppgave.personnummer,
+                    avklaringsbehovOpprettetTid = oppgave.avklaringsbehovOpprettetTidspunkt,
+                    behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,
                     oppgaveOpprettet = LocalDateTime.now()
                 )
 
-                Assertions.assertThat(actual)
+                assertThat(actual)
                     .usingRecursiveComparison()
                     .ignoringFieldsMatchingRegexes("oppgaveOpprettet")
                     .isEqualTo(expected)
@@ -127,16 +177,7 @@ class ApiTest {
         fun `tildelOppgave`() {
             oppgavestyringWithFakes { fakes, client ->
                 val oppgaveId = transaction {
-                    oppgavestyring.oppgave.db.Oppgave.new {
-                        saksnummer = "23424"
-                        behandlingsreferanse = "23642"
-                        status = Avklaringsbehovstatus.OPPRETTET
-                        avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
-                        behandlingstype = Behandlingstype.Førstegangsbehandling
-                        avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
-                        behandlingOpprettetTidspunkt = LocalDateTime.now()
-                        personnummer = "3564589"
-                    }.id.value
+                    genererOppgave().id.value
                 }
 
                 val actual = client.patch("/oppgaver/$oppgaveId/tildelRessurs") {
@@ -150,24 +191,16 @@ class ApiTest {
                     )
                 }
 
-                assertEquals(HttpStatusCode.NoContent, actual.status)
+                assertThat(actual.status)
+                    .isEqualTo(HttpStatusCode.OK)
             }
         }
 
         @Test
-        fun `frigi oppgave`() {
+        fun `frigi oppgave fjerner tildeling fra oppgave`() {
             oppgavestyringWithFakes { fakes, client ->
                 val oppgaveId = transaction {
-                    val oppgave = oppgavestyring.oppgave.db.Oppgave.new {
-                        saksnummer = "23452345"
-                        behandlingsreferanse = "23642"
-                        status = Avklaringsbehovstatus.OPPRETTET
-                        avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
-                        behandlingstype = Behandlingstype.Førstegangsbehandling
-                        avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
-                        behandlingOpprettetTidspunkt = LocalDateTime.now()
-                        personnummer = "3564589"
-                    }
+                    val oppgave = genererOppgave()
                     Tildelt.new {
                         ident = "T123456"
                         this.oppgave = oppgave
@@ -175,11 +208,13 @@ class ApiTest {
                     oppgave.id.value
                 }
 
-                val actual = client.patch("/oppgaver/$oppgaveId/frigi") {
+                client.patch("/oppgaver/$oppgaveId/frigi") {
                     bearerAuth("token")
                 }
 
-                assertEquals(HttpStatusCode.NoContent, actual.status)
+                transaction {
+                    assertThat(Oppgave[oppgaveId].tildelt).isNull()
+                }
             }
         }
     }

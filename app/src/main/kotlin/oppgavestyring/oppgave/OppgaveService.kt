@@ -54,9 +54,9 @@ class OppgaveService {
         return Oppgave[oppgaveId]
     }
 
-    fun lukkOppgave(behandlingsreferanse:  Behandlingsreferanse) {
+    fun lukkOppgaverPåBehandling(behandlingsreferanse:  Behandlingsreferanse) {
         Oppgave.find { OppgaveTabell.behandlingsreferanse eq behandlingsreferanse }
-            .first().status = Avklaringsbehovstatus.OPPRETTET
+            .forEach { it.lukkOppgave() }
     }
 
 }

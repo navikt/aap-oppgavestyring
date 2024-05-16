@@ -52,7 +52,7 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
                 )
             }
 
-            call.respond(HttpStatusCode.NoContent)
+            call.respond(HttpStatusCode.OK)
         }
 
         patch("/{id}/frigi") {
@@ -71,7 +71,7 @@ fun Route.oppgaver(oppgaveService: OppgaveService) {
                 )
             }
 
-            call.respond(HttpStatusCode.NoContent)
+            call.respond(HttpStatusCode.OK)
 
         }
     }

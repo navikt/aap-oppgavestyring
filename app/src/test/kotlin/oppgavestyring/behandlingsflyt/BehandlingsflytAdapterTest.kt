@@ -7,6 +7,7 @@ import io.mockk.verify
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.oppgave.OppgaveService
 import oppgavestyring.oppgave.db.Oppgave
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -38,6 +39,11 @@ class BehandlingsflytAdapterTest {
     val oppgaveService = mockk<OppgaveService>()
     val behandlingsflytAdapter = BehandlingsflytAdapter(oppgaveService)
 
+    @BeforeEach
+    fun setup() {
+        justRun { oppgaveService.lukkOppgaverPåBehandling(any()) }
+    }
+
 
     @Test
     fun `mapBehnadlingshistorikkTilOppgaveHendelser oppretter oppgave ved åpent avklaringsbehov`() {
@@ -55,13 +61,13 @@ class BehandlingsflytAdapterTest {
         val request = generateBehandlingshistorikkRequest().copy(status = Behandlingstatus.AVSLUTTET,
             avklaringsbehov = emptyList()
         )
-        justRun { oppgaveService.lukkOppgave(any()) }
+        justRun { oppgaveService.lukkOppgaverPåBehandling(any()) }
 
 
         behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
 
 
-        verify(exactly = 1){ oppgaveService.lukkOppgave(request.referanse) }
+        verify(exactly = 1){ oppgaveService.lukkOppgaverPåBehandling(request.referanse) }
     }
 
     @Test
@@ -69,11 +75,11 @@ class BehandlingsflytAdapterTest {
         val request = generateBehandlingshistorikkRequest().copy(
             avklaringsbehov = listOf(generateAvklaringsbehovRequest().copy(status = Avklaringsbehovstatus.AVSLUTTET))
         )
-        justRun { oppgaveService.lukkOppgave(any()) }
+        justRun { oppgaveService.lukkOppgaverPåBehandling(any()) }
 
         behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
 
-        verify(exactly = 1){ oppgaveService.lukkOppgave(request.referanse) }
+        verify(exactly = 1){ oppgaveService.lukkOppgaverPåBehandling(request.referanse) }
     }
 
 }
