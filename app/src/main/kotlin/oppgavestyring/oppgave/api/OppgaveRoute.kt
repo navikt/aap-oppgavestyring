@@ -10,14 +10,22 @@ import oppgavestyring.oppgave.NavIdent
 import oppgavestyring.oppgave.OppgaveService
 import org.jetbrains.exposed.sql.transactions.transaction
 
+
 fun Route.oppgaver(oppgaveService: OppgaveService) {
 
     route("/oppgaver") {
 
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
+
+            val searchParams = parseUrlFiltering(call.request.queryParameters)
             val oppgaver = transaction {
-                oppgaveService.hentÅpneOppgaver().map { OppgaveDto.fromOppgave(it) }
+                val oppgaver = if (!searchParams.isEmpty())
+                    oppgaveService.søk(searchParams)
+                else
+                    oppgaveService.hentÅpneOppgaver()
+
+                oppgaver.map { OppgaveDto.fromOppgave(it) }
             }
             call.respond(OppgaverResponse(oppgaver))
         }

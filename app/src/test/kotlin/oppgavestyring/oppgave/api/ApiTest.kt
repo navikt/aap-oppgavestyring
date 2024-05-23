@@ -194,6 +194,78 @@ class ApiTest {
         }
 
         @Test
+        fun `hent alle oppgaver med sortering på $property`() {
+            val sorteringsParameter = "?sortering=behandlingOpprettetTid=desc"
+
+            oppgavestyringWithFakes{fakes, client ->
+                val førsteOppgave = transaction {
+                    genererOppgave().behandlingOpprettetTidspunkt = LocalDateTime.of(2020, 10, 1, 10, 10, 10)
+                    val førsteOppgave = genererOppgave()
+                        førsteOppgave.behandlingOpprettetTidspunkt = LocalDateTime.of(2020, 10, 1, 10, 10, 11)
+                    førsteOppgave.id.value
+                }
+
+                val actual = client.get("/oppgaver$sorteringsParameter") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isEqualTo(2)
+
+                assertThat(actual.oppgaver.first().oppgaveId)
+                    .isEqualTo(førsteOppgave)
+            }
+        }
+
+        @Test
+        fun `hent alle oppgaver med filtrering på property`() {
+            val sorteringsParameter = "?filtrering=avklaringsbehov=AVKLAR_SYKDOM"
+
+            oppgavestyringWithFakes{fakes, client ->
+                val førsteOppgave = transaction {
+                    genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_STUDENT
+                    genererOppgave().id.value
+                }
+
+                val actual = client.get("/oppgaver$sorteringsParameter") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isEqualTo(1)
+
+                assertThat(actual.oppgaver.first().oppgaveId)
+                    .isEqualTo(førsteOppgave)
+            }
+        }
+
+        @Test
+        fun `hent alle oppgaver med filtrering på flere verdier av samme property`() {
+            val sorteringsParameter = "?filtrering=avklaringsbehov%3DAVKLAR_STUDENT%26avklaringsbehov%3DAVKLAR_BISTANDSBEHOV"
+
+            oppgavestyringWithFakes{fakes, client ->
+                transaction {
+                    genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_STUDENT
+                    genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_BISTANDSBEHOV
+                    genererOppgave()
+                }
+
+                val actual = client.get("/oppgaver$sorteringsParameter") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isEqualTo(2)
+
+                assertThat(actual.oppgaver.map { it.avklaringsbehov })
+                    .doesNotContain(Avklaringsbehovtype.AVKLAR_SYKDOM)
+            }
+        }
+
+        @Test
         fun `tildelOppgave`() {
             oppgavestyringWithFakes { fakes, client ->
                 val oppgaveId = transaction {

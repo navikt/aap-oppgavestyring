@@ -16,6 +16,7 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 class Oppgave(id: EntityID<Long>): LongEntity(id) {
     companion object : LongEntityClass<Oppgave>(OppgaveTabell)
 
+
     var behandlingsreferanse by OppgaveTabell.behandlingsreferanse
     var behandlingstype by OppgaveTabell.behandlingstype
     var saksnummer by OppgaveTabell.saksnummer
