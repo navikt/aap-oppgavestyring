@@ -4,6 +4,7 @@ package oppgavestyring.oppgave.db
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.oppgave.api.EnumConverter
 import oppgavestyring.oppgave.api.Filterable
 import oppgavestyring.oppgave.api.Sortable
 import org.jetbrains.exposed.dao.LongEntity
@@ -60,7 +61,7 @@ object OppgaveTabell: LongIdTable("OPPGAVE") {
     val saksnummer = varchar("SAKSNUMMER", 50)
     @Filterable
     val status = enumerationByName("STATUS", 50, Avklaringsbehovstatus::class)
-    @Filterable
+    @Filterable(EnumConverter<Avklaringsbehovtype::class>)
     val avklaringbehovtype = enumerationByName("AVKLARINGBEHOVTYPE", 50, Avklaringsbehovtype::class)
     val gjelderverdi = varchar("GJELDERVERDI", 50).default("")
     val personnummer = varchar("PERSONNUMMER", 11)

@@ -11,6 +11,7 @@ import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import java.time.LocalDateTime
 
 typealias Behandlingsreferanse = String
@@ -52,13 +53,11 @@ class OppgaveService {
     }
 
     fun søk(searchParams: OppgaveParams<OppgaveTabell>): SizedIterable<Oppgave> {
-        val yolo = searchParams.sorting.entries.first()
-        val op = Oppgave
+
         val ll = searchParams.filters.map {
             it.key.get(OppgaveTabell).eq(it.value)
         }.toTypedArray()
-        val fggg = SqlExpressionBuilder.concat(*ll)
-        return Oppgave.find { fggg }
+        return Oppgave.find { ll.reduce { acc, value -> acc.and(value)} }
 
             .orderBy(*searchParams.sorting.map { it.key.get(OppgaveTabell) to it.value }.toTypedArray())
     }

@@ -2,19 +2,28 @@ package oppgavestyring.oppgave.api
 
 import io.ktor.http.*
 import io.ktor.util.*
+import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.Table
-import java.lang.reflect.TypeVariable
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
+interface Transformer<T, G> {
+    fun transform(fromValue: T): G
+}
+
+class EnumConverter<T: Enum<T>>(val enumClass: Class<T>): Transformer<String, T> {
+    override fun transform(string: String) = enumClass.enumConstants.first { it.name == string }
+
+}
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Sortable
 
 @Target(AnnotationTarget.PROPERTY)
-annotation class Filterable
+annotation class Filterable(val transformer: KClass<EnumConverter<Avklaringsbehovtype>>)
 
 enum class SearchParams {
     sortering,

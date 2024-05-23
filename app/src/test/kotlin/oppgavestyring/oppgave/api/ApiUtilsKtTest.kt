@@ -64,7 +64,7 @@ class ApiUtilsKtTest{
             paramBuilder.append(SearchParams.filtrering.name, "$key=${Avklaringsbehovtype.FATTE_VEDTAK}")
             val result = parseUrlFiltering<OppgaveTabell>(paramBuilder.build())
 
-            val prop = OppgaveTabell::class.memberProperties.find { it.name == key }!! as KProperty1<OppgaveTabell, Column<String>>
+            val prop = OppgaveTabell::class.memberProperties.find { it.name == key }!! as KProperty1<OppgaveTabell, Column<Any>>
 
             Assertions.assertThat(result.filters.keys)
                 .contains(prop)
@@ -84,7 +84,7 @@ class ApiUtilsKtTest{
 
             val result = parseUrlFiltering<OppgaveTabell>(paramBuilder.build())
 
-            val prop = OppgaveTabell::class.memberProperties.find { it.name == key }!! as KProperty1<OppgaveTabell, Column<String>>
+            val prop = OppgaveTabell::class.memberProperties.find { it.name == key }!! as KProperty1<OppgaveTabell, Column<Any>>
 
             Assertions.assertThat(result.filters.keys)
                 .contains(prop)

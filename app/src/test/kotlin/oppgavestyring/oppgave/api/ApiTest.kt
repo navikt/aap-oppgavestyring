@@ -220,7 +220,7 @@ class ApiTest {
 
         @Test
         fun `hent alle oppgaver med filtrering på $property`() {
-            val sorteringsParameter = "?filtreriong=avklaringbehovtype=AVKLAR_SYKDOM"
+            val sorteringsParameter = "?filtrering=avklaringbehovtype=AVKLAR_SYKDOM"
 
             oppgavestyringWithFakes{fakes, client ->
                 val førsteOppgave = transaction {
