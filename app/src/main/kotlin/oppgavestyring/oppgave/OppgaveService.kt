@@ -3,10 +3,14 @@ package oppgavestyring.oppgave
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.oppgave.api.OppgaveParams
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SizedIterable
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.time.LocalDateTime
 
 typealias Behandlingsreferanse = String
@@ -47,8 +51,16 @@ class OppgaveService {
         }
     }
 
-    fun søk(): SizedIterable<Oppgave> {
-        return Oppgave.all()
+    fun søk(searchParams: OppgaveParams<OppgaveTabell>): SizedIterable<Oppgave> {
+        val yolo = searchParams.sorting.entries.first()
+        val op = Oppgave
+        val ll = searchParams.filters.map {
+            it.key.get(OppgaveTabell).eq(it.value)
+        }.toTypedArray()
+        val fggg = SqlExpressionBuilder.concat(*ll)
+        return Oppgave.find { fggg }
+
+            .orderBy(*searchParams.sorting.map { it.key.get(OppgaveTabell) to it.value }.toTypedArray())
     }
 
     fun hentÅpneOppgaver(): SizedIterable<Oppgave> {

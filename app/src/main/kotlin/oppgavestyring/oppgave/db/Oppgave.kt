@@ -4,6 +4,8 @@ package oppgavestyring.oppgave.db
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.oppgave.api.Filterable
+import oppgavestyring.oppgave.api.Sortable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -15,6 +17,7 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 class Oppgave(id: EntityID<Long>): LongEntity(id) {
     companion object : LongEntityClass<Oppgave>(OppgaveTabell)
+
 
     var behandlingsreferanse by OppgaveTabell.behandlingsreferanse
     var behandlingstype by OppgaveTabell.behandlingstype
@@ -50,14 +53,20 @@ class Tildelt(id: EntityID<Long>): LongEntity(id) {
 }
 
 object OppgaveTabell: LongIdTable("OPPGAVE") {
+    @Sortable
     val behandlingsreferanse = varchar("BEHANDLINGSREFERANSE", 50)
+    @Filterable
     val behandlingstype = enumerationByName("BEHANDLINGSTYPE", 50, Behandlingstype::class)
     val saksnummer = varchar("SAKSNUMMER", 50)
+    @Filterable
     val status = enumerationByName("STATUS", 50, Avklaringsbehovstatus::class)
+    @Filterable
     val avklaringbehovtype = enumerationByName("AVKLARINGBEHOVTYPE", 50, Avklaringsbehovtype::class)
     val gjelderverdi = varchar("GJELDERVERDI", 50).default("")
     val personnummer = varchar("PERSONNUMMER", 11)
+    @Sortable
     val avklaringsbehovOpprettetTidspunkt = datetime("AVKLARINGSBEHOV_OPPRETTET_TIDSPUNKT")
+    @Sortable
     val behandlingOpprettetTidspunkt = datetime("BEHANDLING_OPPRETTET_TIDSPUNKT")
     val tidsstempel = datetime("TIDSSTEMPEL").defaultExpression(CurrentDateTime)
 }
