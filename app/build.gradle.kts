@@ -36,7 +36,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.flywaydb:flyway-core:10.12.0")
-    implementation("org.flywaydb:flyway-database-postgresql:10.12.0")
+    implementation("org.flywaydb:flyway-database-postgresql:10.13.0")
     implementation("com.zaxxer:HikariCP:5.1.0")
     runtimeOnly("org.postgresql:postgresql:42.7.3")
     testImplementation("org.testcontainers:postgresql:1.19.8")
