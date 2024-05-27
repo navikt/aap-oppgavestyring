@@ -3,17 +3,17 @@ package oppgavestyring.oppgave
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
-import oppgavestyring.oppgave.api.OppgaveDto
-import oppgavestyring.oppgave.api.OppgaveParams
+import oppgavestyring.oppgave.api.*
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SizedIterable
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
-import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 typealias Behandlingsreferanse = String
 typealias Saksnummer = String
@@ -54,38 +54,15 @@ class OppgaveService {
     }
 
     fun søk(searchParams: OppgaveParams): SizedIterable<Oppgave> {
-        val filters = searchParams.filters.map { filter ->
-            when (filter.key) {
-                OppgaveDto::behandlingstype.name -> OppgaveTabell::behandlingstype.get()
-                    .inList(filter.value.map { Behandlingstype.valueOf(it) })
-
-                OppgaveDto::avklaringsbehov.name -> OppgaveTabell::avklaringbehovtype.get()
-                    .inList(filter.value.map { Avklaringsbehovtype.valueOf(it) })
-
-                OppgaveDto::avklaringsbehovOpprettetTid.name -> OppgaveTabell::avklaringsbehovOpprettetTidspunkt.get()
-                    .eq(LocalDateTime.parse(filter.value.first()))
-
-                OppgaveDto::behandlingOpprettetTid.name -> OppgaveTabell::behandlingOpprettetTidspunkt.get()
-                    .eq(LocalDateTime.parse(filter.value.first()))
-
-                else -> null
-            }
-        }.filterNotNull()
+        val filters = generateOppgaveFilter(searchParams)
 
         return Oppgave.find {
-            filters.fold(Op.TRUE.and(Op.TRUE)) { acc, value -> acc.and(value)}
+            filters
         }.orderBy(
-            *searchParams.sorting.map {
-                when (it.key) {
-                    OppgaveDto::behandlingstype.name -> OppgaveTabell::behandlingstype.get() to it.value
-                    OppgaveDto::avklaringsbehov.name -> OppgaveTabell::avklaringbehovtype.get() to it.value
-                    OppgaveDto::avklaringsbehovOpprettetTid.name -> OppgaveTabell::avklaringsbehovOpprettetTidspunkt.get() to it.value
-                    OppgaveDto::behandlingOpprettetTid.name -> OppgaveTabell::behandlingOpprettetTidspunkt.get() to it.value
-                    else -> null
-                }
-            }.filterNotNull().toTypedArray()
+            *generateOppgaveSorting(searchParams)
         )
     }
+
 
     fun hentÅpneOppgaver(): SizedIterable<Oppgave> {
         return Oppgave.find { OppgaveTabell.status eq Avklaringsbehovstatus.OPPRETTET }

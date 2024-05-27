@@ -242,6 +242,33 @@ class ApiTest {
         }
 
         @Test
+        fun `hent alle oppgaver med filtrering på dato`() {
+            val filterTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10, 11111)
+
+            val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${filterTime.truncatedTo(ChronoUnit.DAYS)}"
+
+            oppgavestyringWithFakes{fakes, client ->
+                val førsteOppgave = transaction {
+                    genererOppgave()
+                    val oppgave = genererOppgave()
+                        oppgave.behandlingOpprettetTidspunkt = filterTime
+                    oppgave.id.value
+                }
+
+                val actual = client.get("/oppgaver$sorteringsParameter") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isEqualTo(1)
+
+                assertThat(actual.oppgaver.first().oppgaveId)
+                    .isEqualTo(førsteOppgave)
+            }
+        }
+
+        @Test
         fun `hent alle oppgaver med filtrering på flere verdier av samme property`() {
             val sorteringsParameter = "?filtrering=avklaringsbehov%3DAVKLAR_STUDENT%26avklaringsbehov%3DAVKLAR_BISTANDSBEHOV"
 
