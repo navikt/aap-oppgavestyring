@@ -49,22 +49,30 @@ fun generateOppgaveFilter(searchParams: OppgaveParams) = searchParams.filters.ma
         OppgaveDto::avklaringsbehov.name -> OppgaveTabell.avklaringbehovtype
             .inList(filter.value.map { Avklaringsbehovtype.valueOf(it) })
 
-        OppgaveDto::avklaringsbehovOpprettetTid.name -> {
-            val dateTime = LocalDateTime.parse(filter.value.first()).truncatedTo(ChronoUnit.DAYS)
-            OppgaveTabell.avklaringsbehovOpprettetTidspunkt greaterEq dateTime and
-                    (OppgaveTabell.avklaringsbehovOpprettetTidspunkt lessEq dateTime.plusDays(1))
-        }
+        OppgaveDto::avklaringsbehovOpprettetTid.name -> timeWithinRange(OppgaveTabell.avklaringsbehovOpprettetTidspunkt, filter.value.first())
 
-        OppgaveDto::behandlingOpprettetTid.name -> {
-            val dateTime = LocalDateTime.parse(filter.value.first()).truncatedTo(ChronoUnit.DAYS)
-            OppgaveTabell.behandlingOpprettetTidspunkt greaterEq dateTime and
-                    (OppgaveTabell.behandlingOpprettetTidspunkt lessEq dateTime.plusDays(1))
-        }
+        OppgaveDto::behandlingOpprettetTid.name -> timeWithinRange(OppgaveTabell.behandlingOpprettetTidspunkt, filter.value.first())
 
         else -> null
     }
 }.filterNotNull()
-    .fold(Op.TRUE.and(Op.TRUE)) { acc, value -> acc.and(value)}
+    .fold(Op.TRUE.and(Op.TRUE)) { acc, value -> acc.and(value) }
+
+fun timeWithinRange(timeColumn: Column<LocalDateTime>, timeString: String): Op<Boolean> {
+    val (fromTime, toTime) = getTimerangeFromISOStirng(timeString)
+    val dateTimeFrom = fromTime.truncatedTo(ChronoUnit.DAYS)
+    val dateTimeTo = toTime.truncatedTo(ChronoUnit.DAYS).plusDays(1)
+    return timeColumn greaterEq dateTimeFrom and
+            (OppgaveTabell.behandlingOpprettetTidspunkt lessEq dateTimeTo.plusDays(1))
+}
+
+fun getTimerangeFromISOStirng(dateRange: String): List<LocalDateTime> {
+    val fromTimeToTime = dateRange.split("/").map { LocalDateTime.parse(it) }
+    return if (fromTimeToTime.size == 1) {
+        listOf(fromTimeToTime[0], fromTimeToTime[0])
+    }
+        else listOf(fromTimeToTime[0], fromTimeToTime[1])
+}
 
 fun generateOppgaveSorting(searchParams: OppgaveParams) = searchParams.sorting.map {
     when (it.key) {
