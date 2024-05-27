@@ -3,17 +3,14 @@ package oppgavestyring.oppgave
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
-import oppgavestyring.oppgave.api.*
+import oppgavestyring.oppgave.api.OppgaveParams
+import oppgavestyring.oppgave.api.generateOppgaveFilter
+import oppgavestyring.oppgave.api.generateOppgaveSorting
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
+import org.jetbrains.exposed.sql.SizedIterable
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 typealias Behandlingsreferanse = String
 typealias Saksnummer = String

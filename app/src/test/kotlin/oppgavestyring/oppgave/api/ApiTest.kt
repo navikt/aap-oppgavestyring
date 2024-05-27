@@ -4,6 +4,7 @@ import behandlingsflytRequest
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.server.util.*
 import oppgavestyring.TestDatabase
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
@@ -242,10 +243,11 @@ class ApiTest {
         }
 
         @Test
-        fun `hent alle oppgaver med filtrering på dato`() {
+        fun `hent alle oppgaver med filtrering på enkelt dato`() {
             val filterTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10, 11111)
+            val urlTime = filterTime.truncatedTo(ChronoUnit.DAYS)
 
-            val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${filterTime.truncatedTo(ChronoUnit.DAYS)}"
+            val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${urlTime.minusDays(3)}%2F${urlTime.plusDays(3)}"
 
             oppgavestyringWithFakes{fakes, client ->
                 val førsteOppgave = transaction {
@@ -267,6 +269,34 @@ class ApiTest {
                     .isEqualTo(førsteOppgave)
             }
         }
+
+        @Test
+        fun `hent alle oppgaver med filtrering på fra til dato`() {
+            val filterTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10, 11111)
+
+            val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${filterTime.truncatedTo(ChronoUnit.DAYS)}"
+
+            oppgavestyringWithFakes{fakes, client ->
+                val førsteOppgave = transaction {
+                    genererOppgave()
+                    val oppgave = genererOppgave()
+                    oppgave.behandlingOpprettetTidspunkt = filterTime
+                    oppgave.id.value
+                }
+
+                val actual = client.get("/oppgaver$sorteringsParameter") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isEqualTo(1)
+
+                assertThat(actual.oppgaver.first().oppgaveId)
+                    .isEqualTo(førsteOppgave)
+            }
+        }
+
 
         @Test
         fun `hent alle oppgaver med filtrering på flere verdier av samme property`() {
