@@ -2,7 +2,7 @@ package oppgavestyring.config.db
 
 val DB_CONFIG_PREFIX = "DB_OPPGAVESTYRING"
 
-data class DbConfig(
+data class DatabaseConfiguration(
     val connectionURL: String = System.getenv("${DB_CONFIG_PREFIX}_JDBC_URL") ?:
         System.getProperty("${DB_CONFIG_PREFIX}_JDBC_URL"),
     val username: String = System.getenv("${DB_CONFIG_PREFIX}_USERNAME") ?:

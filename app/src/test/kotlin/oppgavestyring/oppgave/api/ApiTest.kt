@@ -4,7 +4,6 @@ import behandlingsflytRequest
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.server.util.*
 import oppgavestyring.TestDatabase
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
@@ -30,7 +29,6 @@ class ApiTest {
         @JvmStatic
         fun beforeAll() {
             TestDatabase.start()
-            Flyway.migrate(TestDatabase.getConnection())
 
             System.setProperty("${DB_CONFIG_PREFIX}_JDBC_URL", TestDatabase.connectionUrl)
             System.setProperty("${DB_CONFIG_PREFIX}_USERNAME", TestDatabase.username)

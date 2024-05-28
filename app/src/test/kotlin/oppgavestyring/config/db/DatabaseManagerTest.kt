@@ -8,14 +8,13 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
-class DatabaseSingletonTest {
+class DatabaseManagerTest {
     companion object {
         @BeforeAll
         @JvmStatic
@@ -24,21 +23,15 @@ class DatabaseSingletonTest {
         }
     }
 
-    @BeforeEach
-    fun beforeEach() {
+    @AfterEach
+    fun afterEach() {
         TestDatabase.reset()
     }
 
-    private fun connectToDatabase() {
-        DatabaseSingleton.init(DbConfig(
+    val databaseManager = DatabaseManager(DatabaseConfiguration(
             connectionURL = TestDatabase.connectionUrl,
             username = TestDatabase.username,
-            password = TestDatabase.password))}
-
-    @Test
-    fun `verify working database connection`() {
-        connectToDatabase()
-    }
+            password = TestDatabase.password))
 
     @Test
     fun `verify schema creation form Exposed`() {
@@ -49,7 +42,7 @@ class DatabaseSingletonTest {
 
             override val primaryKey = PrimaryKey(id, name = "PK_TEST_ID")
         }
-        connectToDatabase()
+
         val testTable = TestTable()
 
         transaction {
@@ -66,10 +59,8 @@ class DatabaseSingletonTest {
 
     @Test
     fun `run flyway migration without any errors`() {
-        connectToDatabase()
-        Flyway.migrate(DatabaseSingleton.connection ?:
-            throw IllegalStateException("Database connection is not initialized"))
-        println("SDFSDFDF")
+        TestDatabase.reset()
+        Flyway.migrate(databaseManager.connection)
     }
 
 }

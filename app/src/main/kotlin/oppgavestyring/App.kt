@@ -18,8 +18,6 @@ import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
 import oppgavestyring.behandlingsflyt.behandlingsflyt
-import oppgavestyring.config.db.DatabaseSingleton
-import oppgavestyring.config.db.DbConfig
 import oppgavestyring.config.koinModule
 import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
@@ -43,7 +41,6 @@ fun Application.server(
     install(Koin) {
         modules(koinModule)
     }
-
 
     val prometheus: PrometheusMeterRegistry by inject()
 
@@ -72,11 +69,6 @@ fun Application.server(
             }
         }
     }
-
-
-
-    DatabaseSingleton.init(DbConfig())
-    DatabaseSingleton.migrate()
 
     routing {
         actuators()

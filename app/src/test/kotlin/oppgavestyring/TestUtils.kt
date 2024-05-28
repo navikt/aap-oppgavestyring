@@ -10,14 +10,12 @@ import io.ktor.server.netty.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.runBlocking
 import no.nav.aap.ktor.client.auth.azure.AzureConfig
-import oppgavestyring.config.db.DatabaseSingleton
-import oppgavestyring.config.db.DbConfig
+import oppgavestyring.config.db.DatabaseConfiguration
+import oppgavestyring.config.db.DatabaseManager
 import oppgavestyring.fakes.AzureFake
 import oppgavestyring.fakes.OppgaveFake
 import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.containers.wait.strategy.Wait
 import java.net.URI
-import javax.sql.DataSource
 
 class Fakes : AutoCloseable {
     val azure = AzureFake()
@@ -88,13 +86,11 @@ object TestDatabase {
     fun reset() { postgres.execInContainer(
         "psql",  "-U", "test", "-d", "test" , "-c", "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
     ) }
-    fun getConnection(): DataSource{
-        DatabaseSingleton.init(
-            DbConfig(
+
+    fun getConnection() = DatabaseManager(
+            DatabaseConfiguration(
             connectionURL = connectionUrl,
             username = username,
             password = password)
-        )
-        return DatabaseSingleton.connection!!
-    }
+        ).connection
 }
