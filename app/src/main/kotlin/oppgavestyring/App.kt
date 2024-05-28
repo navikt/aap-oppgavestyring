@@ -15,16 +15,16 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
-import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
-import oppgavestyring.behandlingsflyt.BehandlingsflytAdapter
 import oppgavestyring.behandlingsflyt.behandlingsflyt
 import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
-import oppgavestyring.oppgave.OppgaveService
+import oppgavestyring.config.koinModule
 import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
+import org.koin.ktor.ext.inject
+import org.koin.ktor.plugin.Koin
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -39,7 +39,13 @@ fun main() {
 fun Application.server(
     config: Config = Config(),
 ) {
-    val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+
+    install(Koin) {
+        modules(koinModule)
+    }
+
+
+    val prometheus: PrometheusMeterRegistry by inject()
 
     install(MicrometerMetrics) {
         registry = prometheus
@@ -67,16 +73,15 @@ fun Application.server(
         }
     }
 
+
+
     DatabaseSingleton.init(DbConfig())
     DatabaseSingleton.migrate()
 
-    val oppgaveService = OppgaveService()
-    val behandlingsflytAdapter = BehandlingsflytAdapter(oppgaveService)
-
     routing {
-        actuators(prometheus)
-        oppgaver(oppgaveService)
-        behandlingsflyt(behandlingsflytAdapter)
+        actuators()
+        oppgaver()
+        behandlingsflyt()
     }
 }
 

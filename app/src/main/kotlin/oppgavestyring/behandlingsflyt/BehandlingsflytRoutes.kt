@@ -8,8 +8,12 @@ import io.ktor.server.routing.*
 import oppgavestyring.LOG
 import oppgavestyring.behandlingsflyt.dto.BehandlingshistorikkRequest
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.ktor.ext.inject
 
-fun Route.behandlingsflyt(behandlingsflytAdapter: BehandlingsflytAdapter) {
+fun Route.behandlingsflyt() {
+
+    val behandlingsflytAdapter: BehandlingsflytAdapter by inject()
+
     route("/behandling") {
         post {
             LOG.info("Mottok saksendring på behandling")

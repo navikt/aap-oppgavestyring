@@ -28,7 +28,8 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
 
-    implementation(kotlin("reflect"))
+    // Koin for Kotlin apps
+    implementation("io.insert-koin:koin-ktor:3.5.6")
 
     // persistence
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
