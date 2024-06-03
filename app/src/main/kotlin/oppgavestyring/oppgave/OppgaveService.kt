@@ -9,7 +9,7 @@ import oppgavestyring.oppgave.api.generateOppgaveSorting
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
-import oppgavestyring.tilgangsstyring.GruppeMap
+import oppgavestyring.config.security.AdGruppe
 import oppgavestyring.tilgangsstyring.TilgangstyringService
 import java.time.LocalDateTime
 
@@ -51,7 +51,7 @@ class OppgaveService {
         }
     }
 
-    fun søk(gruppe: GruppeMap, searchParams: OppgaveParams): List<Oppgave> {
+    fun søk(gruppe: AdGruppe, searchParams: OppgaveParams): List<Oppgave> {
         val filters = generateOppgaveFilter(searchParams)
 
         return Oppgave.find {
@@ -62,7 +62,7 @@ class OppgaveService {
     }
 
 
-    fun hentÅpneOppgaver(gruppe: GruppeMap): List<Oppgave> {
+    fun hentÅpneOppgaver(gruppe: AdGruppe): List<Oppgave> {
         return Oppgave.find { OppgaveTabell.status eq Avklaringsbehovstatus.OPPRETTET }
             .filter { TilgangstyringService.kanSaksbehandlerSeOppgave(gruppe, it) }
     }

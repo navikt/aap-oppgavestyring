@@ -1,4 +1,4 @@
-package oppgavestyring.config
+package oppgavestyring.config.security
 
 import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.http.*
@@ -49,7 +49,7 @@ fun Application.authentication(config: AzureConfig) {
                     return@validate null
                 }
 
-                JWTPrincipal(cred.payload)
+                OppgavePrincipal.fromJwt(cred)
             }
         }
     }

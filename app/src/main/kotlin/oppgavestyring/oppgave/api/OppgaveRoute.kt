@@ -3,17 +3,14 @@ package oppgavestyring.oppgave.api
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.LOG
-import oppgavestyring.config.NAV_IDENT_CLAIM_NAME
+import oppgavestyring.config.security.OppgavePrincipal
 import oppgavestyring.oppgave.NavIdent
 import oppgavestyring.oppgave.OppgaveService
-import oppgavestyring.tilgangsstyring.GruppeMap
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.UUID
 
 
 fun Route.oppgaver(oppgaveService: OppgaveService ) {
@@ -22,9 +19,8 @@ fun Route.oppgaver(oppgaveService: OppgaveService ) {
 
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
-            val ident = NavIdent(call.authentication.principal<JWTPrincipal>()?.getClaim(NAV_IDENT_CLAIM_NAME, String::class)!!)
 
-            val gruppe = GruppeMap.KONTOR//GruppeMap.valueOf(call.authentication.principal<JWTPrincipal>()?.getListClaim("groups", UUID::class)?.first()!!)
+            val gruppe = call.principal<OppgavePrincipal>()?.gruppe!!
 
             val searchParams = parseUrlFiltering(call.request.queryParameters)
             val oppgaver = transaction {
