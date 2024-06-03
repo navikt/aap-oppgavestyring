@@ -25,7 +25,8 @@ fun Application.authentication(config: AzureConfig) {
                 call.respond(HttpStatusCode.Unauthorized, "AzureAD validering feilet") }
             validate { cred ->
                 val now = Date()
-                SECURE_LOG.info("Ident of requester: ${cred.getClaim("NAVIdent", String::class)}")
+                SECURE_LOG.info("Token of requester: $cred")
+                SECURE_LOG.info("Ident of requester: ${cred.getClaim("NAVident", String::class)}")
                 if (config.clientId !in cred.audience) {
                     SECURE_LOG.warn("AzureAD validering feilet (clientId var ikke i audience: ${cred.audience}")
                     return@validate null
