@@ -36,6 +36,10 @@ spec:
       claims:
         extra:
           - NAVident
+        groups:
+          - id: "8bb0ee13-49cd-4e75-8c3d-a13420c8b376"
+          - id: "12353679-aa80-4e59-bb47-95e727bfe85c"
+          - id: "b60d74dd-fcf7-4c53-a50b-7b20f51804a1"
   resources:
     limits:
       memory: 256Mi

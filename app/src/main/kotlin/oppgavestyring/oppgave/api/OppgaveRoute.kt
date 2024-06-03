@@ -11,7 +11,9 @@ import oppgavestyring.LOG
 import oppgavestyring.config.NAV_IDENT_CLAIM_NAME
 import oppgavestyring.oppgave.NavIdent
 import oppgavestyring.oppgave.OppgaveService
+import oppgavestyring.tilgangsstyring.GruppeMap
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.UUID
 
 
 fun Route.oppgaver(oppgaveService: OppgaveService ) {
@@ -22,12 +24,14 @@ fun Route.oppgaver(oppgaveService: OppgaveService ) {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
             val ident = NavIdent(call.authentication.principal<JWTPrincipal>()?.getClaim(NAV_IDENT_CLAIM_NAME, String::class)!!)
 
+            val gruppe = GruppeMap.valueOf(call.authentication.principal<JWTPrincipal>()?.getListClaim("groups", UUID::class)?.first()!!)
+
             val searchParams = parseUrlFiltering(call.request.queryParameters)
             val oppgaver = transaction {
                 val oppgaver = if (!searchParams.isEmpty())
-                    oppgaveService.søk(ident, searchParams)
+                    oppgaveService.søk(gruppe, searchParams)
                 else
-                    oppgaveService.hentÅpneOppgaver(ident)
+                    oppgaveService.hentÅpneOppgaver(gruppe)
 
                 oppgaver.map { OppgaveDto.fromOppgave(it) }
             }

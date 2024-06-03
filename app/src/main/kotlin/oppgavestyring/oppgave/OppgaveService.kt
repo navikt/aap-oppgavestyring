@@ -9,8 +9,8 @@ import oppgavestyring.oppgave.api.generateOppgaveSorting
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
+import oppgavestyring.tilgangsstyring.GruppeMap
 import oppgavestyring.tilgangsstyring.TilgangstyringService
-import org.jetbrains.exposed.sql.SizedIterable
 import java.time.LocalDateTime
 
 typealias Behandlingsreferanse = String
@@ -51,20 +51,20 @@ class OppgaveService {
         }
     }
 
-    fun søk(navIdent: NavIdent, searchParams: OppgaveParams): List<Oppgave> {
+    fun søk(gruppe: GruppeMap, searchParams: OppgaveParams): List<Oppgave> {
         val filters = generateOppgaveFilter(searchParams)
 
         return Oppgave.find {
             filters
         }.orderBy(
             *generateOppgaveSorting(searchParams)
-        ).filter { TilgangstyringService.kanSaksbehandlerSeOppgave(navIdent, it) }
+        ).filter { TilgangstyringService.kanSaksbehandlerSeOppgave(gruppe, it) }
     }
 
 
-    fun hentÅpneOppgaver(ident: NavIdent): List<Oppgave> {
+    fun hentÅpneOppgaver(gruppe: GruppeMap): List<Oppgave> {
         return Oppgave.find { OppgaveTabell.status eq Avklaringsbehovstatus.OPPRETTET }
-            .filter { TilgangstyringService.kanSaksbehandlerSeOppgave(ident, it) }
+            .filter { TilgangstyringService.kanSaksbehandlerSeOppgave(gruppe, it) }
     }
 
     fun hent(oppgaveId: OppgaveId): Oppgave {

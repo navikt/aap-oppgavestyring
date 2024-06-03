@@ -224,7 +224,7 @@ class ApiTest {
 
             oppgavestyringWithFakes{fakes, client ->
                 val førsteOppgave = transaction {
-                    genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_STUDENT
+                    genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_BISTANDSBEHOV
                     genererOppgave().id.value
                 }
 
