@@ -62,8 +62,9 @@ class OppgaveService {
     }
 
 
-    fun hentÅpneOppgaver(): SizedIterable<Oppgave> {
+    fun hentÅpneOppgaver(ident: NavIdent): List<Oppgave> {
         return Oppgave.find { OppgaveTabell.status eq Avklaringsbehovstatus.OPPRETTET }
+            .filter { TilgangstyringService.kanSaksbehandlerSeOppgave(ident, it) }
     }
 
     fun hent(oppgaveId: OppgaveId): Oppgave {

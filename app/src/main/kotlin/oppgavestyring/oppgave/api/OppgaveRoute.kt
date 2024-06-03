@@ -27,7 +27,7 @@ fun Route.oppgaver(oppgaveService: OppgaveService ) {
                 val oppgaver = if (!searchParams.isEmpty())
                     oppgaveService.søk(ident, searchParams)
                 else
-                    oppgaveService.hentÅpneOppgaver()
+                    oppgaveService.hentÅpneOppgaver(ident)
 
                 oppgaver.map { OppgaveDto.fromOppgave(it) }
             }

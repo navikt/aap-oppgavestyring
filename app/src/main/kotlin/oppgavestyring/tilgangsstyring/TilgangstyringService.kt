@@ -26,7 +26,7 @@ object TilgangstyringService {
     fun kanSaksbehandlerSeOppgave(navIdent: NavIdent,  oppgave: Oppgave): Boolean {
         if (nayIdent == navIdent.asString() && oppgave.avklaringsbehovtype in nayOppgaver) {
             return true
-        } else if (nayIdent != navIdent.asString() && !(oppgave.avklaringsbehovtype in nayOppgaver)) {
+        } else if (nayIdent != navIdent.asString() && oppgave.avklaringsbehovtype !in nayOppgaver) {
             return true
         }
         return false
