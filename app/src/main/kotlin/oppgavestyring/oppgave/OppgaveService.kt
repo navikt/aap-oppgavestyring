@@ -9,6 +9,7 @@ import oppgavestyring.oppgave.api.generateOppgaveSorting
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
+import oppgavestyring.tilgangsstyring.TilgangstyringService
 import org.jetbrains.exposed.sql.SizedIterable
 import java.time.LocalDateTime
 
@@ -50,14 +51,14 @@ class OppgaveService {
         }
     }
 
-    fun søk(searchParams: OppgaveParams): SizedIterable<Oppgave> {
+    fun søk(navIdent: NavIdent, searchParams: OppgaveParams): List<Oppgave> {
         val filters = generateOppgaveFilter(searchParams)
 
         return Oppgave.find {
             filters
         }.orderBy(
             *generateOppgaveSorting(searchParams)
-        )
+        ).filter { TilgangstyringService.kanSaksbehandlerSeOppgave(navIdent, it) }
     }
 
 

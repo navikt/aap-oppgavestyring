@@ -12,6 +12,8 @@ import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+val NAV_IDENT_CLAIM_NAME = "NAVident"
+
 const val AZURE = "azure"
 fun Application.authentication(config: AzureConfig) {
 
@@ -26,7 +28,7 @@ fun Application.authentication(config: AzureConfig) {
             validate { cred ->
                 val now = Date()
                 SECURE_LOG.info("Token of requester: $cred")
-                SECURE_LOG.info("Ident of requester: ${cred.getClaim("NAVident", String::class)}")
+                SECURE_LOG.info("Ident of requester: ${cred.getClaim(NAV_IDENT_CLAIM_NAME, String::class)}")
                 if (config.clientId !in cred.audience) {
                     SECURE_LOG.warn("AzureAD validering feilet (clientId var ikke i audience: ${cred.audience}")
                     return@validate null

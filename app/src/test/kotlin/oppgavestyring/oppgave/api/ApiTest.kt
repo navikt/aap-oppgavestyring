@@ -8,7 +8,6 @@ import oppgavestyring.TestDatabase
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
-import oppgavestyring.fakes.generateJwtToken
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
@@ -300,11 +299,11 @@ class ApiTest {
 
         @Test
         fun `hent alle oppgaver med filtrering på flere verdier av samme property`() {
-            val sorteringsParameter = "?filtrering=avklaringsbehov%3DAVKLAR_STUDENT%26avklaringsbehov%3DAVKLAR_BISTANDSBEHOV"
+            val sorteringsParameter = "?filtrering=avklaringsbehov%3DFASTSETT_ARBEIDSEVNE%26avklaringsbehov%3DAVKLAR_BISTANDSBEHOV"
 
             oppgavestyringWithFakes{fakes, client ->
                 transaction {
-                    genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_STUDENT
+                    genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.FASTSETT_ARBEIDSEVNE
                     genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_BISTANDSBEHOV
                     genererOppgave()
                 }

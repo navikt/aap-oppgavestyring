@@ -2,26 +2,30 @@ package oppgavestyring.oppgave.api
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import oppgavestyring.LOG
+import oppgavestyring.config.NAV_IDENT_CLAIM_NAME
 import oppgavestyring.oppgave.NavIdent
 import oppgavestyring.oppgave.OppgaveService
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
-fun Route.oppgaver(oppgaveService: OppgaveService) {
+fun Route.oppgaver(oppgaveService: OppgaveService ) {
 
     route("/oppgaver") {
 
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
+            val ident = NavIdent(call.authentication.principal<JWTPrincipal>()?.getClaim(NAV_IDENT_CLAIM_NAME, String::class)!!)
 
             val searchParams = parseUrlFiltering(call.request.queryParameters)
             val oppgaver = transaction {
                 val oppgaver = if (!searchParams.isEmpty())
-                    oppgaveService.søk(searchParams)
+                    oppgaveService.søk(ident, searchParams)
                 else
                     oppgaveService.hentÅpneOppgaver()
 

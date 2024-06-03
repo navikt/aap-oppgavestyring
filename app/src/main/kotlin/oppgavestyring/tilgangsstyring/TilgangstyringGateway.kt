@@ -1,4 +1,4 @@
-package tilgangsstyring
+package oppgavestyring.tilgangsstyring
 
 class TilgangstyringGateway {
 
