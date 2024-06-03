@@ -33,6 +33,9 @@ spec:
     application:
       enabled: true
       allowAllUsers: true
+      claims:
+        extra:
+          - NAVident
   resources:
     limits:
       memory: 256Mi

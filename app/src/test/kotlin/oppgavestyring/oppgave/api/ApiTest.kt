@@ -4,11 +4,11 @@ import behandlingsflytRequest
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.server.util.*
 import oppgavestyring.TestDatabase
 import oppgavestyring.behandlingsflyt.dto.*
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
+import oppgavestyring.fakes.generateJwtToken
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
@@ -44,6 +44,7 @@ class ApiTest {
         Flyway.migrate(TestDatabase.getConnection())
     }
 
+
     @Nested
     inner class `behandling route` {
 
@@ -60,7 +61,6 @@ class ApiTest {
                 assertEquals(HttpStatusCode.Created, actual.status)
             }
         }
-
 
         @Test
         fun `lukk oppgave på samme behandling`() {
@@ -330,7 +330,6 @@ class ApiTest {
                 }
 
                 val actual = client.patch("/oppgaver/$oppgaveId/tildelRessurs") {
-                    bearerAuth("token")
                     contentType(ContentType.Application.Json)
                     setBody(
                         TildelRessursRequest(
@@ -358,7 +357,6 @@ class ApiTest {
                 }
 
                 client.patch("/oppgaver/$oppgaveId/frigi") {
-                    bearerAuth("token")
                 }
 
                 transaction {
