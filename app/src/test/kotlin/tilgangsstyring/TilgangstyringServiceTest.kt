@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.oppgave.db.Oppgave
-import oppgavestyring.tilgangsstyring.GruppeMap
+import oppgavestyring.config.security.AdGruppe
 import oppgavestyring.tilgangsstyring.TilgangstyringService
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -20,7 +20,7 @@ class TilgangstyringServiceTest {
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_STUDENT
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(GruppeMap.NAY, oppgave)
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.NAY, oppgave)
 
         assertTrue(actual)
     }
@@ -31,7 +31,7 @@ class TilgangstyringServiceTest {
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_SYKDOM
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(GruppeMap.NAY, oppgave)
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.NAY, oppgave)
 
         assertFalse(actual)
     }
@@ -42,7 +42,7 @@ class TilgangstyringServiceTest {
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_SYKDOM
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(GruppeMap.KONTOR, oppgave)
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.KONTOR, oppgave)
 
         assertTrue(actual)
     }
@@ -53,7 +53,7 @@ class TilgangstyringServiceTest {
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_STUDENT
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(GruppeMap.KONTOR, oppgave)
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.KONTOR, oppgave)
 
         assertFalse(actual)
     }

@@ -1,8 +1,8 @@
-package oppgavestyring.tilgangsstyring
+package oppgavestyring.config.security
 
 import java.util.UUID
 
-enum class GruppeMap(private val gruppeIder: List<UUID>) {
+enum class AdGruppe(private val gruppeIder: List<UUID>) {
 
     NAY(listOf(
         UUID.fromString("8bb0ee13-49cd-4e75-8c3d-a13420c8b376"),

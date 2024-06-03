@@ -1,6 +1,7 @@
 package oppgavestyring.tilgangsstyring
 
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
+import oppgavestyring.config.security.AdGruppe
 import oppgavestyring.oppgave.db.Oppgave
 
 object TilgangstyringService {
@@ -20,10 +21,10 @@ object TilgangstyringService {
     }
 
     // spør oppgavestyring med ident ikke fra token, feks ved tildeling av oppgave til andre
-    fun kanSaksbehandlerSeOppgave(gruppe: GruppeMap, oppgave: Oppgave): Boolean {
-        if (GruppeMap.NAY == gruppe && oppgave.avklaringsbehovtype in nayOppgaver) {
+    fun kanSaksbehandlerSeOppgave(gruppe: AdGruppe, oppgave: Oppgave): Boolean {
+        if (AdGruppe.NAY == gruppe && oppgave.avklaringsbehovtype in nayOppgaver) {
             return true
-        } else if (GruppeMap.KONTOR == gruppe && oppgave.avklaringsbehovtype !in nayOppgaver) {
+        } else if (AdGruppe.KONTOR == gruppe && oppgave.avklaringsbehovtype !in nayOppgaver) {
             return true
         }
         return false

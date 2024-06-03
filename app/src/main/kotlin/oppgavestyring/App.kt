@@ -21,8 +21,8 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
 import oppgavestyring.behandlingsflyt.BehandlingsflytAdapter
 import oppgavestyring.behandlingsflyt.behandlingsflyt
-import oppgavestyring.config.AZURE
-import oppgavestyring.config.authentication
+import oppgavestyring.config.security.AZURE
+import oppgavestyring.config.security.authentication
 import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
 import oppgavestyring.oppgave.OppgaveService
