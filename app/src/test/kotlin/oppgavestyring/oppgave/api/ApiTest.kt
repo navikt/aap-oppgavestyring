@@ -340,7 +340,7 @@ class ApiTest {
                 }
 
                 assertThat(actual.status)
-                    .isEqualTo(HttpStatusCode.OK)
+                    .isEqualTo(HttpStatusCode.NoContent)
             }
         }
 
