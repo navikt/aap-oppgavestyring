@@ -24,7 +24,7 @@ fun Route.oppgaver(oppgaveService: OppgaveService ) {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
             val ident = NavIdent(call.authentication.principal<JWTPrincipal>()?.getClaim(NAV_IDENT_CLAIM_NAME, String::class)!!)
 
-            val gruppe = GruppeMap.valueOf(call.authentication.principal<JWTPrincipal>()?.getListClaim("groups", UUID::class)?.first()!!)
+            val gruppe = GruppeMap.KONTOR//GruppeMap.valueOf(call.authentication.principal<JWTPrincipal>()?.getListClaim("groups", UUID::class)?.first()!!)
 
             val searchParams = parseUrlFiltering(call.request.queryParameters)
             val oppgaver = transaction {
