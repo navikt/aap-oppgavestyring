@@ -1,9 +1,12 @@
 package oppgavestyring
 
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -14,8 +17,8 @@ import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
 import oppgavestyring.fakes.AzureFake
 import oppgavestyring.fakes.OppgaveFake
+import oppgavestyring.fakes.generateJwtToken
 import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.containers.wait.strategy.Wait
 import java.net.URI
 import javax.sql.DataSource
 
@@ -46,11 +49,13 @@ internal fun oppgavestyringWithFakes(test: suspend (Fakes, HttpClient) -> Unit) 
                 server(fakes.config)
             }
 
-            val client = createClient {
+            val client = client.config {
+                install(DefaultRequest) {
+                    bearerAuth(generateJwtToken())
+                }
                 install(ContentNegotiation) {
                     jackson {
-                        registerModules(JavaTimeModule())
-                        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                        registerModule(JavaTimeModule())
                     }
                 }
             }
@@ -67,14 +72,12 @@ internal class TestConfig(oppgavePort: Int, azurePort: Int) : Config(
     ),
     azure = AzureConfig(
         tokenEndpoint = "http://localhost:$azurePort/token",
-        clientId = "",
+        clientId = "oppgave",
         clientSecret = "",
-        jwksUri = "",
-        issuer = "",
+        jwksUri = "http://localhost:$azurePort",
+        issuer = "nav",
     ),
 )
-
-
 
 object TestDatabase {
 

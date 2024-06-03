@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.engine.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.netty.*
@@ -20,6 +21,8 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
 import oppgavestyring.behandlingsflyt.BehandlingsflytAdapter
 import oppgavestyring.behandlingsflyt.behandlingsflyt
+import oppgavestyring.config.AZURE
+import oppgavestyring.config.authentication
 import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
 import oppgavestyring.oppgave.OppgaveService
@@ -36,16 +39,7 @@ fun main() {
     embeddedServer(Netty, port = 8080, module = Application::server).start(wait = true)
 }
 
-fun Application.server(
-    config: Config = Config(),
-) {
-    val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-
-    install(MicrometerMetrics) {
-        registry = prometheus
-        meterBinders += LogbackMetrics()
-    }
-
+fun Application.oppgavestyring(config: Config) {
     install(ContentNegotiation) {
         jackson {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -70,13 +64,34 @@ fun Application.server(
     DatabaseSingleton.init(DbConfig())
     DatabaseSingleton.migrate()
 
+    authentication(config.azure)
+
     val oppgaveService = OppgaveService()
     val behandlingsflytAdapter = BehandlingsflytAdapter(oppgaveService)
 
     routing {
+        authenticate(AZURE) {
+            oppgaver(oppgaveService)
+            behandlingsflyt(behandlingsflytAdapter)
+        }
+
+    }
+}
+
+fun Application.server(
+    config: Config = Config(),
+) {
+    val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+
+    install(MicrometerMetrics) {
+        registry = prometheus
+        meterBinders += LogbackMetrics()
+    }
+
+    oppgavestyring(config)
+
+    routing {
         actuators(prometheus)
-        oppgaver(oppgaveService)
-        behandlingsflyt(behandlingsflytAdapter)
     }
 }
 
