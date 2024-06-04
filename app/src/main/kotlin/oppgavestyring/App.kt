@@ -25,6 +25,7 @@ import oppgavestyring.config.security.AZURE
 import oppgavestyring.config.security.authentication
 import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
+import oppgavestyring.filter.filter
 import oppgavestyring.oppgave.OppgaveService
 import oppgavestyring.oppgave.adapter.Token
 import oppgavestyring.oppgave.api.oppgaver
@@ -73,6 +74,7 @@ fun Application.oppgavestyring(config: Config) {
         authenticate(AZURE) {
             oppgaver(oppgaveService)
             behandlingsflyt(behandlingsflytAdapter)
+            filter()
         }
 
     }
