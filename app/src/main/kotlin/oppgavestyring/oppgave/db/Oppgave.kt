@@ -73,7 +73,6 @@ object UtførerTabell: LongIdTable("UTFORER") {
 object TildeltTabell: LongIdTable("TILDELT") {
     val ident = varchar("IDENT", 50)
     val tidsstempel = timestamp("TIDSSTEMPEL").defaultExpression(CurrentTimestamp)
-
     val oppgave = reference("OPPGAVE_ID", OppgaveTabell)
 }
 

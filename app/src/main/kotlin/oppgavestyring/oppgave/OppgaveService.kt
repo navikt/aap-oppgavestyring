@@ -10,7 +10,10 @@ import oppgavestyring.oppgave.api.generateOppgaveSorting
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
+import oppgavestyring.oppgave.db.TildeltTabell
 import oppgavestyring.tilgangsstyring.TilgangstyringService
+import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.selectAll
 import java.time.LocalDateTime
 
 typealias Behandlingsreferanse = String
@@ -54,11 +57,12 @@ class OppgaveService {
     fun søk(principal: OppgavePrincipal, searchParams: OppgaveParams): List<Oppgave> {
         val filters = generateOppgaveFilter(searchParams)
 
-        return Oppgave.find {
-            filters
-        }.orderBy(
-            *generateOppgaveSorting(searchParams)
-        ).filter { TilgangstyringService.kanSaksbehandlerSeOppgave(principal, it) }
+        return (OppgaveTabell leftJoin TildeltTabell)
+            .select(OppgaveTabell.columns)
+            .where { filters }
+            .orderBy(*generateOppgaveSorting(searchParams))
+            .map { Oppgave.wrapRow(it) }
+            .filter { TilgangstyringService.kanSaksbehandlerSeOppgave(principal, it) }
     }
 
 

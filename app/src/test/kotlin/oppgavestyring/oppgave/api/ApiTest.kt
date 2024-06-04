@@ -219,6 +219,40 @@ class ApiTest {
         }
 
         @Test
+        fun `hent alle oppgaver med sortering på tildelt`() {
+            val sorteringsParameter = "?sortering=tilordnetRessurs=desc"
+
+            oppgavestyringWithFakes{fakes, client ->
+                val førsteOppgave = transaction {
+
+                    val oppgave1 = genererOppgave()
+                    val oppgave2 = genererOppgave()
+                    Tildelt.new {
+                        ident = "K123456"
+                        oppgave = oppgave1
+                    }
+                    Tildelt.new {
+                        ident = "A111111"
+                        oppgave = oppgave2
+                    }
+
+                    oppgave1.id.value
+                }
+
+                val actual = client.get("/oppgaver$sorteringsParameter") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isEqualTo(2)
+
+                assertThat(actual.oppgaver.first().oppgaveId)
+                    .isEqualTo(førsteOppgave)
+            }
+        }
+
+        @Test
         fun `hent alle oppgaver med filtrering på property`() {
             val sorteringsParameter = "?filtrering=avklaringsbehov=AVKLAR_SYKDOM"
 
@@ -226,6 +260,31 @@ class ApiTest {
                 val førsteOppgave = transaction {
                     genererOppgave().avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_BISTANDSBEHOV
                     genererOppgave().id.value
+                }
+
+                val actual = client.get("/oppgaver$sorteringsParameter") {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }.body<OppgaverResponse>()
+
+                assertThat(actual.oppgaver.size)
+                    .isEqualTo(1)
+
+                assertThat(actual.oppgaver.first().oppgaveId)
+                    .isEqualTo(førsteOppgave)
+            }
+        }
+
+        @Test
+        fun `hent alle oppgaver med filtrering på foedselsnummer`() {
+            val sorteringsParameter = "?filtrering=foedselsnummer=101010"
+
+            oppgavestyringWithFakes{fakes, client ->
+                val førsteOppgave = transaction {
+                    val oppgave1 = genererOppgave()
+                        oppgave1.personnummer = "10101012345"
+                    genererOppgave()
+                    oppgave1.id.value
                 }
 
                 val actual = client.get("/oppgaver$sorteringsParameter") {

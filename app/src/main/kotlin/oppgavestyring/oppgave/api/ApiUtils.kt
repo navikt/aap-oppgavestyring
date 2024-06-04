@@ -4,11 +4,14 @@ import io.ktor.http.*
 import io.ktor.util.*
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
+import oppgavestyring.oppgave.db.TildeltTabell
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -43,16 +46,14 @@ fun parseSorting(sortings: List<String>) =
 
 fun generateOppgaveFilter(searchParams: OppgaveParams) = searchParams.filters.map { filter ->
     when (filter.key) {
+        OppgaveDto::foedselsnummer.name -> OppgaveTabell.personnummer like "%${filter.value.first()}%"
+        OppgaveDto::tilordnetRessurs.name -> TildeltTabell.ident like "%${filter.value.first()}%"
         OppgaveDto::behandlingstype.name -> OppgaveTabell.behandlingstype
             .inList(filter.value.map { Behandlingstype.valueOf(it) })
-
         OppgaveDto::avklaringsbehov.name -> OppgaveTabell.avklaringbehovtype
             .inList(filter.value.map { Avklaringsbehovtype.valueOf(it) })
-
         OppgaveDto::avklaringsbehovOpprettetTid.name -> timeWithinRange(OppgaveTabell.avklaringsbehovOpprettetTidspunkt, filter.value.first())
-
         OppgaveDto::behandlingOpprettetTid.name -> timeWithinRange(OppgaveTabell.behandlingOpprettetTidspunkt, filter.value.first())
-
         else -> null
     }
 }.filterNotNull()
@@ -76,6 +77,8 @@ fun getTimerangeFromISOStirng(dateRange: String): List<LocalDateTime> {
 
 fun generateOppgaveSorting(searchParams: OppgaveParams) = searchParams.sorting.map {
     when (it.key) {
+        OppgaveDto::foedselsnummer.name -> OppgaveTabell.personnummer to it.value
+        OppgaveDto::tilordnetRessurs.name -> TildeltTabell.ident to it.value
         OppgaveDto::behandlingstype.name -> OppgaveTabell.behandlingstype to it.value
         OppgaveDto::avklaringsbehov.name -> OppgaveTabell.avklaringbehovtype to it.value
         OppgaveDto::avklaringsbehovOpprettetTid.name -> OppgaveTabell.avklaringsbehovOpprettetTidspunkt to it.value
