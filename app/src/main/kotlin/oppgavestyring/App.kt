@@ -73,9 +73,9 @@ fun Application.oppgavestyring(config: Config) {
     routing {
         authenticate(AZURE) {
             oppgaver(oppgaveService)
-            behandlingsflyt(behandlingsflytAdapter)
             filter()
         }
+        behandlingsflyt(behandlingsflytAdapter)
 
     }
 }
