@@ -20,14 +20,14 @@ fun Route.oppgaver(oppgaveService: OppgaveService ) {
         get {
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
 
-            val gruppe = call.principal<OppgavePrincipal>()?.gruppe!!
-
             val searchParams = parseUrlFiltering(call.request.queryParameters)
+            val principal = call.principal<OppgavePrincipal>()!!
+
             val oppgaver = transaction {
                 val oppgaver = if (!searchParams.isEmpty())
-                    oppgaveService.søk(gruppe, searchParams)
+                    oppgaveService.søk(principal, searchParams)
                 else
-                    oppgaveService.hentÅpneOppgaver(gruppe)
+                    oppgaveService.hentÅpneOppgaver(principal)
 
                 oppgaver.map { OppgaveDto.fromOppgave(it) }
             }

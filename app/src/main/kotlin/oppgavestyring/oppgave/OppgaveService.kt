@@ -3,13 +3,13 @@ package oppgavestyring.oppgave
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.config.security.OppgavePrincipal
 import oppgavestyring.oppgave.api.OppgaveParams
 import oppgavestyring.oppgave.api.generateOppgaveFilter
 import oppgavestyring.oppgave.api.generateOppgaveSorting
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.Tildelt
-import oppgavestyring.config.security.AdGruppe
 import oppgavestyring.tilgangsstyring.TilgangstyringService
 import java.time.LocalDateTime
 
@@ -51,20 +51,20 @@ class OppgaveService {
         }
     }
 
-    fun søk(gruppe: AdGruppe, searchParams: OppgaveParams): List<Oppgave> {
+    fun søk(principal: OppgavePrincipal, searchParams: OppgaveParams): List<Oppgave> {
         val filters = generateOppgaveFilter(searchParams)
 
         return Oppgave.find {
             filters
         }.orderBy(
             *generateOppgaveSorting(searchParams)
-        ).filter { TilgangstyringService.kanSaksbehandlerSeOppgave(gruppe, it) }
+        ).filter { TilgangstyringService.kanSaksbehandlerSeOppgave(principal, it) }
     }
 
 
-    fun hentÅpneOppgaver(gruppe: AdGruppe): List<Oppgave> {
+    fun hentÅpneOppgaver(principal: OppgavePrincipal): List<Oppgave> {
         return Oppgave.find { OppgaveTabell.status eq Avklaringsbehovstatus.OPPRETTET }
-            .filter { TilgangstyringService.kanSaksbehandlerSeOppgave(gruppe, it) }
+            .filter { TilgangstyringService.kanSaksbehandlerSeOppgave(principal, it) }
     }
 
     fun hent(oppgaveId: OppgaveId): Oppgave {

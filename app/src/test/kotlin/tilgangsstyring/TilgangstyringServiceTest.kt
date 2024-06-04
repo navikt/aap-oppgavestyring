@@ -3,8 +3,8 @@ package tilgangsstyring
 import io.mockk.every
 import io.mockk.mockk
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
+import oppgavestyring.config.security.OppgavePrincipal
 import oppgavestyring.oppgave.db.Oppgave
-import oppgavestyring.config.security.AdGruppe
 import oppgavestyring.tilgangsstyring.TilgangstyringService
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -19,8 +19,11 @@ class TilgangstyringServiceTest {
 
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_STUDENT
+        val principal = mockk<OppgavePrincipal>()
+        every { principal.isSaksbehandler() } returns true
+        every { principal.isVeileder() } returns false
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.NAY, oppgave)
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(principal, oppgave)
 
         assertTrue(actual)
     }
@@ -30,8 +33,12 @@ class TilgangstyringServiceTest {
 
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_SYKDOM
+        val principal = mockk<OppgavePrincipal>()
+        every { principal.isSaksbehandler() } returns true
+        every { principal.isVeileder() } returns false
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.NAY, oppgave)
+
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(principal, oppgave)
 
         assertFalse(actual)
     }
@@ -41,8 +48,11 @@ class TilgangstyringServiceTest {
 
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_SYKDOM
+        val principal = mockk<OppgavePrincipal>()
+        every { principal.isSaksbehandler() } returns false
+        every { principal.isVeileder() } returns true
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.KONTOR, oppgave)
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(principal, oppgave)
 
         assertTrue(actual)
     }
@@ -52,8 +62,11 @@ class TilgangstyringServiceTest {
 
         val oppgave = mockk<Oppgave>()
         every { oppgave.avklaringsbehovtype } returns Avklaringsbehovtype.AVKLAR_STUDENT
+        val principal = mockk<OppgavePrincipal>()
+        every { principal.isSaksbehandler() } returns false
+        every { principal.isVeileder() } returns true
 
-        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(AdGruppe.KONTOR, oppgave)
+        val actual = tilgangstyringService.kanSaksbehandlerSeOppgave(principal, oppgave)
 
         assertFalse(actual)
     }
