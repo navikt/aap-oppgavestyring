@@ -7,7 +7,7 @@ import oppgavestyring.TestDatabase
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
 import oppgavestyring.oppgavestyringWithFakes
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -51,7 +51,7 @@ class FilterRouteApiTest {
             OppgaveFilter.all().firstOrNull()
         }
 
-        Assertions.assertThat(filter).isNotNull
+        assertThat(filter).isNotNull
     }
 
     @Test
@@ -76,11 +76,32 @@ class FilterRouteApiTest {
                 accept(ContentType.Application.Json)
             }.body<List<FilterDto>>()
 
-            Assertions.assertThat(actual.first())
+            assertThat(actual.first())
                 .usingRecursiveComparison()
                 .isEqualTo(expected)
         }
 
+    }
+
+    @Test
+    fun `slett oppgavefilter`() {
+        val filterId = transaction {
+            OppgaveFilter.new {
+                tittel = "Test"
+                beskrivelse = "Testbeskrivelse"
+                filter = "{}"
+                opprettetAv = "K112233"
+            }.id.value
+        }
+
+        oppgavestyringWithFakes { _, client ->
+            client.delete("/filter/$filterId")
+        }
+
+        transaction {
+            val actual = OppgaveFilter.findById(filterId)
+            assertThat(actual).isNull()
+        }
     }
 
 }
