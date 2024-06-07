@@ -2,7 +2,7 @@ package oppgavestyring.config.security
 
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import oppgavestyring.oppgave.NavIdent
+import oppgavestyring.intern.oppgave.NavIdent
 import java.util.*
 
 data class OppgavePrincipal(

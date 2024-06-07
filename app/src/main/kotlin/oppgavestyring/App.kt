@@ -19,16 +19,15 @@ import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
-import oppgavestyring.behandlingsflyt.BehandlingsflytAdapter
-import oppgavestyring.behandlingsflyt.behandlingsflyt
-import oppgavestyring.config.security.AZURE
-import oppgavestyring.config.security.authentication
 import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
-import oppgavestyring.filter.filter
-import oppgavestyring.oppgave.OppgaveService
-import oppgavestyring.oppgave.adapter.Token
-import oppgavestyring.oppgave.api.oppgaver
+import oppgavestyring.config.security.AZURE
+import oppgavestyring.config.security.authentication
+import oppgavestyring.ekstern.behandlingsflyt.BehandlingsflytAdapter
+import oppgavestyring.ekstern.behandlingsflyt.behandlingsflyt
+import oppgavestyring.intern.filter.filter
+import oppgavestyring.intern.oppgave.OppgaveService
+import oppgavestyring.intern.oppgave.api.oppgaver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -95,11 +94,4 @@ fun Application.server(
     routing {
         actuators(prometheus)
     }
-}
-
-internal fun ApplicationCall.authToken(): Token? {
-    return request.headers["Authorization"]
-        ?.split(" ")
-        ?.get(1)
-        ?.let { Token(it) }
 }

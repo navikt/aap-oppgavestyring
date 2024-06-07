@@ -2,10 +2,10 @@ package tilgangsstyring
 
 import io.mockk.every
 import io.mockk.mockk
-import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.config.security.OppgavePrincipal
-import oppgavestyring.oppgave.db.Oppgave
-import oppgavestyring.tilgangsstyring.TilgangstyringService
+import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovtype
+import oppgavestyring.ekstern.tilgangsstyring.TilgangstyringService
+import oppgavestyring.intern.oppgave.db.Oppgave
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

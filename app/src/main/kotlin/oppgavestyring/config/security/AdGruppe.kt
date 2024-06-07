@@ -1,6 +1,6 @@
 package oppgavestyring.config.security
 
-import java.util.UUID
+import java.util.*
 
 enum class AdGruppe(private val gruppeId: UUID) {
 
