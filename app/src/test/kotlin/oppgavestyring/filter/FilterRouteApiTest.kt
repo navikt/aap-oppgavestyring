@@ -37,6 +37,7 @@ class FilterRouteApiTest {
     fun `create oppgavefilter`() {
         oppgavestyringWithFakes { _, client ->
             val filterDto = FilterDto(
+                1,
                 "Oppgave",
                 "Dette er en oppgave",
                 """{"hello": "world"}"""
@@ -58,6 +59,7 @@ class FilterRouteApiTest {
     fun `fetch oppgavefilter`() {
 
         val expected = FilterDto(
+            1,
             "Oppgave",
             "Dette er en oppgave",
             """{"hello": "world"}"""
