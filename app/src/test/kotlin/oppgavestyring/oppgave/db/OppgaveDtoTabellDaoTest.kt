@@ -5,6 +5,7 @@ import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
 import oppgavestyring.config.db.Flyway
+import oppgavestyring.oppgave.NavIdent
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
@@ -60,7 +61,7 @@ class OppgaveDtoTabellDaoTest {
             val opprettetOppgave = generateOppgave()
 
             Utfører.new {
-                ident = UUID.randomUUID().toString()
+                ident = NavIdent("R123456")
                 oppgave = opprettetOppgave
             }
 
@@ -71,7 +72,7 @@ class OppgaveDtoTabellDaoTest {
 
     @Test
     fun `forventer å kunne tildele oppgave til person`() {
-        val ident = "YOLO"
+        val ident = NavIdent("K123456")
         transaction {
             val opprettetOppgave = generateOppgave()
 

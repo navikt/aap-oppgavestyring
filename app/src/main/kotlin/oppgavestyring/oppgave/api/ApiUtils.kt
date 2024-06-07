@@ -4,16 +4,35 @@ import io.ktor.http.*
 import io.ktor.util.*
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
-import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.OppgaveTabell
 import oppgavestyring.oppgave.db.TildeltTabell
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
+import org.jetbrains.exposed.sql.and
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.associate
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.emptyList
+import kotlin.collections.filterNotNull
+import kotlin.collections.first
+import kotlin.collections.flatMap
+import kotlin.collections.fold
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.plus
+import kotlin.collections.set
+import kotlin.collections.toTypedArray
 
 
 enum class SearchParams {

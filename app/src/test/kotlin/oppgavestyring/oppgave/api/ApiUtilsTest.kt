@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class ApiUtilsKtTest{
+class ApiUtilsTest{
 
     @Nested
     inner class Sorting {

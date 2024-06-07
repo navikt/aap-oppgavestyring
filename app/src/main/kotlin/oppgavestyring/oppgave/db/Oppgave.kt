@@ -4,6 +4,7 @@ package oppgavestyring.oppgave.db
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.oppgave.NavIdent
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -37,7 +38,10 @@ class Oppgave(id: EntityID<Long>): LongEntity(id) {
 class Utfører(id: EntityID<Long>): LongEntity(id) {
     companion object : LongEntityClass<Utfører>(UtførerTabell)
 
-    var ident by UtførerTabell.ident
+    private var _ident by UtførerTabell.ident
+    var ident: NavIdent
+        set(ident) { _ident = ident.asString() }
+        get() = NavIdent(_ident)
     var tidsstempel by UtførerTabell.tidsstempel
     var oppgave by Oppgave referencedOn UtførerTabell.oppgave
 }
@@ -45,7 +49,10 @@ class Utfører(id: EntityID<Long>): LongEntity(id) {
 class Tildelt(id: EntityID<Long>): LongEntity(id) {
     companion object : LongEntityClass<Tildelt>(TildeltTabell)
 
-    var ident by TildeltTabell.ident
+    private var _ident by TildeltTabell.ident
+    var ident: NavIdent
+        set(ident) { _ident = ident.asString()}
+        get() = NavIdent(_ident)
     var tidsstempel by TildeltTabell.tidsstempel
     var oppgave by Oppgave referencedOn TildeltTabell.oppgave
 }

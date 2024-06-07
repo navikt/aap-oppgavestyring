@@ -49,6 +49,20 @@ fun Route.oppgaver(oppgaveService: OppgaveService ) {
             call.respond(HttpStatusCode.OK, oppgave)
         }
 
+        get("/nesteOppgave") {
+            val principal = call.principal<OppgavePrincipal>()!!
+            LOG.info("Bruker ${principal.ident.asString()} etterspørr neste oppgave")
+
+            val searchParams = parseUrlFiltering(call.request.queryParameters)
+
+            val response = transaction {
+                val oppgave = oppgaveService.hentNesteOppgave(principal, searchParams)
+                OppgaveDto.fromOppgave(oppgave)
+            }
+
+            call.respond(response)
+        }
+
         patch("/{id}/tildelRessurs") {
             LOG.info("Forsøker å tildele ressurs til oppgave")
 
@@ -86,6 +100,8 @@ fun Route.oppgaver(oppgaveService: OppgaveService ) {
             call.respond(HttpStatusCode.NoContent)
 
         }
+
+
     }
 }
 

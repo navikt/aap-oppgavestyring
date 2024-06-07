@@ -34,7 +34,7 @@ data class OppgaveDto(
             saksnummer = oppgave.saksnummer,
             status = oppgave.status,
             foedselsnummer = oppgave.personnummer,
-            tilordnetRessurs = oppgave.tildelt?.ident,
+            tilordnetRessurs = oppgave.tildelt?.ident?.asString(),
             avklaringsbehov = oppgave.avklaringsbehovtype,
             behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,
             avklaringsbehovOpprettetTid = oppgave.avklaringsbehovOpprettetTidspunkt,

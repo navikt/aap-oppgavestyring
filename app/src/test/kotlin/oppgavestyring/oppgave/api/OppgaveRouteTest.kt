@@ -9,6 +9,7 @@ import oppgavestyring.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.behandlingsflyt.dto.Behandlingstype
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
+import oppgavestyring.oppgave.NavIdent
 import oppgavestyring.oppgave.db.Oppgave
 import oppgavestyring.oppgave.db.Tildelt
 import oppgavestyring.oppgavestyringWithFakes
@@ -144,11 +145,11 @@ class OppgaveRouteTest {
                 val oppgave1 = genererOppgave()
                 val oppgave2 = genererOppgave()
                 Tildelt.new {
-                    ident = "K123456"
+                    ident = NavIdent("K123456")
                     oppgave = oppgave1
                 }
                 Tildelt.new {
-                    ident = "A111111"
+                    ident = NavIdent("A111111")
                     oppgave = oppgave2
                 }
 
@@ -224,7 +225,7 @@ class OppgaveRouteTest {
             val førsteOppgave = transaction {
                 val oppgave1 = genererOppgave()
                 Tildelt.new {
-                    ident = "K101010"
+                    ident = NavIdent("K101010")
                     oppgave = oppgave1
                 }
                 genererOppgave()
@@ -352,7 +353,7 @@ class OppgaveRouteTest {
             val oppgaveId = transaction {
                 val oppgave = genererOppgave()
                 Tildelt.new {
-                    ident = "T123456"
+                    ident = NavIdent("T123456")
                     this.oppgave = oppgave
                 }
                 oppgave.id.value
@@ -364,6 +365,29 @@ class OppgaveRouteTest {
             transaction {
                 Assertions.assertThat(Oppgave[oppgaveId].tildelt).isNull()
             }
+        }
+    }
+
+    @Test
+    fun `hent neste oppgave`() {
+        oppgavestyringWithFakes { fakes, client ->
+            val oppgaveId = transaction {
+                val tildeltOppgave = genererOppgave()
+                Tildelt.new {
+                    ident = NavIdent("T123456")
+                    this.oppgave = tildeltOppgave
+                }
+                genererOppgave().status = Avklaringsbehovstatus.AVSLUTTET
+                genererOppgave().id.value
+            }
+
+            val actual = client.get("/oppgaver/nesteOppgave") {
+                accept(ContentType.Application.Json)
+            }.body<OppgaveDto>()
+
+            Assertions.assertThat(actual).isNotNull()
+            Assertions.assertThat(actual.oppgaveId).isEqualTo(oppgaveId)
+            Assertions.assertThat(actual.tilordnetRessurs).isNotNull()
         }
     }
 }
