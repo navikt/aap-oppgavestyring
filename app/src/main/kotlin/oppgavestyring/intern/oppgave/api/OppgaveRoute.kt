@@ -11,9 +11,12 @@ import oppgavestyring.config.security.OppgavePrincipal
 import oppgavestyring.intern.oppgave.NavIdent
 import oppgavestyring.intern.oppgave.OppgaveService
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.ktor.ext.inject
 
 
-fun Route.oppgaver(oppgaveService: OppgaveService) {
+fun Route.oppgaver() {
+
+    val oppgaveService: OppgaveService by inject()
 
     route("/oppgaver") {
 

@@ -3,12 +3,12 @@ package oppgavestyring.ekstern.behandlingsflyt
 import behandlingsflytRequest
 import io.ktor.client.request.*
 import io.ktor.http.*
-import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
 import oppgavestyring.ekstern.behandlingsflyt.dto.*
 import oppgavestyring.intern.oppgave.db.Oppgave
 import oppgavestyring.intern.oppgave.db.OppgaveTabell
+import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.testutils.oppgavestyringWithFakes
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -30,12 +30,11 @@ class BehandlingRouteTest {
         }
     }
 
-    @BeforeEach
+    @AfterEach
     fun setup() {
         TestDatabase.reset()
         Flyway.migrate(TestDatabase.getConnection())
     }
-
 
 
     @Test

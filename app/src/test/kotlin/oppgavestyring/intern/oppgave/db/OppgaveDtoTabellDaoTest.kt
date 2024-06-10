@@ -1,15 +1,15 @@
 package oppgavestyring.intern.oppgave.db
 
-import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.config.db.Flyway
 import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.ekstern.behandlingsflyt.dto.Behandlingstype
 import oppgavestyring.intern.oppgave.NavIdent
+import oppgavestyring.testutils.TestDatabase
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
@@ -35,10 +35,11 @@ class OppgaveDtoTabellDaoTest {
         @JvmStatic
         fun beforeAll() {
             TestDatabase.start()
+            TestDatabase.getConnection()
         }
     }
 
-    @BeforeEach
+    @AfterEach
     fun setup() {
         TestDatabase.reset()
         Flyway.migrate(TestDatabase.getConnection())
