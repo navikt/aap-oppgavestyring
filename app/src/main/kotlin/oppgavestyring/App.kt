@@ -19,15 +19,13 @@ import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import oppgavestyring.actuators.api.actuators
-import oppgavestyring.config.db.DatabaseSingleton
-import oppgavestyring.config.db.DbConfig
+import oppgavestyring.config.koinModule
 import oppgavestyring.config.security.AZURE
 import oppgavestyring.config.security.authentication
-import oppgavestyring.ekstern.behandlingsflyt.BehandlingsflytAdapter
 import oppgavestyring.ekstern.behandlingsflyt.behandlingsflyt
 import oppgavestyring.intern.filter.filter
-import oppgavestyring.intern.oppgave.OppgaveService
 import oppgavestyring.intern.oppgave.api.oppgaver
+import org.koin.ktor.plugin.Koin
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -40,6 +38,11 @@ fun main() {
 }
 
 fun Application.oppgavestyring(config: Config) {
+
+    install(Koin) {
+        modules(koinModule)
+    }
+
     install(ContentNegotiation) {
         jackson {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -61,20 +64,14 @@ fun Application.oppgavestyring(config: Config) {
         }
     }
 
-    DatabaseSingleton.init(DbConfig())
-    DatabaseSingleton.migrate()
-
     authentication(config.azure)
-
-    val oppgaveService = OppgaveService()
-    val behandlingsflytAdapter = BehandlingsflytAdapter(oppgaveService)
 
     routing {
         authenticate(AZURE) {
-            oppgaver(oppgaveService)
+            oppgaver()
             filter()
         }
-        behandlingsflyt(behandlingsflytAdapter)
+        behandlingsflyt()
 
     }
 }
@@ -92,6 +89,6 @@ fun Application.server(
     oppgavestyring(config)
 
     routing {
-        actuators(prometheus)
+        actuators()
     }
 }

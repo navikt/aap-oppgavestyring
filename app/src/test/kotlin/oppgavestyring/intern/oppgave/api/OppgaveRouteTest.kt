@@ -3,7 +3,6 @@ package oppgavestyring.intern.oppgave.api
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
 import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovstatus
@@ -12,11 +11,12 @@ import oppgavestyring.ekstern.behandlingsflyt.dto.Behandlingstype
 import oppgavestyring.intern.oppgave.NavIdent
 import oppgavestyring.intern.oppgave.db.Oppgave
 import oppgavestyring.intern.oppgave.db.Tildelt
+import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.testutils.oppgavestyringWithFakes
 import org.assertj.core.api.Assertions
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -37,7 +37,7 @@ class OppgaveRouteTest {
         }
     }
 
-    @BeforeEach
+    @AfterEach
     fun setup() {
         TestDatabase.reset()
         Flyway.migrate(TestDatabase.getConnection())

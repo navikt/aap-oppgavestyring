@@ -3,14 +3,14 @@ package oppgavestyring.intern.filter
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
+import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.testutils.oppgavestyringWithFakes
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class FilterRouteApiTest {
@@ -27,7 +27,7 @@ class FilterRouteApiTest {
         }
     }
 
-    @BeforeEach
+    @AfterEach
     fun setup() {
         TestDatabase.reset()
         Flyway.migrate(TestDatabase.getConnection())

@@ -6,27 +6,25 @@ import oppgavestyring.LOG
 import org.jetbrains.exposed.sql.Database
 import javax.sql.DataSource
 
-object DatabaseSingleton {
+class DatabaseManager(databaseConfig: DatabaseConfiguration) {
 
-    var connection: DataSource? = null
+    val connection: DataSource
 
-    fun init(config: DbConfig) {
+    init {
         LOG.info("Setting up database connection")
-        if (connection != null) return
-
-        connection = createHikariDataSource(config)
-        Database.connect(connection!!)
+        connection = createHikariDataSource(databaseConfig)
+        Database.connect(connection)
         LOG.info("Database connection established")
+        migrate()
     }
 
     fun migrate() {
         LOG.info("Migrating database")
-        require(connection != null) {"Database connection is required"}
-        connection?.let { Flyway.migrate(it) }
+        Flyway.migrate(connection)
         LOG.info("Database connection completed")
     }
 
-    private fun createHikariDataSource(dbConfig: DbConfig) = HikariDataSource(HikariConfig().apply {
+    private fun createHikariDataSource(dbConfig: DatabaseConfiguration) = HikariDataSource(HikariConfig().apply {
         driverClassName = dbConfig.driver
         jdbcUrl = dbConfig.connectionURL
         username = dbConfig.username

@@ -13,12 +13,12 @@ import kotlinx.coroutines.runBlocking
 import no.nav.aap.ktor.client.auth.azure.AzureConfig
 import oppgavestyring.Config
 import oppgavestyring.OppgaveConfig
-import oppgavestyring.config.db.DatabaseSingleton
-import oppgavestyring.config.db.DbConfig
+import oppgavestyring.config.db.DatabaseConfiguration
+import oppgavestyring.config.db.DatabaseManager
+import oppgavestyring.server
 import oppgavestyring.testutils.fakes.AzureFake
 import oppgavestyring.testutils.fakes.OppgaveFake
 import oppgavestyring.testutils.fakes.generateJwtToken
-import oppgavestyring.server
 import org.testcontainers.containers.PostgreSQLContainer
 import java.net.URI
 import javax.sql.DataSource
@@ -87,19 +87,20 @@ object TestDatabase {
     val password get() = postgres.password
     val connectionUrl get() = postgres.jdbcUrl
 
+    private var connection: DataSource? = null
+
     fun start() { postgres.start() }
     fun stop() { postgres.stop()}
     fun reset() { postgres.execInContainer(
         "psql",  "-U", "test", "-d", "test" , "-c", "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
     ) }
-    fun getConnection(): DataSource{
-        DatabaseSingleton.init(
-            DbConfig(
+
+    fun getConnection() = if (connection == null) DatabaseManager(
+        DatabaseConfiguration(
             connectionURL = connectionUrl,
             username = username,
             password = password
-            )
         )
-        return DatabaseSingleton.connection!!
-    }
+    ).connection.let { connection = it; it }
+    else connection!!
 }
