@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+
+
 plugins {
     kotlin("jvm") version "2.0.0"
     id("io.ktor.plugin") version "2.3.11"
@@ -8,6 +10,17 @@ plugins {
 val aapLibVersion = "5.0.17"
 val ktorVersion = "2.3.11"
 val exposedVersion = "0.51.1"
+val flywayVersion = "10.14.0"
+val hikariVersion = "5.1.0"
+val postgresqlVersion = "42.7.3"
+val testcontainersVersion = "1.19.8"
+val prometheusVersion= "1.13.0"
+val logbackVersion = "1.5.6"
+val jacksonVersion = "2.17.1"
+val logstashVersion = "7.4"
+val assertjVersion = "3.26.0"
+val mockkVersion = "1.13.10"
+
 
 application {
     mainClass.set("oppgavestyring.AppKt")
@@ -35,23 +48,23 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
-    implementation("org.flywaydb:flyway-core:10.14.0")
-    implementation("org.flywaydb:flyway-database-postgresql:10.14.0")
-    implementation("com.zaxxer:HikariCP:5.1.0")
-    runtimeOnly("org.postgresql:postgresql:42.7.3")
-    testImplementation("org.testcontainers:postgresql:1.19.8")
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
+    implementation("com.zaxxer:HikariCP:$hikariVersion")
+    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.13.0")
-    implementation("ch.qos.logback:logback-classic:1.5.6")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
-    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.4")
+    implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-    testImplementation("org.assertj:assertj-core:3.26.0")
-    testImplementation("io.mockk:mockk:1.13.10")
-    testImplementation("org.assertj:assertj-core:3.26.0")
+    testImplementation("org.assertj:assertj-core:$assertjVersion")
+    testImplementation("io.mockk:mockk:$mockkVersion")
+    testImplementation("org.assertj:assertj-core:$assertjVersion")
 }
 
 repositories {
@@ -59,9 +72,12 @@ repositories {
     maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
+//tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
+//    compilerOptions.javaClass.getMethod("set").invoke(JvmTarget.JVM_21)
+//}
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "21"
+        compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
     }
 
     // https://stackoverflow.com/questions/77228513/flyway-unrecognised-migration-name-format-when-run-in-docker
