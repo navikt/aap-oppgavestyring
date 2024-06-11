@@ -1,5 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 
 plugins {
@@ -77,7 +77,7 @@ repositories {
 //}
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+        compilerOptions.jvmTarget = JvmTarget.JVM_21
     }
 
     // https://stackoverflow.com/questions/77228513/flyway-unrecognised-migration-name-format-when-run-in-docker
