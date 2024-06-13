@@ -5,6 +5,7 @@ import com.papsign.ktor.openapigen.route.path.normal.NormalOpenAPIRoute
 import com.papsign.ktor.openapigen.route.path.normal.get
 import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.path.normal.patch
+import com.papsign.ktor.openapigen.route.response.respond
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import oppgavestyring.LOG
@@ -27,7 +28,9 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
             // todo sjekk claims??
             val principal = pipeline.context.authentication.principal<OppgavePrincipal>()!!
 
-            val searchParams = OppgaveParams(filters = call.filters, sorting = call.sorting)
+            val searchParams = OppgaveParams(filters = call.filtrering, sorting = call.sortering)
+
+            LOG.info("search params: $searchParams")
             val oppgaver = transaction {
                 val oppgaver = if (!searchParams.isEmpty())
                     oppgaveService.søk(principal, searchParams)
@@ -36,7 +39,7 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
 
                 oppgaver.map { OppgaveDto.fromOppgave(it) }
             }
-            respondWithStatus(HttpStatusCode.OK, OppgaverResponse(oppgaver))
+            respond(OppgaverResponse(oppgaver))
         }
 
         route("/{id}") {

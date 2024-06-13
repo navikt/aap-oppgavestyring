@@ -5,7 +5,7 @@ import com.papsign.ktor.openapigen.parameters.QueryParamStyle
 import org.jetbrains.exposed.sql.SortOrder
 
 data class ListOppgaverRequest(
-    @QueryParam(description = "xxxx", style = QueryParamStyle.deepObject) val filters: Map<String, List<String>>,
-    @QueryParam(description = "xxxx", style = QueryParamStyle.deepObject) val sorting: Map<String, SortOrder>
+    @QueryParam(description = "xxxx", style = QueryParamStyle.deepObject) val filtrering: Map<String, List<String>>,
+    @QueryParam(description = "xxxx", style = QueryParamStyle.deepObject) val sortering: Map<String, SortOrder>
 ) {
 }
