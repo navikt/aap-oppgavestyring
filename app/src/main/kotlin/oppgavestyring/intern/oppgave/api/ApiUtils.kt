@@ -33,6 +33,7 @@ data class OppgaveParams(
   fun isEmpty() = filters.isEmpty() && sorting.isEmpty()
 }
 
+// todo sjekk bruk etterpå
 fun parseUrlFiltering(parameters: Parameters) = OppgaveParams(
     sorting = parseSorting(parameters.getAll(SearchParams.sortering.name) ?: emptyList()),
     filters = parseFilters(parameters.getAll(SearchParams.filtrering.name) ?: emptyList()),

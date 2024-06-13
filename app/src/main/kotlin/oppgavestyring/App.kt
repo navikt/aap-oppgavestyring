@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.jackson.jackson
-import io.ktor.server.application.Application
-import io.ktor.server.application.install
+import com.papsign.ktor.openapigen.OpenAPIGen
+import com.papsign.ktor.openapigen.route.path.normal.NormalOpenAPIRoute
+import com.papsign.ktor.openapigen.route.response.OpenAPIPipelineResponseContext
+import io.ktor.http.*
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
 import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
@@ -15,7 +17,8 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respondText
-import io.ktor.server.routing.routing
+import io.ktor.server.routing.*
+import io.ktor.util.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
@@ -72,12 +75,32 @@ fun Application.oppgavestyring(config: Config) {
 
     routing {
         authenticate(AZURE) {
-            oppgaver(oppgaveService)
-            filter()
+            apiRoute {
+                oppgaver(oppgaveService)
+                filter()
+            }
         }
         behandlingsflyt(behandlingsflytAdapter)
 
     }
+}
+
+@KtorDsl
+private fun Route.apiRoute(config: NormalOpenAPIRoute.() -> Unit) {
+    NormalOpenAPIRoute(this, application.plugin(OpenAPIGen).globalModuleProvider).apply(config)
+}
+
+suspend inline fun <reified TResponse : Any> OpenAPIPipelineResponseContext<TResponse>.respondWithStatus(
+    statusCode: HttpStatusCode = HttpStatusCode.OK,
+    response: TResponse
+) {
+    responder.respond(statusCode, response, pipeline)
+}
+
+suspend inline fun <reified TResponse : Any> OpenAPIPipelineResponseContext<TResponse>.respondWithStatus(
+    statusCode: HttpStatusCode
+) {
+    responder.respond(statusCode, Unit, pipeline)
 }
 
 fun Application.server(
@@ -88,6 +111,16 @@ fun Application.server(
     install(MicrometerMetrics) {
         registry = prometheus
         meterBinders += LogbackMetrics()
+    }
+
+    install(OpenAPIGen) {
+        // this serves OpenAPI definition on /openapi.json
+        serveOpenApiJson = true
+        // this servers Swagger UI on /swagger-ui/index.html
+        serveSwaggerUi = true
+        info {
+            title = "AAP - Oppgavestyring"
+        }
     }
 
     oppgavestyring(config)

@@ -23,7 +23,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @Nested
-class OppgaveRouteTest {
+class ListOppgaverRequestRouteTest {
     companion object {
         @BeforeAll
         @JvmStatic
@@ -88,6 +88,38 @@ class OppgaveRouteTest {
                 .isEqualTo(expected)
         }
     }
+    @Test
+    fun `hent oppgave uten id`() {
+        oppgavestyringWithFakes { fakes, client ->
+
+            val oppgave = transaction {
+                genererOppgave()
+            }
+
+            val actual = client.get("/oppgaver/123") {
+                accept(ContentType.Application.Json)
+            }.body<OppgaveDto>()
+
+            val expected = OppgaveDto(
+                oppgaveId = oppgave.id.value,
+                saksnummer = "2352345",
+                behandlingsreferanse = "23642",
+                behandlingstype = Behandlingstype.Førstegangsbehandling,
+                avklaringsbehov = Avklaringsbehovtype.AVKLAR_SYKDOM,
+                status = Avklaringsbehovstatus.OPPRETTET,
+                foedselsnummer = oppgave.personnummer,
+                avklaringsbehovOpprettetTid = oppgave.avklaringsbehovOpprettetTidspunkt,
+                behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,
+                oppgaveOpprettet = LocalDateTime.now()
+            )
+
+            Assertions.assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes("oppgaveOpprettet")
+                .isEqualTo(expected)
+        }
+    }
+
 
     @Test
     fun `hent alle oppgaver, verifiser at bare åpne oppgaver blir hentet`() {

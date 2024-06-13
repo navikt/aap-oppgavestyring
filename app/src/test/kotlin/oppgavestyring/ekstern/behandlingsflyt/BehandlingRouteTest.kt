@@ -2,6 +2,7 @@ package oppgavestyring.ekstern.behandlingsflyt
 
 import behandlingsflytRequest
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
@@ -49,6 +50,17 @@ class BehandlingRouteTest {
             }
 
             Assertions.assertEquals(HttpStatusCode.Created, actual.status)
+        }
+    }
+
+    @Test
+    fun `openapi xxxx`() {
+        oppgavestyringWithFakes { _, client ->
+            val actual = client.get("/openapi.json") {
+            }
+
+            Assertions.assertEquals(HttpStatusCode.OK, actual.status)
+            Assertions.assertEquals(actual, actual.bodyAsText(), "2")
         }
     }
 
