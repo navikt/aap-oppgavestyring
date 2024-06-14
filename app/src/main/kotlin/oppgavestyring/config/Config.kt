@@ -15,6 +15,6 @@ data class OppgaveConfig(
 )
 
 data class OppslagConfig(
-    val host: URI = "https://oppslag".let(::URI),
+    val host: URI = "http://oppslag".let(::URI),
     val scope: String = "api://dev-gcp.aap.oppslag/.default"
 )
