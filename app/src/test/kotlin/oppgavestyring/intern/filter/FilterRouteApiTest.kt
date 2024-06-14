@@ -43,10 +43,12 @@ class FilterRouteApiTest {
                 """{"hello": "world"}"""
             )
 
-            client.post("/filter") {
+            val res = client.post("/filter") {
                 contentType(ContentType.Application.Json)
                 setBody(filterDto)
             }
+
+            assertThat(res.status).isEqualTo(HttpStatusCode.Created)
         }
         val filter = transaction {
             OppgaveFilter.all().firstOrNull()

@@ -1,14 +1,12 @@
 package oppgavestyring.intern.oppgave.api
 
-import com.papsign.ktor.openapigen.annotations.parameters.PathParam
 import com.papsign.ktor.openapigen.route.path.normal.NormalOpenAPIRoute
 import com.papsign.ktor.openapigen.route.path.normal.get
-import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.path.normal.patch
 import com.papsign.ktor.openapigen.route.response.respond
+import com.papsign.ktor.openapigen.route.route
 import io.ktor.http.*
 import io.ktor.server.auth.*
-import io.ktor.server.util.*
 import io.ktor.util.*
 import oppgavestyring.LOG
 import oppgavestyring.config.security.OppgavePrincipal
@@ -17,17 +15,12 @@ import oppgavestyring.intern.oppgave.OppgaveService
 import oppgavestyring.respondWithStatus
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class OppgaverByIdRequest(@PathParam(description = "xxxx") val id: Long?)
-
-
 fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
     route("/oppgaver") {
 
         get<ListOppgaverRequest, OppgaverResponse> { call ->
             LOG.info("Forsøker å søke opp alle oppgaver tilknyttet AAP")
 
-            ///val searchParams = call.queryParam
-            // todo sjekk claims??
             val principal = pipeline.context.authentication.principal<OppgavePrincipal>()!!
 
             val filter = trekkUtFilterParametere(pipeline.context.parameters)
@@ -35,7 +28,6 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
             val searchParams = OppgaveParams(
                 filters = filter,
                 sorting = call.sortering.mapValues { it.value.toSQLSortOrder() })
-
 
             LOG.info("search params: $searchParams")
             val oppgaver = transaction {
@@ -57,26 +49,26 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
 
                 if (id == null) {
                     respondWithStatus(HttpStatusCode.BadRequest)
-                } else {
-
-                    val oppgave = transaction {
-                        val oppgave = oppgaveService.hent(
-                            oppgaveId = id
-                        )
-                        OppgaveDto.fromOppgave(oppgave)
-                    }
-                    respondWithStatus(HttpStatusCode.OK, oppgave)
+                    return@get
                 }
+                val oppgave = transaction {
+                    val oppgave = oppgaveService.hent(
+                        oppgaveId = id
+                    )
+                    OppgaveDto.fromOppgave(oppgave)
+                }
+                respondWithStatus(HttpStatusCode.OK, oppgave)
+
             }
         }
 
         route("/nesteOppgave") {
             get<ListOppgaverRequest, OppgaveDto> { req ->
                 val principal = pipeline.context.authentication.principal<OppgavePrincipal>()!!
-                LOG.info("Bruker ${principal.ident.toString()} etterspørr neste oppgave")
+                LOG.info("Bruker ${principal.ident} etterspør neste oppgave")
 
                 val searchParams = OppgaveParams(
-                    filters = trekkUtFilterParametere(pipeline.context.parameters), //req.filtrering,
+                    filters = trekkUtFilterParametere(pipeline.context.parameters),
                     sorting = req.sortering.mapValues { it.value.toSQLSortOrder() })
 
                 val response = transaction {
@@ -92,12 +84,10 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
             patch<OppgaverByIdRequest, Any, TildelRessursRequest> { req, body ->
                 LOG.info("Forsøker å tildele ressurs til oppgave")
 
-                // todo sjekk parsing av string
                 val id = req.id
                 if (id == null) {
                     respondWithStatus(HttpStatusCode.BadRequest)
                 } else {
-
                     transaction {
                         oppgaveService.tildelOppgave(
                             id = id,
@@ -119,8 +109,7 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
                 val id = req.id
                 if (id == null) {
                     respondWithStatus(HttpStatusCode.BadRequest)
-                }
-                else {
+                } else {
 
                     LOG.info("Uthenting av ID OK")
 
@@ -134,12 +123,5 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
                 }
             }
         }
-
-
     }
 }
-
-private fun trekkUtFilterParametere(parameters: Parameters) = parameters.toMap()
-    .filter { it.key.startsWith("filtrering") }
-    .mapKeys { it.key.removePrefix("filtrering[").removeSuffix("]").trim() }
-

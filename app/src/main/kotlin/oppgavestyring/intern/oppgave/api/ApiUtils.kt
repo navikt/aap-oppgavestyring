@@ -18,13 +18,6 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.set
-
-
-enum class SearchParams {
-    sortering,
-    filtrering
-}
 
 data class OppgaveParams(
     val filters: Map<String, List<String>>,
@@ -33,22 +26,11 @@ data class OppgaveParams(
   fun isEmpty() = filters.isEmpty() && sorting.isEmpty()
 }
 
-// todo sjekk bruk etterpå
-fun parseUrlFiltering(parameters: Parameters) = OppgaveParams(
-    sorting = parseSorting(parameters.getAll(SearchParams.sortering.name) ?: emptyList()),
-    filters = parseFilters(parameters.getAll(SearchParams.filtrering.name) ?: emptyList()),
-)
+const val filtrering = "filtrering"
 
-fun parseFilters(filters: List<String>) =
-    filters.flatMap { parseQueryString(it).flattenEntries() }
-        .fold(mutableMapOf<String, List<String>>()) { acc, value ->
-            acc[value.first] = acc[value.first]?.plus(value.second) ?: mutableListOf(value.second)
-            acc
-        }
-
-fun parseSorting(sortings: List<String>) =
-    sortings.flatMap { parseQueryString(it).entries() }
-        .associate { it.key to SortOrder.valueOf(it.value.first().uppercase()) }
+fun trekkUtFilterParametere(parameters: Parameters) = parameters.toMap()
+    .filter { it.key.startsWith(filtrering) }
+    .mapKeys { it.key.removePrefix(filtrering+"[").removeSuffix("]").trim() }
 
 fun generateOppgaveFilter(searchParams: OppgaveParams) = searchParams.filters.map { filter ->
     when (filter.key) {

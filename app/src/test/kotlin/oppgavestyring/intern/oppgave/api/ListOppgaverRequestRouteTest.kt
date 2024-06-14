@@ -371,12 +371,9 @@ class ListOppgaverRequestRouteTest {
                 oppgave.id.value
             }
 
-            var x = client.patch("/oppgaver/$oppgaveId/frigi") {
+            client.patch("/oppgaver/$oppgaveId/frigi") {
                   contentType(ContentType.Application.Json)
-
             }
-
-            x
 
             transaction {
                 Assertions.assertThat(Oppgave[oppgaveId].tildelt).isNull()
