@@ -12,7 +12,7 @@ enum class SortOrder {
     }
 }
 
-data class OppgaverByIdRequest(@PathParam(description = "Hent oppgave med ID.") val id: Long?)
+data class OppgaverByIdRequest(@PathParam(description = "Hent oppgave med ID.") val id: Long)
 
 data class ListOppgaverRequest(
     @QueryParam(
