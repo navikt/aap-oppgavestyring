@@ -8,6 +8,8 @@ import com.papsign.ktor.openapigen.route.path.normal.patch
 import com.papsign.ktor.openapigen.route.response.respond
 import io.ktor.http.*
 import io.ktor.server.auth.*
+import io.ktor.server.util.*
+import io.ktor.util.*
 import oppgavestyring.LOG
 import oppgavestyring.config.security.OppgavePrincipal
 import oppgavestyring.intern.oppgave.NavIdent
@@ -15,7 +17,7 @@ import oppgavestyring.intern.oppgave.OppgaveService
 import oppgavestyring.respondWithStatus
 import org.jetbrains.exposed.sql.transactions.transaction
 
-data class OppgaverByIdRequest(@PathParam(description = "xxxx") val id: Long)
+data class OppgaverByIdRequest(@PathParam(description = "xxxx") val id: Long?)
 
 
 fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
@@ -28,7 +30,12 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
             // todo sjekk claims??
             val principal = pipeline.context.authentication.principal<OppgavePrincipal>()!!
 
-            val searchParams = OppgaveParams(filters = call.filtrering, sorting = call.sortering)
+            val filter = trekkUtFilterParametere(pipeline.context.parameters)
+
+            val searchParams = OppgaveParams(
+                filters = filter,
+                sorting = call.sortering.mapValues { it.value.toSQLSortOrder() })
+
 
             LOG.info("search params: $searchParams")
             val oppgaver = transaction {
@@ -47,15 +54,19 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
                 LOG.info("Forsøker å hente én konkret oppgave")
 
                 val id = req.id
-                //?: return@get call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
 
-                val oppgave = transaction {
-                    val oppgave = oppgaveService.hent(
-                        oppgaveId = id
-                    )
-                    OppgaveDto.fromOppgave(oppgave)
+                if (id == null) {
+                    respondWithStatus(HttpStatusCode.BadRequest)
+                } else {
+
+                    val oppgave = transaction {
+                        val oppgave = oppgaveService.hent(
+                            oppgaveId = id
+                        )
+                        OppgaveDto.fromOppgave(oppgave)
+                    }
+                    respondWithStatus(HttpStatusCode.OK, oppgave)
                 }
-                respondWithStatus(HttpStatusCode.OK, oppgave)
             }
         }
 
@@ -64,8 +75,9 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
                 val principal = pipeline.context.authentication.principal<OppgavePrincipal>()!!
                 LOG.info("Bruker ${principal.ident.toString()} etterspørr neste oppgave")
 
-                //val searchParams = req.queryParam
-                val searchParams = OppgaveParams(filters = emptyMap(), sorting = emptyMap())
+                val searchParams = OppgaveParams(
+                    filters = trekkUtFilterParametere(pipeline.context.parameters), //req.filtrering,
+                    sorting = req.sortering.mapValues { it.value.toSQLSortOrder() })
 
                 val response = transaction {
                     val oppgave = oppgaveService.hentNesteOppgave(principal, searchParams)
@@ -82,41 +94,52 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
 
                 // todo sjekk parsing av string
                 val id = req.id
-                    //?: return@patch call.respond(HttpStatusCode.BadRequest, "mangler path-param 'id'")
+                if (id == null) {
+                    respondWithStatus(HttpStatusCode.BadRequest)
+                } else {
 
-                transaction {
-                    oppgaveService.tildelOppgave(
-                        id = id,
-                        navIdent = NavIdent(body.navIdent)
-                    )
+                    transaction {
+                        oppgaveService.tildelOppgave(
+                            id = id,
+                            navIdent = NavIdent(body.navIdent)
+                        )
+                    }
+                    respondWithStatus(HttpStatusCode.NoContent)
                 }
-                respondWithStatus(HttpStatusCode.NoContent)
             }
         }
 
 
         route("/{id}/frigi") {
-            patch<OppgaverByIdRequest, Any, Any>() { req, _ ->
+            patch<OppgaverByIdRequest, Any, String> { req, _ ->
                 LOG.info("Forsøker å frigi ressurs fra oppgave")
 
                 LOG.info("Token OK")
 
                 val id = req.id
-
-                LOG.info("Uthenting av ID OK")
-
-                transaction {
-                    oppgaveService.frigiRessursFraOppgave(
-                        id = id,
-                    )
+                if (id == null) {
+                    respondWithStatus(HttpStatusCode.BadRequest)
                 }
+                else {
 
-                respondWithStatus(HttpStatusCode.NoContent)
+                    LOG.info("Uthenting av ID OK")
 
+                    transaction {
+                        oppgaveService.frigiRessursFraOppgave(
+                            id = id,
+                        )
+                    }
+
+                    respondWithStatus(HttpStatusCode.NoContent)
+                }
             }
         }
 
 
     }
 }
+
+private fun trekkUtFilterParametere(parameters: Parameters) = parameters.toMap()
+    .filter { it.key.startsWith("filtrering") }
+    .mapKeys { it.key.removePrefix("filtrering[").removeSuffix("]").trim() }
 

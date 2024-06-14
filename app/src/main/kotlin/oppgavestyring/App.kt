@@ -32,6 +32,7 @@ import oppgavestyring.ekstern.behandlingsflyt.behandlingsflyt
 import oppgavestyring.intern.filter.filter
 import oppgavestyring.intern.oppgave.OppgaveService
 import oppgavestyring.intern.oppgave.api.oppgaver
+import org.jetbrains.exposed.dao.exceptions.EntityNotFoundException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -57,10 +58,12 @@ fun Application.oppgavestyring(config: Config) {
         exception<Throwable> { call, cause ->
             LOG.warn("Exception during request handling with cause: $cause")
             LOG.debug(cause.stackTrace.contentToString())
-            if(cause is IllegalArgumentException) {
-                call.respondText(text = "400: $cause" , status = HttpStatusCode.BadRequest)
+            if (cause is IllegalArgumentException) {
+                call.respondText(text = "400: $cause", status = HttpStatusCode.BadRequest)
+            } else if (cause is EntityNotFoundException) {
+                call.respondText(text = "404: $cause", status = HttpStatusCode.NotFound)
             } else {
-                call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
+                call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
             }
         }
     }

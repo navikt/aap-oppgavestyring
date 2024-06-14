@@ -91,32 +91,12 @@ class ListOppgaverRequestRouteTest {
     @Test
     fun `hent oppgave uten id`() {
         oppgavestyringWithFakes { fakes, client ->
-
-            val oppgave = transaction {
-                genererOppgave()
-            }
-
             val actual = client.get("/oppgaver/123") {
                 accept(ContentType.Application.Json)
-            }.body<OppgaveDto>()
+            }
 
-            val expected = OppgaveDto(
-                oppgaveId = oppgave.id.value,
-                saksnummer = "2352345",
-                behandlingsreferanse = "23642",
-                behandlingstype = Behandlingstype.Førstegangsbehandling,
-                avklaringsbehov = Avklaringsbehovtype.AVKLAR_SYKDOM,
-                status = Avklaringsbehovstatus.OPPRETTET,
-                foedselsnummer = oppgave.personnummer,
-                avklaringsbehovOpprettetTid = oppgave.avklaringsbehovOpprettetTidspunkt,
-                behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,
-                oppgaveOpprettet = LocalDateTime.now()
-            )
+           Assertions.assertThat(actual.status).isEqualTo(HttpStatusCode.NotFound)
 
-            Assertions.assertThat(actual)
-                .usingRecursiveComparison()
-                .ignoringFieldsMatchingRegexes("oppgaveOpprettet")
-                .isEqualTo(expected)
         }
     }
 
@@ -144,7 +124,7 @@ class ListOppgaverRequestRouteTest {
 
     @Test
     fun `hent alle oppgaver med sortering på $property`() {
-        val sorteringsParameter = "?sortering=behandlingOpprettetTid=desc"
+        val sorteringsParameter = "?sortering[behandlingOpprettetTid]=desc"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -169,7 +149,7 @@ class ListOppgaverRequestRouteTest {
 
     @Test
     fun `hent alle oppgaver med sortering på tildelt`() {
-        val sorteringsParameter = "?sortering=tilordnetRessurs=desc"
+        val sorteringsParameter = "?sortering[tilordnetRessurs]=desc"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -203,7 +183,7 @@ class ListOppgaverRequestRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på property`() {
-        val sorteringsParameter = "?filtrering=avklaringsbehov=AVKLAR_SYKDOM"
+        val sorteringsParameter = "?filtrering[avklaringsbehov]=AVKLAR_SYKDOM"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -226,7 +206,7 @@ class ListOppgaverRequestRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på foedselsnummer`() {
-        val sorteringsParameter = "?filtrering=foedselsnummer=101010"
+        val sorteringsParameter = "?filtrering[foedselsnummer]=101010"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -251,7 +231,7 @@ class ListOppgaverRequestRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på relasjonsverdi`() {
-        val sorteringsParameter = "?filtrering=tilordnetRessurs=K101010"
+        val sorteringsParameter = "?filtrering[tilordnetRessurs]=K101010&filtrering[tilordnetRessurs]=K101011"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -282,7 +262,7 @@ class ListOppgaverRequestRouteTest {
         val filterTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10, 11111)
         val urlTime = filterTime.truncatedTo(ChronoUnit.DAYS)
 
-        val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${urlTime.minusDays(3)}%2F${urlTime.plusDays(3)}"
+        val sorteringsParameter = "?filtrering[behandlingOpprettetTid]=${urlTime.minusDays(3)}/${urlTime.plusDays(3)}"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -309,7 +289,7 @@ class ListOppgaverRequestRouteTest {
     fun `hent alle oppgaver med filtrering på fra til dato`() {
         val filterTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10, 11111)
 
-        val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${filterTime.truncatedTo(ChronoUnit.DAYS)}"
+        val sorteringsParameter = "?filtrering[behandlingOpprettetTid]=${filterTime.truncatedTo(ChronoUnit.DAYS)}"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -335,7 +315,7 @@ class ListOppgaverRequestRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på flere verdier av samme property`() {
-        val sorteringsParameter = "?filtrering=avklaringsbehov%3DFASTSETT_ARBEIDSEVNE%26avklaringsbehov%3DAVKLAR_BISTANDSBEHOV"
+        val sorteringsParameter = "?filtrering[avklaringsbehov]=FASTSETT_ARBEIDSEVNE&filtrering[avklaringsbehov]=AVKLAR_BISTANDSBEHOV"
 
         oppgavestyringWithFakes { fakes, client ->
             transaction {
@@ -391,8 +371,12 @@ class ListOppgaverRequestRouteTest {
                 oppgave.id.value
             }
 
-            client.patch("/oppgaver/$oppgaveId/frigi") {
+            var x = client.patch("/oppgaver/$oppgaveId/frigi") {
+                  contentType(ContentType.Application.Json)
+
             }
+
+            x
 
             transaction {
                 Assertions.assertThat(Oppgave[oppgaveId].tildelt).isNull()
