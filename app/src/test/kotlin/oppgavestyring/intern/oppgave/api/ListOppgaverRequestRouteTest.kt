@@ -55,6 +55,7 @@ class ListOppgaverRequestRouteTest {
             LocalDateTime.of(2020, 1, 1, 1, 1, 1, 222).truncatedTo(ChronoUnit.MILLIS)
         behandlingOpprettetTidspunkt = LocalDateTime.of(2021, 1, 1, 1, 1, 1, 222).truncatedTo(ChronoUnit.MILLIS)
         this.personnummer = personnummer
+        personNavn = "Yolo Swaggins"
     }
 
     @Test
@@ -79,7 +80,8 @@ class ListOppgaverRequestRouteTest {
                 foedselsnummer = oppgave.personnummer,
                 avklaringsbehovOpprettetTid = oppgave.avklaringsbehovOpprettetTidspunkt,
                 behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,
-                oppgaveOpprettet = LocalDateTime.now()
+                oppgaveOpprettet = LocalDateTime.now(),
+                personNavn = "Yolo Swaggins"
             )
 
             Assertions.assertThat(actual)

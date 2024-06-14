@@ -75,6 +75,7 @@ class BehandlingRouteTest {
                     avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
                     behandlingOpprettetTidspunkt = LocalDateTime.now()
                     this.personnummer = personnummer
+                    personNavn = "Yolo Swaggins"
                 }
             }
 

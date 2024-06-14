@@ -23,6 +23,7 @@ fun generateOppgave() = Oppgave.new {
     avklaringsbehovOpprettetTidspunkt = LocalDateTime.now()
     behandlingOpprettetTidspunkt = LocalDateTime.now()
     personnummer = "12345678901"
+    personNavn = "Test Personson"
     avklaringsbehovtype = Avklaringsbehovtype.AVKLAR_SYKDOM
 }
 

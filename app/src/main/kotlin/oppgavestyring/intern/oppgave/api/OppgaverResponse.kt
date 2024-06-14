@@ -20,6 +20,7 @@ data class OppgaveDto(
     val avklaringsbehov: Avklaringsbehovtype,
     val status: Avklaringsbehovstatus,
     val foedselsnummer: String, //innbygger
+    val personNavn: String,
     val avklaringsbehovOpprettetTid: LocalDateTime,
     val behandlingOpprettetTid: LocalDateTime,
     val oppgaveOpprettet: LocalDateTime,
@@ -34,6 +35,7 @@ data class OppgaveDto(
             saksnummer = oppgave.saksnummer,
             status = oppgave.status,
             foedselsnummer = oppgave.personnummer,
+            personNavn = oppgave.personNavn,
             tilordnetRessurs = oppgave.tildelt?.ident?.toString(),
             avklaringsbehov = oppgave.avklaringsbehovtype,
             behandlingOpprettetTid = oppgave.behandlingOpprettetTidspunkt,

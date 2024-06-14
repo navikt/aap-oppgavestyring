@@ -27,6 +27,7 @@ class Oppgave(id: EntityID<Long>): LongEntity(id) {
     var avklaringsbehovOpprettetTidspunkt by OppgaveTabell.avklaringsbehovOpprettetTidspunkt
     var behandlingOpprettetTidspunkt by OppgaveTabell.behandlingOpprettetTidspunkt
     var personnummer by OppgaveTabell.personnummer
+    var personNavn by OppgaveTabell.personNavn
     val tidsstempel by OppgaveTabell.tidsstempel
 
     val utførere by Utfører referrersOn UtførerTabell.oppgave
@@ -65,6 +66,7 @@ object OppgaveTabell: LongIdTable("OPPGAVE") {
     val avklaringbehovtype = enumerationByName("AVKLARINGBEHOVTYPE", 50, Avklaringsbehovtype::class)
     val gjelderverdi = varchar("GJELDERVERDI", 50).default("")
     val personnummer = varchar("PERSONNUMMER", 11)
+    val personNavn = varchar("PERSONNAVN", 255)
     val avklaringsbehovOpprettetTidspunkt = datetime("AVKLARINGSBEHOV_OPPRETTET_TIDSPUNKT")
     val behandlingOpprettetTidspunkt = datetime("BEHANDLING_OPPRETTET_TIDSPUNKT")
     val tidsstempel = datetime("TIDSSTEMPEL").defaultExpression(CurrentDateTime)

@@ -22,6 +22,7 @@ import io.ktor.util.*
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import no.nav.aap.ktor.client.auth.azure.AzureAdTokenProvider
 import oppgavestyring.actuators.api.actuators
 import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
@@ -29,6 +30,7 @@ import oppgavestyring.config.security.AZURE
 import oppgavestyring.config.security.authentication
 import oppgavestyring.ekstern.behandlingsflyt.BehandlingsflytAdapter
 import oppgavestyring.ekstern.behandlingsflyt.behandlingsflyt
+import oppgavestyring.ekstern.oppslag.OppslagClient
 import oppgavestyring.intern.filter.filter
 import oppgavestyring.intern.oppgave.OppgaveService
 import oppgavestyring.intern.oppgave.api.oppgaver
@@ -45,6 +47,7 @@ fun main() {
 }
 
 fun Application.oppgavestyring(config: Config) {
+
     install(ContentNegotiation) {
         jackson {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -73,7 +76,9 @@ fun Application.oppgavestyring(config: Config) {
 
     authentication(config.azure)
 
-    val oppgaveService = OppgaveService()
+    val azureAdTokenProvider = AzureAdTokenProvider(config.azure)
+    val oppslagClient = OppslagClient(config.oppslag, azureAdTokenProvider)
+    val oppgaveService = OppgaveService(oppslagClient)
     val behandlingsflytAdapter = BehandlingsflytAdapter(oppgaveService)
 
     routing {

@@ -13,12 +13,14 @@ import kotlinx.coroutines.runBlocking
 import no.nav.aap.ktor.client.auth.azure.AzureConfig
 import oppgavestyring.Config
 import oppgavestyring.OppgaveConfig
+import oppgavestyring.OppslagConfig
 import oppgavestyring.config.db.DatabaseSingleton
 import oppgavestyring.config.db.DbConfig
 import oppgavestyring.testutils.fakes.AzureFake
 import oppgavestyring.testutils.fakes.OppgaveFake
 import oppgavestyring.testutils.fakes.generateJwtToken
 import oppgavestyring.server
+import oppgavestyring.testutils.fakes.OppslagFake
 import org.testcontainers.containers.PostgreSQLContainer
 import java.net.URI
 import javax.sql.DataSource
@@ -26,15 +28,18 @@ import javax.sql.DataSource
 class Fakes : AutoCloseable {
     val azure = AzureFake()
     val oppgave = OppgaveFake()
+    val oppslag = OppslagFake()
 
     internal val config = TestConfig(
         oppgavePort = oppgave.port,
-        azurePort = azure.port
+        azurePort = azure.port,
+        oppslagPort = oppslag.port
     )
 
     override fun close() {
         azure.close()
         oppgave.close()
+        oppslag.close()
     }
 }
 
@@ -66,7 +71,7 @@ internal fun oppgavestyringWithFakes(test: suspend (Fakes, HttpClient) -> Unit) 
     }
 }
 
-internal class TestConfig(oppgavePort: Int, azurePort: Int) : Config(
+internal class TestConfig(oppgavePort: Int, azurePort: Int, oppslagPort: Int) : Config(
     oppgave = OppgaveConfig(
         host = "http://localhost:$oppgavePort".let(::URI),
         scope = "",
@@ -78,6 +83,10 @@ internal class TestConfig(oppgavePort: Int, azurePort: Int) : Config(
         jwksUri = "http://localhost:$azurePort",
         issuer = "nav",
     ),
+    oppslag = OppslagConfig(
+        host = "http://localhost:$oppslagPort".let(::URI),
+        scope = ""
+        )
 )
 
 object TestDatabase {

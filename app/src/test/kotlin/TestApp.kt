@@ -7,6 +7,7 @@ import oppgavestyring.testutils.TestConfig
 import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.testutils.fakes.AzureFake
 import oppgavestyring.testutils.fakes.OppgaveFake
+import oppgavestyring.testutils.fakes.OppslagFake
 import oppgavestyring.testutils.fakes.generateJwtToken
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,9 +23,12 @@ fun main() {
 
     val azure = AzureFake()
     val oppgave = OppgaveFake()
+    val oppslag = OppslagFake()
+
     val config = TestConfig(
         oppgavePort = oppgave.port,
-        azurePort = azure.port
+        azurePort = azure.port,
+        oppslagPort = oppslag.port
     )
 
     val jwt = generateJwtToken()

@@ -3,6 +3,7 @@ package oppgavestyring.testutils.fakes
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -66,6 +67,17 @@ private fun Application.azure() {
                         )
                     )
                 )
+            }
+        }
+
+        post("/token") {
+            call.respondText(contentType = ContentType.Application.Json) {
+                """
+                    {
+                        "exprires_in" : 3600,
+                        "access_token": "very.secure.token"
+                    }
+                """.trimMargin()
             }
         }
     }
