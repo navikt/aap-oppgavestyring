@@ -27,6 +27,7 @@ application {
 }
 
 dependencies {
+    implementation("dev.forst:ktor-openapi-generator:0.6.1")
     implementation("com.github.navikt.aap-libs:ktor-auth:$aapLibVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")

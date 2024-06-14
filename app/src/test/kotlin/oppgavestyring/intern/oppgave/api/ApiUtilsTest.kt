@@ -8,46 +8,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class ApiUtilsTest{
-
-    @Nested
-    inner class Sorting {
-
-        @Test
-        fun `test that querryparam sorters are correctly formatted`() {
-            val key = "behandlingsreferanse"
-
-            val paramBuilder = ParametersBuilder()
-            paramBuilder.set(SearchParams.sortering.name, "$key=asc")
-            val result = parseUrlFiltering(paramBuilder.build())
-
-
-            Assertions.assertThat(result.sorting.keys)
-                .contains(key)
-
-            Assertions.assertThat(result.sorting[key])
-                .isEqualTo(SortOrder.ASC)
-        }
-
-        @Test
-        fun `test that queryparam sorters are correctly ordered `() {
-            val key1 = "behandlingsreferanse"
-            val key2 = "behandlingOpprettetTidspunkt"
-
-            val paramBuilder = ParametersBuilder()
-            paramBuilder.append(SearchParams.sortering.name, "$key1=asc")
-            paramBuilder.append(SearchParams.sortering.name, "$key2=desc")
-            val result = parseUrlFiltering(paramBuilder.build())
-
-
-            Assertions.assertThat(result.sorting.keys)
-                .hasSize(2)
-
-            Assertions.assertThat(result.sorting.keys.toList()[0])
-                .isEqualTo(key1)
-
-        }
-    }
-
     @Nested
     inner class Filtering {
 
@@ -56,13 +16,14 @@ class ApiUtilsTest{
             val key = "avklaringbehovtype"
 
             val paramBuilder = ParametersBuilder()
-            paramBuilder.append(SearchParams.filtrering.name, "$key=${Avklaringsbehovtype.FATTE_VEDTAK}")
-            val result = parseUrlFiltering(paramBuilder.build())
+            paramBuilder.append("${filtrering}[$key]", Avklaringsbehovtype.FATTE_VEDTAK.toString())
 
-            Assertions.assertThat(result.filters.keys)
+            val result = trekkUtFilterParametere(paramBuilder.build())
+
+            Assertions.assertThat(result.keys)
                 .contains(key)
 
-            Assertions.assertThat(result.filters[key])
+            Assertions.assertThat(result[key])
                 .contains(Avklaringsbehovtype.FATTE_VEDTAK.name)
         }
 
@@ -70,24 +31,33 @@ class ApiUtilsTest{
         fun `test that multiple filterparams are correctly formatted`() {
             val key = "avklaringbehovtype"
 
-
-            val filterParameterBuilder = ParametersBuilder()
             val paramBuilder = ParametersBuilder()
-            filterParameterBuilder.append(key, Avklaringsbehovtype.FATTE_VEDTAK.name)
-            filterParameterBuilder.append(key, Avklaringsbehovtype.AVKLAR_STUDENT.name)
-            paramBuilder.append(SearchParams.filtrering.name, filterParameterBuilder.build().formUrlEncode())
+            paramBuilder.append("${filtrering}[$key]", Avklaringsbehovtype.FATTE_VEDTAK.name)
+            paramBuilder.append("${filtrering}[$key]", Avklaringsbehovtype.AVKLAR_STUDENT.name)
 
-            val result = parseUrlFiltering(paramBuilder.build())
+            val result = trekkUtFilterParametere(paramBuilder.build())
 
-
-            Assertions.assertThat(result.filters.keys)
+            Assertions.assertThat(result.keys)
                 .contains(key)
 
-            Assertions.assertThat(result.filters[key])
+            Assertions.assertThat(result[key])
                 .contains(Avklaringsbehovtype.FATTE_VEDTAK.name)
                 .contains(Avklaringsbehovtype.AVKLAR_STUDENT.name)
+        }
 
+        @Test
+        fun `trekk ut filter-dictionary`() {
+            val paramBuilder = ParametersBuilder()
+            paramBuilder.append(filtrering + "[key1]", "asc")
+            paramBuilder.append(filtrering + "[key1]", "asc2")
+            paramBuilder.append(filtrering + "[key2]", "desc")
+            val params = paramBuilder.build()
 
+            val res = trekkUtFilterParametere(params)
+
+            Assertions.assertThat(res.keys)
+                .hasSize(2)
+            Assertions.assertThat(res).isEqualTo(mapOf("key1" to listOf("asc", "asc2"), "key2" to listOf("desc")))
         }
 
     }

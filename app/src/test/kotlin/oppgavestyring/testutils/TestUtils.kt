@@ -81,8 +81,7 @@ internal class TestConfig(oppgavePort: Int, azurePort: Int) : Config(
 )
 
 object TestDatabase {
-
-    val postgres = PostgreSQLContainer<Nothing>("postgres:16")
+    val postgres = PostgreSQLContainer("postgres:16")
     val username get() = postgres.username
     val password get() = postgres.password
     val connectionUrl get() = postgres.jdbcUrl

@@ -3,16 +3,27 @@ package oppgavestyring.ekstern.behandlingsflyt
 import behandlingsflytRequest
 import io.ktor.client.request.*
 import io.ktor.http.*
-import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
-import oppgavestyring.ekstern.behandlingsflyt.dto.*
+import oppgavestyring.ekstern.behandlingsflyt.dto.AvklaringsbehovDto
+import oppgavestyring.ekstern.behandlingsflyt.dto.AvklaringsbehovhendelseEndring
+import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovstatus
+import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovtype
+import oppgavestyring.ekstern.behandlingsflyt.dto.BehandlingshistorikkRequest
+import oppgavestyring.ekstern.behandlingsflyt.dto.Behandlingstatus
+import oppgavestyring.ekstern.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.ekstern.behandlingsflyt.dto.Definisjon
 import oppgavestyring.intern.oppgave.db.Oppgave
 import oppgavestyring.intern.oppgave.db.OppgaveTabell
+import oppgavestyring.testutils.TestDatabase
 import oppgavestyring.testutils.oppgavestyringWithFakes
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 @Nested
@@ -35,8 +46,6 @@ class BehandlingRouteTest {
         TestDatabase.reset()
         Flyway.migrate(TestDatabase.getConnection())
     }
-
-
 
     @Test
     fun `opprett oppgave`() {

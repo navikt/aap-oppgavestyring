@@ -23,7 +23,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @Nested
-class OppgaveRouteTest {
+class ListOppgaverRequestRouteTest {
     companion object {
         @BeforeAll
         @JvmStatic
@@ -88,6 +88,18 @@ class OppgaveRouteTest {
                 .isEqualTo(expected)
         }
     }
+    @Test
+    fun `hent oppgave uten id`() {
+        oppgavestyringWithFakes { fakes, client ->
+            val actual = client.get("/oppgaver/123") {
+                accept(ContentType.Application.Json)
+            }
+
+           Assertions.assertThat(actual.status).isEqualTo(HttpStatusCode.NotFound)
+
+        }
+    }
+
 
     @Test
     fun `hent alle oppgaver, verifiser at bare åpne oppgaver blir hentet`() {
@@ -112,7 +124,7 @@ class OppgaveRouteTest {
 
     @Test
     fun `hent alle oppgaver med sortering på $property`() {
-        val sorteringsParameter = "?sortering=behandlingOpprettetTid=desc"
+        val sorteringsParameter = "?sortering[behandlingOpprettetTid]=desc"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -137,7 +149,7 @@ class OppgaveRouteTest {
 
     @Test
     fun `hent alle oppgaver med sortering på tildelt`() {
-        val sorteringsParameter = "?sortering=tilordnetRessurs=desc"
+        val sorteringsParameter = "?sortering[tilordnetRessurs]=desc"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -171,7 +183,7 @@ class OppgaveRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på property`() {
-        val sorteringsParameter = "?filtrering=avklaringsbehov=AVKLAR_SYKDOM"
+        val sorteringsParameter = "?filtrering[avklaringsbehov]=AVKLAR_SYKDOM"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -194,7 +206,7 @@ class OppgaveRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på foedselsnummer`() {
-        val sorteringsParameter = "?filtrering=foedselsnummer=101010"
+        val sorteringsParameter = "?filtrering[foedselsnummer]=101010"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -219,7 +231,7 @@ class OppgaveRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på relasjonsverdi`() {
-        val sorteringsParameter = "?filtrering=tilordnetRessurs=K101010"
+        val sorteringsParameter = "?filtrering[tilordnetRessurs]=K101010&filtrering[tilordnetRessurs]=K101011"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -250,7 +262,7 @@ class OppgaveRouteTest {
         val filterTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10, 11111)
         val urlTime = filterTime.truncatedTo(ChronoUnit.DAYS)
 
-        val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${urlTime.minusDays(3)}%2F${urlTime.plusDays(3)}"
+        val sorteringsParameter = "?filtrering[behandlingOpprettetTid]=${urlTime.minusDays(3)}/${urlTime.plusDays(3)}"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -277,7 +289,7 @@ class OppgaveRouteTest {
     fun `hent alle oppgaver med filtrering på fra til dato`() {
         val filterTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10, 11111)
 
-        val sorteringsParameter = "?filtrering=behandlingOpprettetTid%3D${filterTime.truncatedTo(ChronoUnit.DAYS)}"
+        val sorteringsParameter = "?filtrering[behandlingOpprettetTid]=${filterTime.truncatedTo(ChronoUnit.DAYS)}"
 
         oppgavestyringWithFakes { fakes, client ->
             val førsteOppgave = transaction {
@@ -303,7 +315,7 @@ class OppgaveRouteTest {
 
     @Test
     fun `hent alle oppgaver med filtrering på flere verdier av samme property`() {
-        val sorteringsParameter = "?filtrering=avklaringsbehov%3DFASTSETT_ARBEIDSEVNE%26avklaringsbehov%3DAVKLAR_BISTANDSBEHOV"
+        val sorteringsParameter = "?filtrering[avklaringsbehov]=FASTSETT_ARBEIDSEVNE&filtrering[avklaringsbehov]=AVKLAR_BISTANDSBEHOV"
 
         oppgavestyringWithFakes { fakes, client ->
             transaction {
@@ -360,6 +372,7 @@ class OppgaveRouteTest {
             }
 
             client.patch("/oppgaver/$oppgaveId/frigi") {
+                  contentType(ContentType.Application.Json)
             }
 
             transaction {
