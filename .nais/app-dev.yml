@@ -18,6 +18,8 @@ spec:
     outbound:
       external:
         - host: oppgave.dev-fss-pub.nais.io
+    rules:
+        - application: oppslag
   replicas:
     max: 1
     min: 1
@@ -58,3 +60,8 @@ spec:
       runtime: "java"
   secureLogs:
     enabled: true
+  env:
+      - name: OPPSLAG_URL
+        value: "http://oppslag"
+      - name: OPPSLAG_SCOPE
+        value: api://dev-gcp.aap.oppslag/.default

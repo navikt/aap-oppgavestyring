@@ -5,6 +5,7 @@ import oppgavestyring.config.security.OppgavePrincipal
 import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovstatus
 import oppgavestyring.ekstern.behandlingsflyt.dto.Avklaringsbehovtype
 import oppgavestyring.ekstern.behandlingsflyt.dto.Behandlingstype
+import oppgavestyring.ekstern.oppslag.OppslagClient
 import oppgavestyring.ekstern.tilgangsstyring.TilgangstyringService
 import oppgavestyring.intern.oppgave.api.OppgaveParams
 import oppgavestyring.intern.oppgave.api.generateOppgaveFilter
@@ -20,7 +21,7 @@ import java.time.LocalDateTime
 typealias Behandlingsreferanse = String
 typealias Saksnummer = String
 
-class OppgaveService {
+class OppgaveService(private val oppslagClient: OppslagClient) {
 
     fun opprett(
         personident: String,
@@ -31,6 +32,7 @@ class OppgaveService {
         avklaringsbehovOpprettetTidspunkt: LocalDateTime,
         behandlingOpprettetTidspunkt: LocalDateTime
     ): Oppgave {
+        val fultNavn = oppslagClient.hentNavnForPersonIdent(personident.let(::Personident)).toString()
         return Oppgave.new {
             this.saksnummer = saksnummer
             this.behandlingsreferanse = behandlingsreferanse
@@ -40,6 +42,7 @@ class OppgaveService {
             this.avklaringsbehovOpprettetTidspunkt = avklaringsbehovOpprettetTidspunkt
             this.behandlingOpprettetTidspunkt = behandlingOpprettetTidspunkt
             personnummer = personident
+            personNavn = fultNavn
         }
     }
 
