@@ -7,7 +7,6 @@ import com.papsign.ktor.openapigen.route.response.respond
 import com.papsign.ktor.openapigen.route.route
 import io.ktor.http.*
 import io.ktor.server.auth.*
-import io.ktor.util.*
 import oppgavestyring.LOG
 import oppgavestyring.config.security.OppgavePrincipal
 import oppgavestyring.intern.oppgave.NavIdent
@@ -47,10 +46,6 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
 
                 val id = req.id
 
-                if (id == null) {
-                    respondWithStatus(HttpStatusCode.BadRequest)
-                    return@get
-                }
                 val oppgave = transaction {
                     val oppgave = oppgaveService.hent(
                         oppgaveId = id
@@ -85,17 +80,13 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
                 LOG.info("Forsøker å tildele ressurs til oppgave")
 
                 val id = req.id
-                if (id == null) {
-                    respondWithStatus(HttpStatusCode.BadRequest)
-                } else {
-                    transaction {
-                        oppgaveService.tildelOppgave(
-                            id = id,
-                            navIdent = NavIdent(body.navIdent)
-                        )
-                    }
-                    respondWithStatus(HttpStatusCode.NoContent)
+                transaction {
+                    oppgaveService.tildelOppgave(
+                        id = id,
+                        navIdent = NavIdent(body.navIdent)
+                    )
                 }
+                respondWithStatus(HttpStatusCode.NoContent)
             }
         }
 
@@ -107,20 +98,16 @@ fun NormalOpenAPIRoute.oppgaver(oppgaveService: OppgaveService) {
                 LOG.info("Token OK")
 
                 val id = req.id
-                if (id == null) {
-                    respondWithStatus(HttpStatusCode.BadRequest)
-                } else {
 
-                    LOG.info("Uthenting av ID OK")
+                LOG.info("Uthenting av ID OK")
 
-                    transaction {
-                        oppgaveService.frigiRessursFraOppgave(
-                            id = id,
-                        )
-                    }
-
-                    respondWithStatus(HttpStatusCode.NoContent)
+                transaction {
+                    oppgaveService.frigiRessursFraOppgave(
+                        id = id,
+                    )
                 }
+
+                respondWithStatus(HttpStatusCode.NoContent)
             }
         }
     }

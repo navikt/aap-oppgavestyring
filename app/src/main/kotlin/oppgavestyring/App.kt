@@ -83,8 +83,9 @@ fun Application.oppgavestyring(config: Config) {
                 filter()
             }
         }
-        behandlingsflyt(behandlingsflytAdapter)
-
+        apiRoute {
+            behandlingsflyt(behandlingsflytAdapter)
+        }
     }
 }
 

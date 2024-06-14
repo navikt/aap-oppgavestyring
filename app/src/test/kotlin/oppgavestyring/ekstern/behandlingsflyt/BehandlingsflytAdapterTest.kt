@@ -46,38 +46,38 @@ class BehandlingsflytAdapterTest {
 
 
     @Test
-    fun `mapBehnadlingshistorikkTilOppgaveHendelser oppretter oppgave ved åpent avklaringsbehov`() {
+    fun `mapBehandlingshistorikkTilOppgaveHendelser oppretter oppgave ved åpent avklaringsbehov`() {
         val request = generateBehandlingshistorikkRequest()
         every { oppgaveService.opprett(any(), any(), any(), any(), any(), any(), any()) } returns mockk<Oppgave>()
 
-        behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
+        behandlingsflytAdapter.mapBehandlingshistorikkTilOppgaveHendelser(request)
 
 
         verify(exactly = 1){ oppgaveService.opprett(any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test
-    fun `mapBehnadlingshistorikkTilOppgaveHendelser lukker oppgave når behandling er lukket`() {
+    fun `mapBehandlingshistorikkTilOppgaveHendelser lukker oppgave når behandling er lukket`() {
         val request = generateBehandlingshistorikkRequest().copy(status = Behandlingstatus.AVSLUTTET,
             avklaringsbehov = emptyList()
         )
         justRun { oppgaveService.lukkOppgaverPåBehandling(any()) }
 
 
-        behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
+        behandlingsflytAdapter.mapBehandlingshistorikkTilOppgaveHendelser(request)
 
 
         verify(exactly = 1){ oppgaveService.lukkOppgaverPåBehandling(request.referanse) }
     }
 
     @Test
-    fun `mapBehnadlingshistorikkTilOppgaveHendelser lukker oppgave når behandling ikke har noen åpne avklaringsbehov`() {
+    fun `mapBehandlingshistorikkTilOppgaveHendelser lukker oppgave når behandling ikke har noen åpne avklaringsbehov`() {
         val request = generateBehandlingshistorikkRequest().copy(
             avklaringsbehov = listOf(generateAvklaringsbehovRequest().copy(status = Avklaringsbehovstatus.AVSLUTTET))
         )
         justRun { oppgaveService.lukkOppgaverPåBehandling(any()) }
 
-        behandlingsflytAdapter.mapBehnadlingshistorikkTilOppgaveHendelser(request)
+        behandlingsflytAdapter.mapBehandlingshistorikkTilOppgaveHendelser(request)
 
         verify(exactly = 1){ oppgaveService.lukkOppgaverPåBehandling(request.referanse) }
     }

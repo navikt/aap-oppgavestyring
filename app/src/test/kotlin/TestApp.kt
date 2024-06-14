@@ -1,6 +1,5 @@
-import com.papsign.ktor.openapigen.route.apiRouting
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import oppgavestyring.config.db.DB_CONFIG_PREFIX
 import oppgavestyring.config.db.Flyway
 import oppgavestyring.server

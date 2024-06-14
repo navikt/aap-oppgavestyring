@@ -45,7 +45,7 @@ fun NormalOpenAPIRoute.filter() {
 
         route("/{id}") {
             delete<SlettFilterRequest, String> { req ->
-                val filterId = req.id ?: throw IllegalArgumentException("Filter-id mangler")
+                val filterId = req.id
                 val principal = pipeline.context.authentication.principal<OppgavePrincipal>()!!
 
                 LOG.info("Bruker: ${principal.ident} sletter filter: $filterId")

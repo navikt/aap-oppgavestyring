@@ -10,21 +10,21 @@ class BehandlingsflytAdapter(
 ) {
 
 
-    fun mapBehnadlingshistorikkTilOppgaveHendelser(
-        behanlding: BehandlingshistorikkRequest
+    fun mapBehandlingshistorikkTilOppgaveHendelser(
+        behandling: BehandlingshistorikkRequest
     ) {
 
-        oppgaveService.lukkOppgaverPåBehandling(behanlding.referanse)
+        oppgaveService.lukkOppgaverPåBehandling(behandling.referanse)
 
-        val åpentAvklaringsbehov = behanlding.getÅpentAvklaringsbehov()
+        val åpentAvklaringsbehov = behandling.getÅpentAvklaringsbehov()
         if (åpentAvklaringsbehov != null) oppgaveService.opprett(
-            personident = behanlding.personident,
-            saksnummer = behanlding.saksnummer,
+            personident = behandling.personident,
+            saksnummer = behandling.saksnummer,
             avklaringsbehovtype = Avklaringsbehovtype.fraKode(åpentAvklaringsbehov.definisjon.type),
-            behandlingsreferanse = behanlding.referanse,
-            behandlingstype = behanlding.behandlingType,
+            behandlingsreferanse = behandling.referanse,
+            behandlingstype = behandling.behandlingType,
             avklaringsbehovOpprettetTidspunkt = åpentAvklaringsbehov.getOpprettelsestidspunkt(),
-            behandlingOpprettetTidspunkt = behanlding.opprettetTidspunkt
+            behandlingOpprettetTidspunkt = behandling.opprettetTidspunkt
         )
 
     }
