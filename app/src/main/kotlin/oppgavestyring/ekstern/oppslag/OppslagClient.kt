@@ -27,7 +27,7 @@ class OppslagClient(private val oppslagConfig: OppslagConfig, private val azureA
             val obo = azureAdTokenProvider.getClientCredentialToken(oppslagConfig.scope)
 
             client.get("${oppslagConfig.host}/navn") {
-            headers["personIdnet"] = personident.toString()
+            headers["personident"] = personident.toString()
             accept(ContentType.Application.Json)
             bearerAuth(obo)
         }.body<NavnDto>() }

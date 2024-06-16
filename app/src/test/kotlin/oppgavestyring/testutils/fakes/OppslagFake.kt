@@ -29,7 +29,7 @@ private fun Application.oppslag() {
 
     routing {
         get("/navn") {
-            val personident = call.request.headers["personIdnet"]
+            val personident = call.request.headers["personident"]
                 ?: throw IllegalArgumentException("personident mangler")
 
             call.respond(NavnDto("Testy", "Testersen"))
