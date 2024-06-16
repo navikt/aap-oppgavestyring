@@ -32,7 +32,7 @@ class OppgaveService(private val oppslagClient: OppslagClient) {
         avklaringsbehovOpprettetTidspunkt: LocalDateTime,
         behandlingOpprettetTidspunkt: LocalDateTime
     ): Oppgave {
-        val fultNavn = oppslagClient.hentNavnForPersonIdent(personident.let(::Personident)).toString()
+        val fultNavn = "PLACEHOLDER" //oppslagClient.hentNavnForPersonIdent(personident.let(::Personident)).toString()
         return Oppgave.new {
             this.saksnummer = saksnummer
             this.behandlingsreferanse = behandlingsreferanse
