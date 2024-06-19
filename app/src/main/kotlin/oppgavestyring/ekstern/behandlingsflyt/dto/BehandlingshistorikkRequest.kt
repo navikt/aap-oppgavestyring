@@ -18,12 +18,16 @@ data class BehandlingshistorikkRequest(
                 avklaringsbehov.all { it.status == Avklaringsbehovstatus.AVSLUTTET }
 
     @JsonIgnore
-    fun getÅpentAvklaringsbehov() = avklaringsbehov.firstOrNull {it.status == Avklaringsbehovstatus.OPPRETTET ||
-            it.status == Avklaringsbehovstatus.SENDT_TILBAKE_FRA_BESLUTTER
+    fun getÅpentAvklaringsbehov() = avklaringsbehov.firstOrNull {
+        it.status in setOf(
+            Avklaringsbehovstatus.OPPRETTET,
+            Avklaringsbehovstatus.SENDT_TILBAKE_FRA_BESLUTTER,
+            Avklaringsbehovstatus.SENDT_TILBAKE_FRA_KVALITETSSIKRER
+        )
     }
 }
 
-enum class Behandlingstype{
+enum class Behandlingstype {
     Førstegangsbehandling,
     Revurdering,
     Tilbakekreving,
@@ -40,6 +44,8 @@ enum class Behandlingstatus {
 enum class Avklaringsbehovstatus {
     OPPRETTET,
     AVSLUTTET,
+    KVALITETSSIKRET,
+    SENDT_TILBAKE_FRA_KVALITETSSIKRER,
     TOTRINNS_VURDERT,
     SENDT_TILBAKE_FRA_BESLUTTER,
     AVBRUTT
@@ -60,7 +66,8 @@ enum class Avklaringsbehovtype(val kode: String) {
 
     companion object {
         private val map = entries.associateBy(Avklaringsbehovtype::kode)
-        fun fraKode(kode: String) = map[kode] ?: throw IllegalArgumentException("Finner ikke Avklaringsbehovtype for kode: $kode")
+        fun fraKode(kode: String) =
+            map[kode] ?: throw IllegalArgumentException("Finner ikke Avklaringsbehovtype for kode: $kode")
     }
 }
 
@@ -69,8 +76,8 @@ data class AvklaringsbehovDto(
     val status: Avklaringsbehovstatus,
     val endringer: List<AvklaringsbehovhendelseEndring>
 ) {
-    fun getOpprettelsestidspunkt() = endringer.find { it.status == Avklaringsbehovstatus.OPPRETTET }?.tidsstempel ?:
-        throw IllegalArgumentException("Avklaringsbehov mangler ")
+    fun getOpprettelsestidspunkt() = endringer.find { it.status == Avklaringsbehovstatus.OPPRETTET }?.tidsstempel
+        ?: throw IllegalArgumentException("Avklaringsbehov mangler ")
 }
 
 data class Definisjon(
