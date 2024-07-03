@@ -44,7 +44,7 @@ spec:
           - id: "b60d74dd-fcf7-4c53-a50b-7b20f51804a1"
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
     requests:
       memory: 256Mi
   liveness:
