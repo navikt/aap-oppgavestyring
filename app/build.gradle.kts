@@ -18,7 +18,7 @@ val prometheusVersion= "1.13.1"
 val logbackVersion = "1.5.6"
 val jacksonVersion = "2.17.2"
 val logstashVersion = "7.4"
-val assertjVersion = "3.26.0"
+val assertjVersion = "3.26.3"
 val mockkVersion = "1.13.11"
 
 
