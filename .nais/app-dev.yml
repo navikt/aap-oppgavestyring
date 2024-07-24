@@ -15,6 +15,7 @@ spec:
         - application: behandlingsflyt
         - application: mottak
         - application: saksbehandling
+        - application: oppgavestyring-frontend
     outbound:
       external:
         - host: oppgave.dev-fss-pub.nais.io
