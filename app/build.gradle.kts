@@ -9,7 +9,7 @@ plugins {
 
 val aapLibVersion = "5.0.23"
 val ktorVersion = "2.3.12"
-val exposedVersion = "0.54.0"
+val exposedVersion = "0.55.0"
 val flywayVersion = "10.18.1"
 val hikariVersion = "6.0.0"
 val postgresqlVersion = "42.7.4"
